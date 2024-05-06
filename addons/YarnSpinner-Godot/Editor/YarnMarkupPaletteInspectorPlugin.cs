@@ -14,10 +14,7 @@ namespace YarnSpinnerGodot.Editor
     [Tool]
     public partial class YarnMarkupPaletteInspectorPlugin : EditorInspectorPlugin
     {
-        public override bool _CanHandle(GodotObject obj)
-        {
-            return obj is MarkupPalette;
-        }
+        public override bool _CanHandle(GodotObject obj) => obj is MarkupPalette;
 
         public override bool _ParseProperty(GodotObject @object, Variant.Type type,
             string path,

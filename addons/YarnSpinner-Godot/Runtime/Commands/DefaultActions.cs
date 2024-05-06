@@ -9,6 +9,7 @@ namespace YarnSpinnerGodot
     public partial class DefaultActions : Godot.Node
     {
         #region Commands
+
         /// <summary>
         /// Yarn Spinner defines two built-in commands: "wait", and "stop".
         /// Stop is defined inside the Virtual Machine (the compiler traps it
@@ -20,12 +21,14 @@ namespace YarnSpinnerGodot
         {
             var mainLoop = Engine.GetMainLoop();
             var sceneTree = mainLoop as SceneTree;
-            var timer = sceneTree.CreateTimer((float)duration);
-            await mainLoop.ToSignal(timer, "timeout");
+            var timer = sceneTree.CreateTimer((float) duration);
+            await mainLoop.ToSignal(timer, SceneTreeTimer.SignalName.Timeout);
         }
+
         #endregion
 
         #region Functions
+
         [YarnFunction("random")]
         public static float Random()
         {
@@ -35,7 +38,7 @@ namespace YarnSpinnerGodot
         [YarnFunction("random_range")]
         public static float RandomRange(float minInclusive, float maxInclusive)
         {
-            return (float)GD.RandRange(minInclusive, maxInclusive);
+            return (float) GD.RandRange(minInclusive, maxInclusive);
         }
 
         /// <summary>
@@ -47,19 +50,19 @@ namespace YarnSpinnerGodot
         [YarnFunction("dice")]
         public static uint Dice(int sides)
         {
-            return (uint)((GD.Randi() +1)  % sides);
+            return (uint) ((GD.Randi() + 1) % sides);
         }
 
         [YarnFunction("round")]
         public static int Round(float num)
         {
-            return (int)RoundPlaces(num, 0);
+            return (int) RoundPlaces(num, 0);
         }
 
         [YarnFunction("round_places")]
         public static float RoundPlaces(float num, int places)
         {
-            return (float)Math.Round(num, places);
+            return (float) Math.Round(num, places);
         }
 
         [YarnFunction("floor")]
@@ -84,7 +87,8 @@ namespace YarnSpinnerGodot
             {
                 return Mathf.CeilToInt(num);
             }
-            return (int)num + 1;
+
+            return (int) num + 1;
         }
 
         /// <summary>
@@ -97,7 +101,8 @@ namespace YarnSpinnerGodot
             {
                 return Mathf.FloorToInt(num);
             }
-            return (int)num - 1;
+
+            return (int) num - 1;
         }
 
         /// <summary>
@@ -121,8 +126,9 @@ namespace YarnSpinnerGodot
         [YarnFunction("int")]
         public static int Int(float num)
         {
-            return (int)Math.Truncate(num);
+            return (int) Math.Truncate(num);
         }
+
         #endregion
     }
 }

@@ -12,52 +12,27 @@ namespace YarnSpinnerGodot.Editor
     /// </summary>
     public partial class YarnImporter : EditorImportPlugin
     {
-
         public override string[] _GetRecognizedExtensions() =>
             new[]
             {
                 "yarn"
             };
 
-        public override string _GetImporterName()
-        {
-            return "yarnscript";
-        }
+        public override string _GetImporterName() => "yarnscript";
 
-        public override string _GetVisibleName()
-        {
-            return "Yarn Script";
-        }
-
+        public override string _GetVisibleName() => "Yarn Script";
 
         public override string _GetSaveExtension() => "tres";
 
-        public override string _GetResourceType()
-        {
-            var a = new Array();
-            
-            return "Resource";
-        }
+        public override string _GetResourceType() => "Resource";
 
-        public override int _GetPresetCount()
-        {
-            return 0;
-        }
+        public override int _GetPresetCount() => 0;
 
-        public override float _GetPriority()
-        {
-            return 1.0f;
-        }
+        public override float _GetPriority() => 1.0f;
 
-        public override int _GetImportOrder()
-        {
-            return 0;
-        }
+        public override int _GetImportOrder() => 0;
 
-        public override Array<Dictionary> _GetImportOptions(string path, int presetIndex)
-        {
-            return new Array<Dictionary>();
-        }
+        public override Array<Dictionary> _GetImportOptions(string path, int presetIndex) => new();
 
         public override Error _Import(
             string assetPath,

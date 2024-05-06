@@ -1,8 +1,6 @@
 #nullable disable
 #if TOOLS
-using System.Collections.Generic;
 using Godot;
-using Yarn.Compiler;
 using File = System.IO.File;
 using Path = System.IO.Path;
 

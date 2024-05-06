@@ -9,7 +9,7 @@ namespace YarnSpinnerGodot.Editor
     public partial class YarnCompileErrorsPropertyEditor : EditorProperty
     {
         // The main control for editing the property.
-        private Label _propertyControl = new Label();
+        private Label _propertyControl;
 
         // An internal value of the property.
         private Array _currentValue;
@@ -19,6 +19,7 @@ namespace YarnSpinnerGodot.Editor
 
         public YarnCompileErrorsPropertyEditor()
         {
+            _propertyControl = new Label();
             Label = "Project Errors";
             // Add the control as a direct child of EditorProperty node.
             AddChild(_propertyControl);
