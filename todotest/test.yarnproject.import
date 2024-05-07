@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnproject"
+type="Resource"
+uid="uid://ctohnh0p1djyy"
+path="res://.godot/imported/test.yarnproject-2d67af08ea018e3b1d7c17efa90da8f4.tres"
+
+[deps]
+
+source_file="res://todotest/test.yarnproject"
+dest_files=["res://.godot/imported/test.yarnproject-2d67af08ea018e3b1d7c17efa90da8f4.tres"]
+
+[params]
+

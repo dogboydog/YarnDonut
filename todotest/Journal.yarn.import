@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://c4ic80ymnb8od"
+path="res://.godot/imported/Journal.yarn-0954623f3a7fc5d902a75b888dda7e19.tres"
+
+[deps]
+
+source_file="res://todotest/Journal.yarn"
+dest_files=["res://.godot/imported/Journal.yarn-0954623f3a7fc5d902a75b888dda7e19.tres"]
+
+[params]
+

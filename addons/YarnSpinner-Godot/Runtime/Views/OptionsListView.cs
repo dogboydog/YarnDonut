@@ -145,12 +145,9 @@ namespace YarnSpinnerGodot
             Effects.FadeAlpha(viewControl, 0, 1, fadeTime)
                 .ContinueWith(t =>
                 {
-                    if (t.IsFaulted)
-                    {
-                        GD.PrintErr(
-                            $"Error running {nameof(Effects.FadeAlpha)} on {nameof(OptionsListView)}: {t.Exception}");
-                    }
-                });
+                    GD.PrintErr(
+                        $"Error running {nameof(Effects.FadeAlpha)} on {nameof(OptionsListView)}: {t.Exception}");
+                }, TaskContinuationOptions.OnlyOnFaulted);
 
             /// <summary>
             /// Creates and configures a new <see cref="OptionView"/>, and adds
@@ -211,17 +208,19 @@ namespace YarnSpinnerGodot
                 }
 
                 viewControl.Visible = false;
-                Effects.FadeAlpha(viewControl, viewControl.Modulate.A, 0, fadeTime)        
+                Effects.FadeAlpha(viewControl, viewControl.Modulate.A, 0, fadeTime)
                     .ContinueWith(failedTask =>
-                    {
-                        var errorMessage = "";
-                        if (failedTask.Exception != null)
                         {
-                            errorMessage = failedTask.Exception.ToString();
-                        }
-                        GD.PushError($"Error while running {nameof(Effects.FadeAlpha)}: {errorMessage}");
-                    }, 
-                    TaskContinuationOptions.OnlyOnFaulted);;
+                            var errorMessage = "";
+                            if (failedTask.Exception != null)
+                            {
+                                errorMessage = failedTask.Exception.ToString();
+                            }
+
+                            GD.PushError($"Error while running {nameof(Effects.FadeAlpha)}: {errorMessage}");
+                        },
+                        TaskContinuationOptions.OnlyOnFaulted);
+                ;
             }
         }
     }

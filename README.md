@@ -15,7 +15,7 @@ To try these samples yourself, open this repository as a Godot project. Feel fre
 
 There is a [guide here](https://docs.yarnspinner.dev/beginners-guide/making-a-game/yarn-spinner-for-godot) on the basic installation and usage of the plugin. 
 
-See the [docs directory](./docs/Home.md) for more documentation. 
+ Full documentation is available on the same site in [this section](https://docs.yarnspinner.dev/using-yarnspinner-with-godot/overview)
 
 ## Features 
 

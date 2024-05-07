@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://cx6dfra60fx1t"
+path="res://.godot/imported/NodeCompleteTest.yarn-98330f888e0152a783d01d08bfc1d10a.tres"
+
+[deps]
+
+source_file="res://todotest/NodeCompleteTest.yarn"
+dest_files=["res://.godot/imported/NodeCompleteTest.yarn-98330f888e0152a783d01d08bfc1d10a.tres"]
+
+[params]
+

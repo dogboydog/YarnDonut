@@ -1,0 +1,25 @@
+﻿title: Day_1
+position: -291,-373
+---
+Day 1 text.
+    -> Next page
+        <<jump Day_2>> 
+===
+
+title: Day_2
+position: -88,-165
+---
+Day 2 text. Unbelievable!
+        -> Previous page
+            <<jump Day_1>>
+        -> Next page
+            <<jump Day_3>>
+===
+
+title: Day_3
+position: -175,124
+---
+Day 3 text
+    -> Previous page
+        <<jump Day_2>>
+===
