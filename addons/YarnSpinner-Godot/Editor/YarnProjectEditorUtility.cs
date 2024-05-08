@@ -311,9 +311,10 @@ namespace YarnSpinnerGodot.Editor
             if (modificationsNeeded == false)
             {
                 if (generateTranslation)
-                { 
+                {
                     GenerateGodotTranslation(language, csvResourcePath);
                 }
+
                 // No changes needed to be done to the translated string
                 // table entries. Stop here.
                 return false;
@@ -381,7 +382,11 @@ namespace YarnSpinnerGodot.Editor
         public static void SaveYarnProject(YarnProject project)
         {
             // force the JSON serialization to update before saving 
-            project.baseLocalization.stringTable = project.baseLocalization.stringTable;
+            if (GodotObject.IsInstanceValid(project.baseLocalization))
+            {
+                project.baseLocalization.stringTable = project.baseLocalization.stringTable;
+            }
+
             project.LineMetadata = project.LineMetadata;
             project.ListOfFunctions = project.ListOfFunctions;
             project.SerializedDeclarations = project.SerializedDeclarations;

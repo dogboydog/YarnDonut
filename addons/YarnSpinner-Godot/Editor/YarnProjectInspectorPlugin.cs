@@ -62,7 +62,7 @@ namespace YarnSpinnerGodot.Editor
             {
                 _project = project;
                 // hide some properties that are not editable by the user
-                var hideProperties = new List<string>
+                string[] hideProperties =
                 {
                     nameof(YarnProject.LastImportHadAnyStrings),
                     nameof(YarnProject.LastImportHadImplicitStringIDs),
@@ -254,6 +254,11 @@ namespace YarnSpinnerGodot.Editor
 
         private void LocaleAdded()
         {
+            if (string.IsNullOrEmpty(_localeTextEntry.Text))
+            {
+                return;
+            }
+
             _project.JSONProject.Localisation[_localeTextEntry.Text] =
                 new Project.LocalizationInfo
                 {
@@ -455,7 +460,7 @@ namespace YarnSpinnerGodot.Editor
                     picker.AddChild(pickerButton);
                     localeGrid.AddChild(picker);
                     var deleteButton = new LocaleDeleteButton
-                        {Text = "X", LocaleCode = locale.Key};
+                        {Text = "X", LocaleCode = locale.Key, Plugin = this};
                     deleteButton.Connect(BaseButton.SignalName.Pressed,
                         new Callable(deleteButton,
                             nameof(LocaleDeleteButton.OnPressed)));
@@ -485,9 +490,20 @@ namespace YarnSpinnerGodot.Editor
                 baseLocaleRow.AddChild(changeBaseLocaleButton);
                 AddCustomControl(baseLocaleRow);
                 var writeBaseCSVButton = new Button();
+                if (!IsInstanceValid(_project.baseLocalization))
+                {
+                    writeBaseCSVButton.Disabled = true;
+                    AddCustomControl(new Label
+                    {
+                        AutowrapMode = TextServer.AutowrapMode.Word,
+                        Text =
+                            "No yarn scripts have been compiled into this project yet.\nYou can't export strings and metadata without compiled yarn script content."
+                    });
+                }
+
                 writeBaseCSVButton.Text = "Export Strings and Metadata as CSV";
                 writeBaseCSVButton.TooltipText =
-                    "Write all of the lines in your Yarn Project to a CSV," +
+                    "Write all of the lines in your Yarn Project to a CSV in your base language," +
                     " including the metadata, line IDs, and the names of the nodes" +
                     " in which each line appears.";
                 writeBaseCSVButton.Connect(BaseButton.SignalName.Pressed,

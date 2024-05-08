@@ -29,7 +29,7 @@ public partial class LocaleDeleteButton : Button
     /// </summary>
     public void OnPressed()
     {
-        if (!IsInstanceValid(Plugin))
+        if (IsInstanceValid(Plugin))
         {
             Plugin.RemoveLocale(LocaleCode);
         }
