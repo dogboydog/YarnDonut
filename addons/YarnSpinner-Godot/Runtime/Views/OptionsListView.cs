@@ -67,131 +67,139 @@ namespace YarnSpinnerGodot
 
         public void RunOptions(DialogueOption[] dialogueOptions, Action<int> onOptionSelected)
         {
-            viewControl.Visible = false;
-            // Hide all existing option views
-            foreach (var optionView in optionViews)
+            RunOptionsInternal(dialogueOptions, onOptionSelected);
+        }
+
+        private async void RunOptionsInternal(DialogueOption[] dialogueOptions, Action<int> onOptionSelected)
+        {
+            try
             {
-                optionView.Visible = false;
-            }
-
-            // If we don't already have enough option views, create more
-            while (dialogueOptions.Length > optionViews.Count)
-            {
-                var optionView = CreateNewOptionView();
-                optionView.Visible = false;
-            }
-
-            // Set up all of the option views
-            int optionViewsCreated = 0;
-
-            for (int i = 0; i < dialogueOptions.Length; i++)
-            {
-                var optionView = optionViews[i];
-                var option = dialogueOptions[i];
-
-                if (option.IsAvailable == false && showUnavailableOptions == false)
+                // prevent option views from being pressed by the same input that advanced the dialogue
+                // by waiting a frame
+                var mainTree = (SceneTree)Engine.GetMainLoop();
+                await mainTree.ToSignal(mainTree, SceneTree.SignalName.ProcessFrame);
+                viewControl.Visible = false;
+                // Hide all existing option views
+                foreach (var optionView in optionViews)
                 {
-                    // Don't show this option.
-                    continue;
+                    optionView.Visible = false;
                 }
 
-                optionView.Visible = true;
-
-                optionView.palette = this.palette;
-                optionView.Option = option;
-
-                // The first available option is selected by default
-                if (optionViewsCreated == 0)
+                // If we don't already have enough option views, create more
+                while (dialogueOptions.Length > optionViews.Count)
                 {
-                    optionView.GrabFocus();
+                    var optionView = CreateNewOptionView();
+                    optionView.Visible = false;
                 }
 
-                optionViewsCreated += 1;
-            }
+                // Set up all of the option views
+                int optionViewsCreated = 0;
 
-            // Update the last line, if one is configured
-            if (IsInstanceValid(lastLineText))
-            {
-                var line = lastSeenLine.Text;
-                lastLineText.Visible = true;
-                if (IsInstanceValid(lastLineCharacterNameText))
+                for (int i = 0; i < dialogueOptions.Length; i++)
                 {
-                    if (string.IsNullOrWhiteSpace(lastSeenLine.CharacterName))
+                    var optionView = optionViews[i];
+                    var option = dialogueOptions[i];
+
+                    if (option.IsAvailable == false && showUnavailableOptions == false)
                     {
-                        lastLineCharacterNameText.Visible = false;
+                        // Don't show this option.
+                        continue;
+                    }
+
+                    optionView.Visible = true;
+
+                    optionView.palette = this.palette;
+                    optionView.Option = option;
+
+                    // The first available option is selected by default
+                    if (optionViewsCreated == 0)
+                    {
+                        optionView.GrabFocus();
+                    }
+
+                    optionViewsCreated += 1;
+                }
+
+                // Update the last line, if one is configured
+                if (IsInstanceValid(lastLineText))
+                {
+                    var line = lastSeenLine.Text;
+                    lastLineText.Visible = true;
+                    if (IsInstanceValid(lastLineCharacterNameText))
+                    {
+                        if (string.IsNullOrWhiteSpace(lastSeenLine.CharacterName))
+                        {
+                            lastLineCharacterNameText.Visible = false;
+                        }
+                        else
+                        {
+                            line = lastSeenLine.TextWithoutCharacterName;
+                            lastLineCharacterNameText.Visible = true;
+                            lastLineCharacterNameText.Text = lastSeenLine.CharacterName;
+                        }
+                    }
+
+                    if (IsInstanceValid(palette))
+                    {
+                        lastLineText.Text = LineView.PaletteMarkedUpText(line, palette);
                     }
                     else
                     {
-                        line = lastSeenLine.TextWithoutCharacterName;
-                        lastLineCharacterNameText.Visible = true;
-                        lastLineCharacterNameText.Text = lastSeenLine.CharacterName;
+                        lastLineText.Text = line.Text;
                     }
                 }
 
-                if (palette != null)
+                // Note the delegate to call when an option is selected
+                OnOptionSelected = onOptionSelected;
+
+                // Fade it all in
+                await Effects.FadeAlpha(viewControl, 0, 1, fadeTime);
+
+                /// <summary>
+                /// Creates and configures a new <see cref="OptionView"/>, and adds
+                /// it to <see cref="optionViews"/>.
+                /// </summary>
+                OptionView CreateNewOptionView()
                 {
-                    lastLineText.Text = LineView.PaletteMarkedUpText(line, palette);
+                    var optionView = optionViewPrefab.Instantiate<OptionView>();
+                    boxContainer.AddChild(optionView);
+
+                    optionView.OnOptionSelected = OptionViewWasSelected;
+                    optionViews.Add(optionView);
+
+                    return optionView;
                 }
-                else
+
+                /// <summary>
+                /// Called by <see cref="OptionView"/> objects.
+                /// </summary>
+                void OptionViewWasSelected(DialogueOption option)
                 {
-                    lastLineText.Text = line.Text;
-                }
-            }
-
-            // Note the delegate to call when an option is selected
-            OnOptionSelected = onOptionSelected;
-
-            // Fade it all in
-            Effects.FadeAlpha(viewControl, 0, 1, fadeTime)
-                .ContinueWith(t =>
-                {
-                    GD.PrintErr(
-                        $"Error running {nameof(Effects.FadeAlpha)} on {nameof(OptionsListView)}: {t.Exception}");
-                }, TaskContinuationOptions.OnlyOnFaulted);
-
-            /// <summary>
-            /// Creates and configures a new <see cref="OptionView"/>, and adds
-            /// it to <see cref="optionViews"/>.
-            /// </summary>
-            OptionView CreateNewOptionView()
-            {
-                var optionView = optionViewPrefab.Instantiate<OptionView>();
-                boxContainer.AddChild(optionView);
-
-                optionView.OnOptionSelected = OptionViewWasSelected;
-                optionViews.Add(optionView);
-
-                return optionView;
-            }
-
-            /// <summary>
-            /// Called by <see cref="OptionView"/> objects.
-            /// </summary>
-            void OptionViewWasSelected(DialogueOption option)
-            {
-                OptionViewWasSelectedInternal(option).ContinueWith(t =>
-                {
-                    if (t.IsFaulted)
+                    OptionViewWasSelectedInternal(option).ContinueWith(t =>
                     {
                         GD.PrintErr(
                             $"Error running {nameof(OptionViewWasSelected)} on {nameof(OptionsListView)}: {t.Exception}");
-                    }
-                });
+                    }, TaskContinuationOptions.OnlyOnFaulted);
 
-                async Task OptionViewWasSelectedInternal(DialogueOption selectedOption)
-                {
-                    await Effects.FadeAlpha(viewControl, 1, 0, fadeTime);
-                    viewControl.Visible = false;
-                    if (lastLineText != null)
+                    async Task OptionViewWasSelectedInternal(DialogueOption selectedOption)
                     {
-                        lastLineText.Visible = false;
+                        await Effects.FadeAlpha(viewControl, 1, 0, fadeTime);
+                        viewControl.Visible = false;
+                        if (lastLineText != null)
+                        {
+                            lastLineText.Visible = false;
+                        }
+
+                        OnOptionSelected(selectedOption.DialogueOptionID);
                     }
-
-                    OnOptionSelected(selectedOption.DialogueOptionID);
                 }
-            }
 
-            optionViews[0].GrabFocus();
+                optionViews[0].GrabFocus();
+            }
+            catch (Exception e)
+            {
+                GD.PushError($"Error while running {nameof(OptionsListView)}.{nameof(RunOptionsInternal)}(): {e}");
+            }
         }
 
         /// <inheritdoc />

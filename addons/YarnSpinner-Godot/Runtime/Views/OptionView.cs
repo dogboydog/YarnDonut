@@ -11,9 +11,9 @@ namespace YarnSpinnerGodot
         public Action<DialogueOption> OnOptionSelected;
         public MarkupPalette palette;
 
-        DialogueOption _option;
+        private DialogueOption _option;
 
-        bool hasSubmittedOptionSelection = false;
+        private bool hasSubmittedOptionSelection = false;
 
         public DialogueOption Option
         {
@@ -38,7 +38,7 @@ namespace YarnSpinnerGodot
                 }
 
                 label.BbcodeEnabled = true;
-                if (palette != null)
+                if (IsInstanceValid(palette))
                 {
                     label.Text =
                         $"[center]{LineView.PaletteMarkedUpText(line, palette)}[/center]";
