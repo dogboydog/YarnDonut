@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.6] 2024-05-08 
+* Fix #53 where the first OptionView in an OptionsListView could not be interacted with if fadeTime was zero
+* Update YarnSpinner core DLL files to [version 2.4.2](https://github.com/YarnSpinnerTool/YarnSpinner/releases/tag/v2.4.2)
+  * Updated dependency versions:
+    * Google.Protobuf: Moved from 3.15.0 to 3.25.2.
+    * Microsoft.Extensions.FileSystemGlobbing: Moved from 7.0.0 to 8.0.0
+  * [Standard library functions (e.g. random, round_places, dice)](https://docs.yarnspinner.dev/getting-started/writing-in-yarn/functions#built-in-functions) have been removed from Yarn Spinner for Godot, since they have been added directly to the core Yarn Spinner library.
+* Fix #55 where Yarn projects with no scripts added / compiled yet threw exceptions when locale related or 'export strings' were pressed
+
 ## [0.2.5] 2024-04-28
 * fix #50 - errors calling Stop if the runner was running a command like wait
 * fix #44 - show variable declarations in the yarn project inspector
