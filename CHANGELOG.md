@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.7] 2024-05-11
+* Add an explicit dependency on System.Text.Json v8.0.1 to fix compiler warnings and incompatibility with DotNet SDK versions below 8. The symptom in 0.2.6 was failing to create a .yarnproject file from the editor.
+
 ## [0.2.6] 2024-05-08 
 * Fix #53 where the first OptionView in an OptionsListView could not be interacted with if fadeTime was zero
 * Update YarnSpinner core DLL files to [version 2.4.2](https://github.com/YarnSpinnerTool/YarnSpinner/releases/tag/v2.4.2)
