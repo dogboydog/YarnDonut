@@ -68,6 +68,7 @@ public partial class SQLVariableStorage : VariableStorageBehaviour
         }
         else if (typeof(T) == typeof(float))
         {
+            
             query = "SELECT * FROM YarnFloat WHERE key = ?";
             results.AddRange(db.Query<YarnFloat>(query, variableName));
         }
