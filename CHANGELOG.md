@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.8] 2024-05-24
+* Fix Yarn commands not supporting methods with optional arguments (by @spirifoxy)
+* Update Visual Novel sample to make use of this fix
+
 ## [0.2.7] 2024-05-11
 * Add an explicit dependency on System.Text.Json v8.0.1 to fix compiler warnings and incompatibility with DotNet SDK versions below 8. The symptom in 0.2.6 was failing to create a .yarnproject file from the editor.
 

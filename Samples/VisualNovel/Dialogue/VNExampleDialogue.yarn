@@ -9,7 +9,7 @@ position: 0,0
 // the node name must be specified - in this case VisualNovelManager
 <<Scene VisualNovelManager bg_office>>
 // start playing audioclip "ambient_birds" at 50% volume, loop forever
-<<PlayAudio ambient_birds 0.5 loop>>
+<<PlayAudio ambient_birds 0.5>>
 
 A VISUAL NOVEL EXAMPLE #line:07ee50d 
 
@@ -23,7 +23,7 @@ Eve: Finally, a quiet day at the office. Maybe I'll be able to get some work don
 
 // animate Adam into new position in right-half + center, within 0.5 seconds
 <<Move Adam right center 0.5>>
-<<PlayAudio music_funny 1.0 loop>>
+<<PlayAudio music_funny>>
 
 Adam: Hey Eve! I have a question! #line:07f4eac 
 Eve: Oh no... #line:0721506 
@@ -49,7 +49,7 @@ Eve: Oh no... #line:0721506
 
 Eve: Ok, now to finally write that visual novel. #line:0794753 
 <<Flip Eve left>>
-<<PlayAudio music_romantic 1.0 loop>>
+<<PlayAudio music_romantic>>
 Eve: I can finally write my epic romance about - #line:0c39b43 
 <<StopAudioAll>>
 <<Flip Eve right>>
@@ -59,7 +59,7 @@ Eve: Wait... where's my laptop? It's not here. #line:04432b5
 <<Shake Eve 1.0>>
 Eve: Adam! Have you seen my laptop??? #line:0a21105 
 
-<<PlayAudio music_funny 1.0 loop>>
+<<PlayAudio music_funny>>
 <<Flip Eve right>>
 <<Move Eve 1.25 center 1.0>>
 Eve: ADDDDAAAMMMMMMM!!! #line:062467b 
