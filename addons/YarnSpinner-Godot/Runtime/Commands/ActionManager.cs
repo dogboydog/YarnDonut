@@ -413,7 +413,7 @@ namespace YarnSpinnerGodot
             }
             for (int i = count; i < finalArgs.Length; i++)
             {
-                finalArgs[i] = Type.Missing;
+                finalArgs[i] = (parameters[i].HasDefaultValue ? parameters[i].DefaultValue : Type.Missing) ?? Type.Missing;
             }
             return finalArgs;
         }
