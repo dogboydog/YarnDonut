@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.9] 2024-06-30
+
+* Set LineView's MouseFilter to 'ignore' to avoid interfering with clicks.  
+* Fix an issue where 'use fade effect' would cause the ConvertBBCodeToHTML feature to stop working while the text was fading out. 
+* Set the LineView to Visible=False when marking its alpha as 0.
+
 ## [0.2.8] 2024-05-24
 * Fix Yarn commands not supporting methods with optional arguments (by @spirifoxy)
 * Update Visual Novel sample to make use of this fix

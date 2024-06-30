@@ -280,6 +280,7 @@ namespace YarnSpinnerGodot
             var color = viewControl.Modulate;
             color.A = alpha;
             viewControl.Modulate = color;
+            viewControl.Visible = alpha != 0f;
         }
 
         /// <inheritdoc/>
@@ -292,9 +293,6 @@ namespace YarnSpinnerGodot
 
         private async void DismissLineInternal(Action onDismissalComplete)
         {
-            // disabling interaction temporarily while dismissing the line
-            // we don't want people to interrupt a dismissal
-            var interactable = viewControl.Visible;
             SetCanvasInteractable(false);
 
             // If we're using a fade effect, run it, and wait for it to finish.
@@ -305,7 +303,6 @@ namespace YarnSpinnerGodot
             }
 
             SetViewAlpha(0f);
-            SetCanvasInteractable(interactable);
             if (onDismissalComplete != null)
             {
                 onDismissalComplete();
@@ -342,6 +339,7 @@ namespace YarnSpinnerGodot
                 characterNameText.Text = dialogueLine.CharacterName;
                 lineText.Text = dialogueLine.TextWithoutCharacterName.Text;
             }
+            ConvertHTMLToBBCodeIfConfigured();
 
 
             // Show the entire line's text immediately.
@@ -369,9 +367,10 @@ namespace YarnSpinnerGodot
                         {
                             errorMessage = failedTask.Exception.ToString();
                         }
+
                         GD.PushError($"Error while running {nameof(RunLineInternal)}: {errorMessage}");
-                    }, 
-                TaskContinuationOptions.OnlyOnFaulted);
+                    },
+                    TaskContinuationOptions.OnlyOnFaulted);
         }
 
         private async Task RunLineInternal(LocalizedLine dialogueLine, Action onDialogueLineFinished)
@@ -379,10 +378,8 @@ namespace YarnSpinnerGodot
             async Task PresentLine()
             {
                 lineText.Visible = true;
-                viewControl.Visible = true;
-                var color = viewControl.Modulate;
-                color.A = 1f;
-                viewControl.Modulate = color;
+                SetCanvasInteractable(true);
+                SetViewAlpha(1f);
 
                 // Hide the continue button until presentation is complete (if
                 // we have one).
@@ -437,17 +434,7 @@ namespace YarnSpinnerGodot
                     lineText.Text = text.Text;
                 }
 
-                if (ConvertHTMLToBBCode)
-                {
-                    const string htmlTagPattern = @"<(.*?)>";
-                    if (characterNameText != null)
-                    {
-                        characterNameText.Text = Regex.Replace(characterNameText.Text, htmlTagPattern, "[$1]");
-                    }
-            
-                    lineText.Text = Regex.Replace(lineText.Text, htmlTagPattern, "[$1]");
-                }
-
+                ConvertHTMLToBBCodeIfConfigured();
                 if (useTypewriterEffect)
                 {
                     // If we're using the typewriter effect, hide all of the
@@ -481,9 +468,7 @@ namespace YarnSpinnerGodot
                 {
                     var pauses = LineView.GetPauseDurationsInsideLine(text);
                     // setting the canvas all back to its defaults because if we didn't also fade we don't have anything visible
-                    color = viewControl.Modulate;
-                    color.A = 1f;
-                    viewControl.Modulate = color;
+                    SetViewAlpha(1f);
                     SetCanvasInteractable(true);
                     await Effects.PausableTypewriter(
                         lineText,
@@ -501,7 +486,7 @@ namespace YarnSpinnerGodot
 
             // Run any presentations as a single async Task. If this is stopped,
             // which UserRequestedViewAdvancement can do, then we will stop all
-            // of the animations at once.
+            // the animations at once.
             await PresentLine();
 
             if (!IsInstanceValid(this))
@@ -551,6 +536,25 @@ namespace YarnSpinnerGodot
             onDialogueLineFinished();
         }
 
+        /// <summary>
+        /// If <see cref="ConvertHTMLToBBCode"/> is true, replace any HTML tags in the line text and
+        /// character name text with BBCode tags.
+        /// </summary>
+        private void ConvertHTMLToBBCodeIfConfigured()
+        {
+            if (ConvertHTMLToBBCode)
+            {
+                const string htmlTagPattern = @"<(.*?)>";
+                if (characterNameText != null)
+                {
+                    characterNameText.Text = Regex.Replace(characterNameText.Text, htmlTagPattern, "[$1]");
+                }
+
+                lineText.Text = Regex.Replace(lineText.Text, htmlTagPattern, "[$1]");
+            }
+
+        }
+
         private void SetCanvasInteractable(bool b)
         {
             if (!IsInstanceValid(viewControl))
@@ -560,7 +564,6 @@ namespace YarnSpinnerGodot
 
             viewControl.MouseFilter = b ? Control.MouseFilterEnum.Pass : Control.MouseFilterEnum.Ignore;
             viewControl.SetProcessInput(b);
-            viewControl.Visible = b;
         }
 
         /// <inheritdoc/>
