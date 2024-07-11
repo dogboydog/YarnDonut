@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://dhnl6qatalt6x"]
 
-[ext_resource type="StyleBox" uid="uid://itxqi5xpilu6" path="res://addons/YarnSpinner-Godot/Scenes/RoundedViewStyleBox.tres" id="1_brfok"]
+[ext_resource type="StyleBox" uid="uid://itxqi5xpilu6" path="res://addons/YarnSpinner-Godot/Scenes/RoundedViewStylebox.tres" id="1_brfok"]
 [ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Views/OptionView.cs" id="1_uv0oc"]
-[ext_resource type="StyleBox" uid="uid://cqadffkf802cr" path="res://addons/YarnSpinner-Godot/Scenes/RoundedViewFocusedStyleBox.tres" id="2_tuu8c"]
+[ext_resource type="StyleBox" uid="uid://cqadffkf802cr" path="res://addons/YarnSpinner-Godot/Scenes/RoundedViewFocusedStylebox.tres" id="2_tuu8c"]
 
 [node name="OptionView" type="Button" node_paths=PackedStringArray("label")]
 anchors_preset = 7

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.10] 2024-07-11
+* Update System.Text.Json to 8.0.4 based on CVE-2024-30105 https://github.com/advisories/GHSA-hh2w-p6rv-4g7w
+* Fix references to `RoundedViewStylebox.tres` that were in the wrong case in resource files, which could cause an issue on case-sensitive platforms.
+
 ## [0.2.9] 2024-06-30
 
 * Set LineView's MouseFilter to 'ignore' to avoid interfering with clicks.  
