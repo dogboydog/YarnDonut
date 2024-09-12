@@ -76,7 +76,7 @@ namespace YarnSpinnerGodot
             {
                 // prevent option views from being pressed by the same input that advanced the dialogue
                 // by waiting a frame
-                var mainTree = (SceneTree)Engine.GetMainLoop();
+                var mainTree = (SceneTree) Engine.GetMainLoop();
                 await mainTree.ToSignal(mainTree, SceneTree.SignalName.ProcessFrame);
                 viewControl.Visible = false;
                 // Hide all existing option views
@@ -152,6 +152,7 @@ namespace YarnSpinnerGodot
                 // Note the delegate to call when an option is selected
                 OnOptionSelected = onOptionSelected;
 
+                viewControl.Visible = true;
                 // Fade it all in
                 await Effects.FadeAlpha(viewControl, 0, 1, fadeTime);
 

@@ -94,21 +94,25 @@ namespace YarnSpinnerGodot
             color.A = from;
             control.Modulate = color;
 
-            var timeElapsed = 0d;
+            var destinationColor = color;
+            destinationColor.A = to;
 
-            while (timeElapsed < fadeTime)
+            var tween = control.CreateTween();
+            tween.TweenProperty(control, "modulate", destinationColor, fadeTime);
+            while (tween.IsRunning())
             {
-                if (stopToken?.WasInterrupted ?? false)
+                if (!GodotObject.IsInstanceValid(control))
                 {
+                    // the control was deleted from the scene
                     return;
                 }
 
-                var fraction = timeElapsed / fadeTime;
-                timeElapsed += mainTree.Root.GetProcessDeltaTime();
+                if (stopToken?.WasInterrupted ?? false)
+                {
+                    tween.Kill();
+                    return;
+                }
 
-                float a = Mathf.Lerp(from, to, (float) fraction);
-                color.A = a;
-                control.Modulate = color;
                 await DefaultActions.Wait(mainTree.Root.GetProcessDeltaTime());
             }
 
@@ -122,7 +126,7 @@ namespace YarnSpinnerGodot
             stopToken?.Complete();
         }
 
-        public static async Task Typewriter(RichTextLabel text, float lettersPerSecond, 
+        public static async Task Typewriter(RichTextLabel text, float lettersPerSecond,
             Action onCharacterTyped, TaskInterruptToken stopToken = null)
         {
             await PausableTypewriter(
@@ -231,7 +235,7 @@ namespace YarnSpinnerGodot
             // the requested speed.
             var deltaTime = mainTree.Root.GetProcessDeltaTime();
             var accumulator = deltaTime;
-            
+
             while (GodotObject.IsInstanceValid(text) && text.VisibleRatio < 1)
             {
                 if (!GodotObject.IsInstanceValid(text))
@@ -259,6 +263,7 @@ namespace YarnSpinnerGodot
                         {
                             return;
                         }
+
                         onPauseEnded?.Invoke();
 
                         // need to reset the accumulator
@@ -289,6 +294,7 @@ namespace YarnSpinnerGodot
             {
                 return;
             }
+
             // We either finished displaying everything, or were
             // interrupted. Either way, display everything now.
             text.VisibleRatio = 1;

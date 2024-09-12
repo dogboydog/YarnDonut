@@ -15,6 +15,13 @@ variableStorage = NodePath("../SQLVariableStorage")
 startNode = "SqlSample"
 startAutomatically = true
 
+[node name="LineView" parent="RoundedYarnSpinnerCanvasLayer" index="2"]
+useFadeEffect = true
+fadeInTime = 1.0
+
+[node name="OptionsListView" parent="RoundedYarnSpinnerCanvasLayer" index="3"]
+fadeTime = 2.0
+
 [node name="ColorRect" type="ColorRect" parent="RoundedYarnSpinnerCanvasLayer"]
 z_index = -6
 z_as_relative = false
