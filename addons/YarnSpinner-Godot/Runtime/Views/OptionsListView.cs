@@ -1,6 +1,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 
@@ -194,8 +195,8 @@ namespace YarnSpinnerGodot
                         OnOptionSelected(selectedOption.DialogueOptionID);
                     }
                 }
-
-                optionViews[0].GrabFocus();
+                // If the user is hiding unavailable options, select the first visible one.
+                optionViews.First(view => view.Visible).GrabFocus();
             }
             catch (Exception e)
             {

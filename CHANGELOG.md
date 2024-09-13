@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.11] 2024-09-13
+* Fix an issue where the OptionsListView did not fade in properly and instead suddenly appeared at the end of the fade time. (Fix #62)
+* `Effects.Fade` now uses a Godot Tween. 
+*  Grab focus of the first visible option in OptionsListView.cs, rather than the first option which may be hidden due to being unavailable.
+
 ## [0.2.10] 2024-07-11
 * Update System.Text.Json to 8.0.4 based on CVE-2024-30105 https://github.com/advisories/GHSA-hh2w-p6rv-4g7w
 * Fix references to `RoundedViewStylebox.tres` that were in the wrong case in resource files, which could cause an issue on case-sensitive platforms.
