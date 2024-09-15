@@ -59,7 +59,7 @@ public partial class MarkupAttribute : GodotObject
             stringBuilder.Append($", {Properties.Count} properties)");
         }
 
-        stringBuilder.Append(")");
+        stringBuilder.Append(')');
         return stringBuilder.ToString();
     }
 
