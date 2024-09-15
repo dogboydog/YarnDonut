@@ -52,9 +52,7 @@ public partial class YarnSpinnerPlugin : EditorPlugin
     {
         get
         {
-            if (_idToToolsMenuItem == null)
-            {
-                _idToToolsMenuItem = new()
+            _idToToolsMenuItem ??= new()
                 {
                     [0] =
                         new ToolsMenuItem()
@@ -83,7 +81,6 @@ public partial class YarnSpinnerPlugin : EditorPlugin
                     //     }
                     // 
                 };
-            }
 
             return _idToToolsMenuItem;
         }

@@ -319,10 +319,7 @@ public partial class YarnProject : Resource
     {
         get
         {
-            if (cachedProgram == null)
-            {
-                cachedProgram = Program.Parser.ParseFrom(CompiledYarnProgram);
-            }
+            cachedProgram ??= Program.Parser.ParseFrom(CompiledYarnProgram);
 
             return cachedProgram;
         }
