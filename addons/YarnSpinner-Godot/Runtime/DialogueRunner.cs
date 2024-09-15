@@ -707,13 +707,13 @@ public partial class DialogueRunner : Godot.Node
     ///  The collection of dialogue views that are currently either
     ///  delivering a line, or dismissing a line from being on screen.
     /// </summary>
-    private readonly HashSet<Node> ActiveDialogueViews = new HashSet<Node>();
+    private readonly HashSet<Node> ActiveDialogueViews = new();
 
     Action<int> selectAction;
 
     /// Maps the names of commands to action delegates.
     System.Collections.Generic.Dictionary<string, Delegate> commandHandlers =
-        new System.Collections.Generic.Dictionary<string, Delegate>();
+        new();
 
     /// <summary>
     /// The underlying object that executes Yarn instructions
@@ -1720,7 +1720,7 @@ public partial class DialogueRunner : Godot.Node
     {
         (var floats, var strings, var bools) = variableStorage.GetAllVariables();
 
-        SaveData data = new SaveData();
+        SaveData data = new();
         data.floatKeys = floats.Keys.ToArray();
         data.floatValues = floats.Values.ToArray();
         data.stringKeys = strings.Keys.ToArray();

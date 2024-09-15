@@ -73,7 +73,7 @@ public partial class VisualNovelManager : Node
         GD.Print("Visual novel sample has completed!");
     }
 
-    private Dictionary<string, string> _bgShortNameToPath = new Dictionary<string, string>
+    private Dictionary<string, string> _bgShortNameToPath = new()
     {
         {
             "bg_office", "res://Samples/VisualNovel/Sprites/bg_office.png"
@@ -97,7 +97,7 @@ public partial class VisualNovelManager : Node
         _background.Texture = texture;
     }
 
-    private Dictionary<string, string> _audioShortNameToUuid = new Dictionary<string, string>
+    private Dictionary<string, string> _audioShortNameToUuid = new()
     {
         {
             "music_funny", "res://Samples/VisualNovel/Sounds/music_funny.mp3"
@@ -110,7 +110,7 @@ public partial class VisualNovelManager : Node
         }
     };
 
-    private List<AudioStreamPlayer2D> _audioPlayers = new List<AudioStreamPlayer2D>();
+    private List<AudioStreamPlayer2D> _audioPlayers = new();
 
     private async void PlayAudio(string streamName, float volume = 1.0f, string doLoop = "loop")
     {
@@ -141,9 +141,9 @@ public partial class VisualNovelManager : Node
         public TextureRect Rect;
     }
 
-    private Dictionary<string, Actor> _actors = new Dictionary<string, Actor>();
+    private Dictionary<string, Actor> _actors = new();
 
-    private Dictionary<string, string> _spriteShortNameToPath = new Dictionary<string, string>
+    private Dictionary<string, string> _spriteShortNameToPath = new()
     {
         {
             "biz-guy", "res://Samples/VisualNovel/Sprites/biz-guy.png"

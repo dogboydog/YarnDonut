@@ -29,10 +29,10 @@ public partial class YarnSpinnerPlugin : EditorPlugin
     private const string TOOLS_MENU_NAME = "YarnSpinner";
 
     private List<EditorInspectorPlugin> _inspectorPlugins =
-        new List<EditorInspectorPlugin>();
+        new();
 
     private List<EditorImportPlugin>
-        _importPlugins = new List<EditorImportPlugin>();
+        _importPlugins = new();
 
     private struct ToolsMenuItem
     {
