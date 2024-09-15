@@ -27,7 +27,7 @@ public partial class StringInfo : Resource
         lineNumber = -1;
         fileName = "";
         isImplicitTag = false;
-        metadata = new string[] { };
+        metadata = System.Array.Empty<string>();
     }
 
     public StringInfo(string text, string nodeName, int lineNumber, string fileName, bool isImplicitTag, string[] metadata)

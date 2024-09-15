@@ -819,9 +819,7 @@ public static class YarnProjectEditorUtility
             if (containsErrors)
             {
                 GD.PrintErr($"Can't check for existing line tags in {path} because it contains errors.");
-                return new string[]
-                {
-                };
+                return Array.Empty<string>();
             }
 
             return result.StringTable.Where(i => i.Value.isImplicitTag == false).Select(i => i.Key);

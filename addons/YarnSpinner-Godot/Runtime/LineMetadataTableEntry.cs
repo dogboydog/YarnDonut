@@ -125,9 +125,7 @@ public class LineMetadataTableEntry
                 record.File = file ?? string.Empty;
                 record.Node = node ?? string.Empty;
                 record.LineNumber = lineNumber ?? string.Empty;
-                record.Metadata = metadata?.Split(' ') ?? new string[]
-                {
-                };
+                record.Metadata = metadata?.Split(' ') ?? Array.Empty<string>();
                 records.Add(record);
             }
 
