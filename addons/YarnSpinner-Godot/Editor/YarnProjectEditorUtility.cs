@@ -447,7 +447,7 @@ public static class YarnProjectEditorUtility
                 errors = compilationResult.Value.Diagnostics.Where(d =>
                     d.Severity == Diagnostic.DiagnosticSeverity.Error);
 
-                if (errors.Count() > 0)
+                if (errors.Any())
                 {
                     var errorGroups = errors.GroupBy(e => e.FileName);
                     foreach (var errorGroup in errorGroups)
@@ -675,7 +675,7 @@ public static class YarnProjectEditorUtility
         var errors =
             compilationResult.Value.Diagnostics.Where(d => d.Severity == Diagnostic.DiagnosticSeverity.Error);
 
-        if (errors.Count() > 0)
+        if (errors.Any())
         {
             GD.PrintErr("Can't generate a strings table from a Yarn Project that contains compile errors", null);
             return null;
@@ -752,7 +752,7 @@ public static class YarnProjectEditorUtility
     {
         var cleanedMetadata = RemoveLineIDFromMetadata(metadata);
 
-        if (cleanedMetadata.Count() == 0)
+        if (!cleanedMetadata.Any())
         {
             return string.Empty;
         }
