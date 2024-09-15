@@ -514,15 +514,13 @@ public static class YarnProjectEditorUtility
 
                 CreateYarnInternalLocalizationAssets(project, compilationResult.Value);
 
-                using (var memoryStream = new MemoryStream())
-                using (var outputStream = new CodedOutputStream(memoryStream))
-                {
-                    // Serialize the compiled program to memory
-                    compilationResult.Value.Program.WriteTo(outputStream);
-                    outputStream.Flush();
+                using var memoryStream = new MemoryStream();
+                using var outputStream = new CodedOutputStream(memoryStream);
+                // Serialize the compiled program to memory
+                compilationResult.Value.Program.WriteTo(outputStream);
+                outputStream.Flush();
 
-                    compiledBytes = memoryStream.ToArray();
-                }
+                compiledBytes = memoryStream.ToArray();
             }
 
             project.ListOfFunctions = newFunctionList.ToArray();

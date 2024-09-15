@@ -70,10 +70,8 @@ public partial class YarnImporter : EditorImportPlugin
     /// <returns>The hash of <paramref name="inputString"/>.</returns>
     private static byte[] GetHash(string inputString)
     {
-        using (HashAlgorithm algorithm = SHA256.Create())
-        {
-            return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
-        }
+        using HashAlgorithm algorithm = SHA256.Create();
+        return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
     }
 
     /// <summary>

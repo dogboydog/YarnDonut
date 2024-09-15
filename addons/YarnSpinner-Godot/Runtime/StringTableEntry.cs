@@ -139,46 +139,44 @@ public class StringTableEntry
     {
         try
         {
-            using (var stringReader = new System.IO.StringReader(sourceText))
-            using (var csv = new CsvReader(stringReader, GetConfiguration()))
+            using var stringReader = new System.IO.StringReader(sourceText);
+            using var csv = new CsvReader(stringReader, GetConfiguration());
+            /*
+            Do the below instead of GetRecords<T> due to
+            incompatibility with IL2CPP See more:
+            https://github.com/YarnSpinnerTool/YarnSpinner-Unity/issues/36#issuecomment-691489913
+            */
+            var records = new List<StringTableEntry>();
+            csv.Read();
+            csv.ReadHeader();
+            while (csv.Read())
             {
-                /*
-                Do the below instead of GetRecords<T> due to
-                incompatibility with IL2CPP See more:
-                https://github.com/YarnSpinnerTool/YarnSpinner-Unity/issues/36#issuecomment-691489913
-                */
-                var records = new List<StringTableEntry>();
-                csv.Read();
-                csv.ReadHeader();
-                while (csv.Read())
-                {
-                    // Fetch values; if they can't be found, they'll be
-                    // defaults.
-                    csv.TryGetField<string>("language", out var language);
-                    csv.TryGetField<string>("lock", out var lockString);
-                    csv.TryGetField<string>("comment", out var comment);
-                    csv.TryGetField<string>("id", out var id);
-                    csv.TryGetField<string>("text", out var text);
-                    csv.TryGetField<string>("file", out var file);
-                    csv.TryGetField<string>("node", out var node);
-                    csv.TryGetField<string>("lineNumber", out var lineNumber);
+                // Fetch values; if they can't be found, they'll be
+                // defaults.
+                csv.TryGetField<string>("language", out var language);
+                csv.TryGetField<string>("lock", out var lockString);
+                csv.TryGetField<string>("comment", out var comment);
+                csv.TryGetField<string>("id", out var id);
+                csv.TryGetField<string>("text", out var text);
+                csv.TryGetField<string>("file", out var file);
+                csv.TryGetField<string>("node", out var node);
+                csv.TryGetField<string>("lineNumber", out var lineNumber);
 
-                    var record = new StringTableEntry();
+                var record = new StringTableEntry();
 
-                    record.Language = language ?? string.Empty;
-                    record.ID = id ?? string.Empty;
-                    record.Text = text ?? string.Empty;
-                    record.File = file ?? string.Empty;
-                    record.Node = node ?? string.Empty;
-                    record.LineNumber = lineNumber ?? string.Empty;
-                    record.Lock = lockString ?? string.Empty;
-                    record.Comment = comment ?? string.Empty;
+                record.Language = language ?? string.Empty;
+                record.ID = id ?? string.Empty;
+                record.Text = text ?? string.Empty;
+                record.File = file ?? string.Empty;
+                record.Node = node ?? string.Empty;
+                record.LineNumber = lineNumber ?? string.Empty;
+                record.Lock = lockString ?? string.Empty;
+                record.Comment = comment ?? string.Empty;
 
-                    records.Add(record);
-                }
-
-                return records;
+                records.Add(record);
             }
+
+            return records;
         }
         catch (CsvHelperException e)
         {
@@ -195,17 +193,16 @@ public class StringTableEntry
     /// <returns>A string containing CSV-formatted data.</returns>
     public static string CreateCSV(IEnumerable<StringTableEntry> entries)
     {
-        using (var textWriter = new System.IO.StringWriter())
-        {
-            // Generate the localised .csv file
+        using var textWriter = new System.IO.StringWriter();
+        // Generate the localised .csv file
 
-            // Use the invariant culture when writing the CSV
-            var csv = new CsvHelper.CsvWriter(
+        // Use the invariant culture when writing the CSV
+        var csv = new CsvHelper.CsvWriter(
                 textWriter, // write into this stream
                 GetConfiguration() // use this configuration
             );
 
-            var fieldNames = new[]
+        var fieldNames = new[]
             {
                 "language",
                 "id",
@@ -218,16 +215,16 @@ public class StringTableEntry
                 "comment"
             };
 
-            foreach (var field in fieldNames)
-            {
-                csv.WriteField(field);
-            }
+        foreach (var field in fieldNames)
+        {
+            csv.WriteField(field);
+        }
 
-            csv.NextRecord();
+        csv.NextRecord();
 
-            foreach (var entry in entries)
-            {
-                var values = new[]
+        foreach (var entry in entries)
+        {
+            var values = new[]
                 {
                     entry.Language,
                     entry.ID,
@@ -239,16 +236,15 @@ public class StringTableEntry
                     entry.Lock,
                     entry.Comment,
                 };
-                foreach (var value in values)
-                {
-                    csv.WriteField(value);
-                }
-
-                csv.NextRecord();
+            foreach (var value in values)
+            {
+                csv.WriteField(value);
             }
 
-            return textWriter.ToString();
+            csv.NextRecord();
         }
+
+        return textWriter.ToString();
     }
 
 #endif
