@@ -310,18 +310,18 @@ public static class ActionManager
     /// <summary>
     /// The Yarn commands that we have found.
     /// </summary>
-    private static Dictionary<string, DispatchCommand> commands = new Dictionary<string, DispatchCommand>();
+    private static Dictionary<string, DispatchCommand> commands = new();
 
     /// <summary>
     /// The Yarn functions that we have found.
     /// </summary>
-    private static Dictionary<string, Delegate> functions = new Dictionary<string, Delegate>();
+    private static Dictionary<string, Delegate> functions = new();
 
     /// <summary>
     /// A list of names of assemblies that we have searched for commands and
     /// functions.
     /// </summary>
-    private static HashSet<string> searchedAssemblyNames = new HashSet<string>();
+    private static HashSet<string> searchedAssemblyNames = new();
 
     /// <summary>
     /// Try to execute a command if it exists.

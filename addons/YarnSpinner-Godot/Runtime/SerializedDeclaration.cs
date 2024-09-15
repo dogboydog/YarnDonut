@@ -13,7 +13,7 @@ namespace YarnSpinnerGodot;
 [Tool]
 public class SerializedDeclaration
 {
-    public static List<IType> BuiltInTypesList = new List<IType>
+    public static List<IType> BuiltInTypesList = new()
     {
         BuiltinTypes.String,
         BuiltinTypes.Boolean,

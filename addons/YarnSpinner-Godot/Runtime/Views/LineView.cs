@@ -239,7 +239,7 @@ public partial class LineView : Node, DialogueViewBase
     /// <summary>
     /// A stop token that is used to interrupt the current animation.
     /// </summary>
-    Effects.TaskInterruptToken currentStopToken = new Effects.TaskInterruptToken();
+    Effects.TaskInterruptToken currentStopToken = new();
 
     public override void _Ready()
     {

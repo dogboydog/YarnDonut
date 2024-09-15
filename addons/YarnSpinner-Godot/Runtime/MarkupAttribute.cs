@@ -17,7 +17,7 @@ public partial class MarkupAttribute : GodotObject
 
     public static MarkupAttribute fromMarkupAttribute(Yarn.Markup.MarkupAttribute e)
     {
-        Dictionary properties = new Dictionary();
+        Dictionary properties = new();
         foreach (var property in e.Properties)
         {
             properties.Add(property.Key, VariantFromMarkupValue(property.Value));
@@ -51,7 +51,7 @@ public partial class MarkupAttribute : GodotObject
 
     public override string ToString()
     {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new();
         stringBuilder.Append($"[{Name}] - {Position}-{Position + Length} ({Length}");
         var properties = Properties;
         if (properties != null && properties.Count > 0)

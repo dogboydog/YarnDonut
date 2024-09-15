@@ -77,10 +77,10 @@ public static class YarnProjectEditorUtility
     private const int PROJECT_UPDATE_TIMEOUT = 80; // ms 
 
     private static ConcurrentDictionary<string, DateTime> _projectPathToLastUpdateTime =
-        new ConcurrentDictionary<string, DateTime>();
+        new();
 
-    private static Dictionary<string, Task> _projectPathToUpdateTask = new Dictionary<string, Task>();
-    private static object _lastUpdateLock = new object();
+    private static Dictionary<string, Task> _projectPathToUpdateTask = new();
+    private static object _lastUpdateLock = new();
 
     /// <summary>
     /// Queue up a re-compile of scripts in a yarn project, add all associated data to the project,
@@ -412,7 +412,7 @@ public static class YarnProjectEditorUtility
     {
         lock (project)
         {
-            List<FunctionInfo> newFunctionList = new List<FunctionInfo>();
+            List<FunctionInfo> newFunctionList = new();
             var assetPath = project.ResourcePath;
             GD.Print($"Compiling all scripts in {assetPath}");
 
