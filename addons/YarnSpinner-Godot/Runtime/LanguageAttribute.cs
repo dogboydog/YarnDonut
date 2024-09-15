@@ -1,10 +1,9 @@
 #nullable disable
 
 
-namespace YarnSpinnerGodot
+namespace YarnSpinnerGodot;
+
+public class LanguageAttribute : System.Attribute
 {
-    public class LanguageAttribute : System.Attribute
-    {
-        // No data or methods on this attribute; it's purely a marker.
-    }
+    // No data or methods on this attribute; it's purely a marker.
 }

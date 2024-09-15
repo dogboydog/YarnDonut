@@ -1,14 +1,13 @@
 #nullable disable
 using Godot;
 
-namespace YarnSpinnerGodot
-{
+namespace YarnSpinnerGodot;
 
-    [Tool]
-    public class FunctionInfo
-    {
-        public string Name;
-        public string ReturnType;
-        public string[] Parameters;
-    }
+
+[Tool]
+public class FunctionInfo
+{
+    public string Name;
+    public string ReturnType;
+    public string[] Parameters;
 }

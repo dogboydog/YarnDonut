@@ -25,29 +25,28 @@ DEALINGS IN THE SOFTWARE.
 */
 #nullable disable
 
-namespace YarnSpinnerGodot
+namespace YarnSpinnerGodot;
+
+public class DialogueOption
 {
-    public class DialogueOption
-    {
-        /// <summary>
-        /// The ID of this dialogue option
-        /// </summary>
-        public int DialogueOptionID;
+    /// <summary>
+    /// The ID of this dialogue option
+    /// </summary>
+    public int DialogueOptionID;
 
-        /// <summary>
-        /// The ID of the dialogue option's text
-        /// </summary>
-        public string TextID;
+    /// <summary>
+    /// The ID of the dialogue option's text
+    /// </summary>
+    public string TextID;
 
-        /// <summary>
-        /// The line for this dialogue option
-        /// </summary>
-        public LocalizedLine Line;
+    /// <summary>
+    /// The line for this dialogue option
+    /// </summary>
+    public LocalizedLine Line;
 
-        /// <summary>
-        /// Indicates whether this value should be presented as available
-        /// or not.
-        /// </summary>
-        public bool IsAvailable;
-    }
+    /// <summary>
+    /// Indicates whether this value should be presented as available
+    /// or not.
+    /// </summary>
+    public bool IsAvailable;
 }

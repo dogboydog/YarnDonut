@@ -29,25 +29,24 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 
-namespace YarnSpinnerGodot
+namespace YarnSpinnerGodot;
+
+public static class AssemblyExtensions
 {
-    public static class AssemblyExtensions
+    /// <summary>
+    /// Assembly.GetTypes() can throw in some cases.  This extension
+    /// will catch that exception and return only the types which were
+    /// successfully loaded from the assembly.
+    /// </summary>
+    public static IEnumerable<System.Type> GetLoadableTypes(this Assembly @this)
     {
-        /// <summary>
-        /// Assembly.GetTypes() can throw in some cases.  This extension
-        /// will catch that exception and return only the types which were
-        /// successfully loaded from the assembly.
-        /// </summary>
-        public static IEnumerable<System.Type> GetLoadableTypes(this Assembly @this)
+        try
         {
-            try
-            {
-                return @this.GetTypes();
-            }
-            catch (ReflectionTypeLoadException e)
-            {
-                return e.Types.Where(t => t != null);
-            }
+            return @this.GetTypes();
+        }
+        catch (ReflectionTypeLoadException e)
+        {
+            return e.Types.Where(t => t != null);
         }
     }
 }

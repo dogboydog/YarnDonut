@@ -3,69 +3,68 @@
 using Godot;
 using Array = Godot.Collections.Array;
 
-namespace YarnSpinnerGodot.Editor
+namespace YarnSpinnerGodot.Editor;
+
+[Tool]
+public partial class YarnCompileErrorsPropertyEditor : EditorProperty
 {
-    [Tool]
-    public partial class YarnCompileErrorsPropertyEditor : EditorProperty
+    // The main control for editing the property.
+    private Label _propertyControl;
+
+    // An internal value of the property.
+    private Array _currentValue;
+
+    [Signal]
+    public delegate void OnErrorsUpdateEventHandler(GodotObject yarnProject);
+
+    public YarnCompileErrorsPropertyEditor()
     {
-        // The main control for editing the property.
-        private Label _propertyControl;
+        _propertyControl = new Label();
+        Label = "Project Errors";
+        // Add the control as a direct child of EditorProperty node.
+        AddChild(_propertyControl);
+        // Make sure the control is able to retain the focus.
+        AddFocusable(_propertyControl);
+        // Setup the initial state and connect to the signal to track changes.
+        RefreshControlText();
+    }
 
-        // An internal value of the property.
-        private Array _currentValue;
-
-        [Signal]
-        public delegate void OnErrorsUpdateEventHandler(GodotObject yarnProject);
-
-        public YarnCompileErrorsPropertyEditor()
+    public override void _UpdateProperty()
+    {
+        // Read the current value from the property.
+        var newVariantValue = GetEditedObject().Get(GetEditedProperty());
+        var newValue = (Array) newVariantValue;
+        if (newValue == _currentValue)
         {
-            _propertyControl = new Label();
-            Label = "Project Errors";
-            // Add the control as a direct child of EditorProperty node.
-            AddChild(_propertyControl);
-            // Make sure the control is able to retain the focus.
-            AddFocusable(_propertyControl);
-            // Setup the initial state and connect to the signal to track changes.
-            RefreshControlText();
+            return;
         }
 
-        public override void _UpdateProperty()
-        {
-            // Read the current value from the property.
-            var newVariantValue = GetEditedObject().Get(GetEditedProperty());
-            var newValue = (Array) newVariantValue;
-            if (newValue == _currentValue)
-            {
-                return;
-            }
+        _currentValue = newValue;
+        RefreshControlText();
+        EmitSignal(SignalName.OnErrorsUpdate);
+    }
 
-            _currentValue = newValue;
-            RefreshControlText();
-            EmitSignal(SignalName.OnErrorsUpdate);
-        }
-
-        private void RefreshControlText()
+    private void RefreshControlText()
+    {
+        if (_currentValue == null)
         {
-            if (_currentValue == null)
-            {
-                _propertyControl.Text = "";
-            }
-            else if (_currentValue.Count == 0)
-            {
-                _propertyControl.Text = "None";
-            }
-            else
-            {
-                _propertyControl.Text =
-                    $"❌{_currentValue.Count} error{(_currentValue.Count > 1 ? "s" : "")}";
-            }
+            _propertyControl.Text = "";
         }
-
-        public void Refresh()
+        else if (_currentValue.Count == 0)
         {
-            EmitChanged(GetEditedProperty(),
-                GetEditedObject().Get(GetEditedProperty()));
+            _propertyControl.Text = "None";
         }
+        else
+        {
+            _propertyControl.Text =
+                $"❌{_currentValue.Count} error{(_currentValue.Count > 1 ? "s" : "")}";
+        }
+    }
+
+    public void Refresh()
+    {
+        EmitChanged(GetEditedProperty(),
+            GetEditedObject().Get(GetEditedProperty()));
     }
 }
 #endif
