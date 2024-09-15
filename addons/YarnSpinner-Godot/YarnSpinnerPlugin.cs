@@ -182,7 +182,7 @@ public partial class YarnSpinnerPlugin : EditorPlugin
             nameof(CreateYarnScriptDestinationSelected));
     }
 
-    private void CreateYarnScriptDestinationSelected(string destination)
+    private static void CreateYarnScriptDestinationSelected(string destination)
     {
         GD.Print("Creating a yarn script at " + destination);
         YarnEditorUtility.CreateYarnScript(destination);
@@ -196,7 +196,7 @@ public partial class YarnSpinnerPlugin : EditorPlugin
             nameof(CreateMarkupPaletteDestinationSelected));
     }
 
-    private void CreateMarkupPaletteDestinationSelected(string destination)
+    private static void CreateMarkupPaletteDestinationSelected(string destination)
     {
         GD.Print($"Creating a markup palette at {destination}");
         YarnEditorUtility.CreateMarkupPalette(destination);
@@ -230,7 +230,7 @@ public partial class YarnSpinnerPlugin : EditorPlugin
         dialog.PopupCentered(new Vector2I(700, 500));
     }
 
-    private void CreateYarnProjectDestinationSelected(string destination)
+    private static void CreateYarnProjectDestinationSelected(string destination)
     {
         GD.Print("Creating a yarn project at " + destination);
         YarnEditorUtility.CreateYarnProject(destination);

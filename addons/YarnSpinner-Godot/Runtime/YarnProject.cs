@@ -82,7 +82,7 @@ public partial class YarnProject : Resource
 
     [Export] public string CompiledYarnProgramBase64;
 
-    public List<Resource> ScriptsWithParseErrors => new();
+    public static List<Resource> ScriptsWithParseErrors => new();
 
     [Export] public Localization baseLocalization;
 

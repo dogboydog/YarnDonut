@@ -106,7 +106,7 @@ public partial class YarnImporter : EditorImportPlugin
         }
     }
 
-    private void ImportYarn(string assetPath)
+    private static void ImportYarn(string assetPath)
     {
         GD.Print($"Importing Yarn script {assetPath}");
         var projectPath = YarnProjectEditorUtility.GetDestinationProjectPath(assetPath);

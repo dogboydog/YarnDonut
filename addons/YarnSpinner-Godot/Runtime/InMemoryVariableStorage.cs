@@ -155,7 +155,7 @@ public partial class InMemoryVariableStorage
     /// <exception cref="System.ArgumentException">Thrown when
     /// <paramref name="variableName"/> is not a valid variable
     /// name.</exception> 
-    private void ValidateVariableName(string variableName)
+    private static void ValidateVariableName(string variableName)
     {
         if (variableName.StartsWith("$") == false)
         {
