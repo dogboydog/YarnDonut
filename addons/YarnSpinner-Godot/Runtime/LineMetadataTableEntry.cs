@@ -73,14 +73,11 @@ public class LineMetadataTableEntry
 
     private static CsvHelper.Configuration.Configuration GetConfiguration()
     {
-        if (CsvConfiguration == null)
-        {
-            CsvConfiguration =
+        CsvConfiguration ??=
                 new CsvHelper.Configuration.Configuration(System.Globalization.CultureInfo.InvariantCulture)
                 {
                     MemberTypes = CsvHelper.Configuration.MemberTypes.Fields,
                 };
-        }
 
         return CsvConfiguration;
     }

@@ -228,7 +228,7 @@ public partial class DialogueRunner : Godot.Node
     /// Gets the underlying <see cref="Dialogue"/> object that runs the
     /// Yarn code.
     /// </summary>
-    public Dialogue Dialogue => _dialogue ?? (_dialogue = CreateDialogueInstance());
+    public Dialogue Dialogue => _dialogue ??= CreateDialogueInstance();
 
     /// <summary>
     /// A flag used to detect if an options handler attempts to set the
@@ -794,10 +794,7 @@ public partial class DialogueRunner : Godot.Node
                 GD.Print($"Dialogue Runner has no LineProvider; creating a {nameof(TextLineProvider)}.", this);
             }
         }
-        else if (lineProvider.YarnProject == null)
-        {
-            lineProvider.YarnProject = yarnProject;
-        }
+        else lineProvider.YarnProject ??= yarnProject;
 
         if (startAutomatically)
         {

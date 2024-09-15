@@ -251,10 +251,7 @@ public partial class LineView : Node, DialogueViewBase
 
         lineText.VisibleCharactersBehavior = TextServer.VisibleCharactersBehavior.CharsAfterShaping;
 
-        if (viewControl == null)
-        {
-            viewControl = GetNode(viewControlPath) as Control;
-        }
+        viewControl ??= GetNode(viewControlPath) as Control;
 
         continueButton?.Connect("pressed", new Callable(this, nameof(OnContinueClicked)));
 

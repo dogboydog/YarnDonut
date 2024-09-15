@@ -227,20 +227,11 @@ public static class ActionManager
 
     private static void FindAllActions()
     {
-        if (commands == null)
-        {
-            commands = new Dictionary<string, DispatchCommand>();
-        }
+        commands ??= new Dictionary<string, DispatchCommand>();
 
-        if (functions == null)
-        {
-            functions = new Dictionary<string, Delegate>();
-        }
+        functions ??= new Dictionary<string, Delegate>();
 
-        if (searchedAssemblyNames == null)
-        {
-            searchedAssemblyNames = new HashSet<string>();
-        }
+        searchedAssemblyNames ??= new HashSet<string>();
         var injectorCache = new Dictionary<string, Injector>();
 
         // Find the assemblies we're looking for
