@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.12] 2024-09-15
+* Use file-scoped namespaces in all plugin scripts to reduce indentation, by @valkyrienyanko 
+
 ## [0.2.11] 2024-09-13
 * Fix an issue where the OptionsListView did not fade in properly and instead suddenly appeared at the end of the fade time. (Fix #62)
 * `Effects.Fade` now uses a Godot Tween. 
