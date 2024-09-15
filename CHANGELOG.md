@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.13] 2024-09-15
+* General code cleanup by @valkyrienyanko. Make use of some C# language features such as target-typed `new()` to simplify code.
+* Potential breaking change: DispatchCommandToNode on DialogueRunner has been marked static. Users generally do not need to call this method directly, so it shouldn't affect most or possibly any projects.
+
 ## [0.2.12] 2024-09-15
 * Use file-scoped namespaces in all plugin scripts to reduce indentation, by @valkyrienyanko 
 

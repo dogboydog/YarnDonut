@@ -794,7 +794,10 @@ public partial class DialogueRunner : Godot.Node
                 GD.Print($"Dialogue Runner has no LineProvider; creating a {nameof(TextLineProvider)}.", this);
             }
         }
-        else lineProvider.YarnProject ??= yarnProject;
+        else
+        {
+            lineProvider.YarnProject ??= yarnProject;
+        }
 
         if (startAutomatically)
         {
@@ -1272,7 +1275,7 @@ public partial class DialogueRunner : Godot.Node
     /// <returns><see langword="true"/> if the command was successfully
     /// dispatched to a Godot Node; <see langword="false"/> if no game
     /// object was registered as a handler for the command.</returns>
-    public async Task<CommandDispatchResult> DispatchCommandToNode(Command command,
+    public static async Task<CommandDispatchResult> DispatchCommandToNode(Command command,
         Action onSuccessfulDispatch)
     {
         // Call out to the string version of this method, because
