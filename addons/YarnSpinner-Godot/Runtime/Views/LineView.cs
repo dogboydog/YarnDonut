@@ -341,7 +341,6 @@ public partial class LineView : Node, DialogueViewBase
         }
         ConvertHTMLToBBCodeIfConfigured();
 
-
         // Show the entire line's text immediately.
         lineText.VisibleRatio = 1;
 
@@ -423,7 +422,6 @@ public partial class LineView : Node, DialogueViewBase
                 }
             }
 
-
             // if we have a palette file need to add those colours into the text
             if (IsInstanceValid(palette))
             {
@@ -447,7 +445,6 @@ public partial class LineView : Node, DialogueViewBase
                 // Show all characters
                 lineText.VisibleRatio = 1;
             }
-
 
             // If we're using the fade effect, start it, and wait for it to
             // finish.
@@ -606,7 +603,6 @@ public partial class LineView : Node, DialogueViewBase
         // example, if a DialogueAdvanceInput had signalled us.)
         UserRequestedViewAdvancement();
     }
-
 
     /// <inheritdoc />
     public void DialogueComplete()

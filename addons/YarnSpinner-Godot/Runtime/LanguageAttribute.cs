@@ -1,6 +1,5 @@
 #nullable disable
 
-
 namespace YarnSpinnerGodot;
 
 public class LanguageAttribute : System.Attribute

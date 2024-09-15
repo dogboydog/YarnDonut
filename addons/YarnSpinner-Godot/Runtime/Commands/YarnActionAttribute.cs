@@ -1,7 +1,6 @@
 using System;
 #nullable disable
 
-
 namespace YarnSpinnerGodot;
 
 [AttributeUsage(AttributeTargets.Method, Inherited = false)]

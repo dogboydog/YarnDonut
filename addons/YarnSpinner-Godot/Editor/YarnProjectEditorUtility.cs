@@ -614,7 +614,6 @@ public static class YarnProjectEditorUtility
     /// <seealso cref="assembliesToSearch"/>
     public static bool searchAllAssembliesForActions = true;
 
-
     private static void CreateYarnInternalLocalizationAssets(YarnProject project,
         CompilationResult compilationResult)
     {
@@ -762,7 +761,6 @@ public static class YarnProjectEditorUtility
 
         return $"Line metadata: {string.Join(" ", cleanedMetadata)}";
     }
-
 
     /// <summary>
     /// Removes any line ID entry from an array of line metadata.

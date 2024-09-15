@@ -6,7 +6,6 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using Godot;
 
-
 #if TOOLS
 using YarnSpinnerGodot.Editor;
 #endif

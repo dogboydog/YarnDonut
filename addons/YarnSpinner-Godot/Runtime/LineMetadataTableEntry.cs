@@ -85,7 +85,6 @@ public class LineMetadataTableEntry
         return CsvConfiguration;
     }
 
-
     /// <summary>
     /// Reads comma-separated value data from <paramref name="sourceText"/>,
     /// and produces a collection of <see cref="LineMetadataTableEntry"/> structs.
@@ -120,7 +119,6 @@ public class LineMetadataTableEntry
                     csv.TryGetField<string>("node", out var node);
                     csv.TryGetField<string>("lineNumber", out var lineNumber);
                     csv.TryGetField<string>("metadata", out var metadata);
-
 
                     var record = new LineMetadataTableEntry();
 

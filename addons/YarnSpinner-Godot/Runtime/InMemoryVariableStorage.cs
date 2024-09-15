@@ -101,7 +101,6 @@ public partial class InMemoryVariableStorage
         return stringBuilder.ToString();
     }
 
-
     #region Setters
 
     /// <summary>

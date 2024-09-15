@@ -24,7 +24,6 @@ DEALINGS IN THE SOFTWARE.
 
 */
 
-
 #nullable disable
 
 using Yarn;

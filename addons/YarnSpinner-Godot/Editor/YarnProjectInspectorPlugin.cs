@@ -10,7 +10,6 @@ using Yarn;
 using Yarn.Compiler;
 using YarnSpinnerGodot.Editor.UI;
 
-
 namespace YarnSpinnerGodot.Editor;
 
 [Tool]
@@ -251,7 +250,6 @@ public partial class YarnProjectInspectorPlugin : EditorInspectorPlugin
         _project.SaveJSONProject();
     }
 
-
     private void LocaleAdded()
     {
         if (string.IsNullOrEmpty(_localeTextEntry.Text))
@@ -371,7 +369,6 @@ public partial class YarnProjectInspectorPlugin : EditorInspectorPlugin
             };
             scriptPatternsGrid.AddChild(addPatternButton);
             AddCustomControl(scriptPatternsGrid);
-
 
             var numScriptsText = "None";
             if (sourceScripts.Any())

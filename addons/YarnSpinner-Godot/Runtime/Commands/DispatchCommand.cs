@@ -3,7 +3,6 @@ using System;
 using System.Reflection;
 using Godot;
 
-
 namespace YarnSpinnerGodot;
 
 using Injector = Func<string, object>;

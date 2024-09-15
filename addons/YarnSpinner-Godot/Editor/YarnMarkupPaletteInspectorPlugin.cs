@@ -4,7 +4,6 @@ using System;
 using Godot;
 using YarnSpinnerGodot.Editor.UI;
 
-
 namespace YarnSpinnerGodot.Editor;
 
 /// <summary>
