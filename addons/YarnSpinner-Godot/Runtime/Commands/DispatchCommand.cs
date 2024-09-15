@@ -32,7 +32,7 @@ public class DispatchCommand
         }
         catch (Exception e) when (
             e is ArgumentException // when arguments are invalid
-            || e is TargetException // when a method is not static, but the instance ended up null
+            or TargetException // when a method is not static, but the instance ended up null
         )
         {
             GD.PrintErr($"Can't run command {args[0]}: {e.Message}");

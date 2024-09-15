@@ -1536,7 +1536,7 @@ public partial class DialogueRunner : Godot.Node
                     {
                         // Possibly an escaped character!
                         var next = reader.Peek();
-                        if (next == '\\' || next == '\"')
+                        if (next is '\\' or '\"')
                         {
                             // It is! Skip the \ and use the character after it.
                             reader.Read();
