@@ -1289,7 +1289,7 @@ public partial class DialogueRunner : Godot.Node
     /// <inheritdoc cref="DispatchCommandToNode"/>
     /// <param name="command">The text of the command to
     /// dispatch.</param>
-    public async Task<CommandDispatchResult> DispatchCommandToNode(string command,
+    public static async Task<CommandDispatchResult> DispatchCommandToNode(string command,
         System.Action onSuccessfulDispatch)
     {
         if (string.IsNullOrEmpty(command))
@@ -1658,7 +1658,7 @@ public partial class DialogueRunner : Godot.Node
     // takes in a JSON string and converts it into a tuple of dictionaries
     // intended to let you just dump these straight into the variable storage
     // throws exceptions if unable to convert or if the conversion half works
-    private (System.Collections.Generic.Dictionary<string, float>,
+    private static (System.Collections.Generic.Dictionary<string, float>,
         System.Collections.Generic.Dictionary<string, string>,
         System.Collections.Generic.Dictionary<string, bool>)
         DeserializeAllVariablesFromJSON(string jsonData)

@@ -168,7 +168,7 @@ public partial class VisualNovelManager : Node
 
     // utility function to convert words like "left" or "right" into
     // equivalent screen ratios, where 0 for an x coordinate is extreme left
-    private float GetCoordinate(string coordinate)
+    private static float GetCoordinate(string coordinate)
     {
         switch (coordinate)
         {
