@@ -3,7 +3,6 @@ using System;
 using System.Threading.Tasks;
 using Godot;
 
-
 namespace YarnSpinnerGodot;
 
 public partial class DefaultActions : Godot.Node

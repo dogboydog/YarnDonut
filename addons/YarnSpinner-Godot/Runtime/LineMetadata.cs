@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 
-
 namespace YarnSpinnerGodot;
-
 
 [Serializable]
 [Tool]

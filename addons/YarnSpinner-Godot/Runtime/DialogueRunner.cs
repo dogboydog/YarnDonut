@@ -814,7 +814,6 @@ public partial class DialogueRunner : Godot.Node
         }
     }
 
-
     Dialogue CreateDialogueInstance()
     {
         if (VariableStorage == null)
@@ -978,7 +977,6 @@ public partial class DialogueRunner : Godot.Node
         // dialogue, so we'll continue it now.
         ContinueDialogue();
     }
-
 
     /// <summary>
     /// Forward the line to the dialogue UI.

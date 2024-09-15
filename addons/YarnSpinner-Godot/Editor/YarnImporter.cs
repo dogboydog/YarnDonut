@@ -108,7 +108,6 @@ public partial class YarnImporter : EditorImportPlugin
         }
     }
 
-
     private void ImportYarn(string assetPath)
     {
         GD.Print($"Importing Yarn script {assetPath}");

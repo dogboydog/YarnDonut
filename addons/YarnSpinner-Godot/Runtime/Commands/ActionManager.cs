@@ -8,7 +8,6 @@ using Godot;
 using Yarn;
 using Node = Godot.Node;
 
-
 namespace YarnSpinnerGodot;
 
 using Injector = Func<string, object>;

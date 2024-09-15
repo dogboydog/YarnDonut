@@ -1,7 +1,6 @@
 #nullable disable
 using System;
 
-
 namespace YarnSpinnerGodot;
 
 /// <summary>

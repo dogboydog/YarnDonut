@@ -2,7 +2,6 @@
 using System;
 using Yarn;
 
-
 namespace YarnSpinnerGodot;
 
 /// <summary>

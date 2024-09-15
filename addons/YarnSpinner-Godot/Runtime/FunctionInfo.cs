@@ -3,7 +3,6 @@ using Godot;
 
 namespace YarnSpinnerGodot;
 
-
 [Tool]
 public class FunctionInfo
 {
