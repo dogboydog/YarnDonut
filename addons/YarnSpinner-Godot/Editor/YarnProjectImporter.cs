@@ -83,7 +83,7 @@ public partial class YarnProjectImporter : EditorImportPlugin
         var saveErr = ResourceSaver.Save(godotProject, godotProject.ImportPath);
         if (saveErr != Error.Ok)
         {
-            GD.PrintErr($"Error saving .yarnproject file import: {saveErr.ToString()}");
+            GD.PrintErr($"Error saving .yarnproject file import: {saveErr}");
         }
 
         YarnProjectEditorUtility.UpdateYarnProject(godotProject);
