@@ -55,7 +55,7 @@ public partial class YarnImporter : EditorImportPlugin
         var saveErr = ResourceSaver.Save(importedMarkerResource, $"{savePath}.{_GetSaveExtension()}");
         if (saveErr != Error.Ok)
         {
-            GD.PrintErr($"Error saving yarn file import: {saveErr.ToString()}");
+            GD.PrintErr($"Error saving yarn file import: {saveErr}");
         }
 
         return (int) Error.Ok;
