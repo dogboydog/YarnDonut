@@ -489,7 +489,7 @@ public static class YarnProjectEditorUtility
                 var newDeclarations = new List<Declaration>() //localDeclarations
                     .Concat(compilationResult.Value.Declarations)
                     .Where(decl => !decl.Name.StartsWith("$Yarn.Internal."))
-                    .Where(decl => !(decl.Type is FunctionType))
+                    .Where(decl => decl.Type is not FunctionType)
                     .Select(decl =>
                     {
                         SerializedDeclaration existingDeclaration = null;
