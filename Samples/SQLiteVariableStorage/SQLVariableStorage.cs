@@ -52,7 +52,7 @@ public partial class SQLVariableStorage : VariableStorageBehaviour
                 return true;
             }
 
-            result = default(T);
+            result = default;
             return false;
         }
 
@@ -97,7 +97,7 @@ public partial class SQLVariableStorage : VariableStorageBehaviour
         }
 
         // otherwise TryGetValue has failed
-        result = default(T);
+        result = default;
         return false;
     }
 
