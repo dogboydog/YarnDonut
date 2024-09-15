@@ -254,11 +254,11 @@ public static class Effects
             // and instead we do a normal wait for the necessary duration
             if (pausePositions != null && pausePositions.Count != 0)
             {
-                if (text.VisibleCharacters == pausePositions.Peek().Item1)
+                if (text.VisibleCharacters == pausePositions.Peek().position)
                 {
                     var pause = pausePositions.Pop();
                     onPauseStarted?.Invoke();
-                    await Effects.InterruptableWait(pause.Item2, stopToken);
+                    await Effects.InterruptableWait(pause.duration, stopToken);
                     if (!GodotObject.IsInstanceValid(text))
                     {
                         return;
