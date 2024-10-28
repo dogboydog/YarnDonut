@@ -151,6 +151,10 @@ public static class ActionManager
         {
             try
             {
+                if (targetType == typeof(Variant))
+                {
+                    return Variant.From(arg);
+                }
                 return Convert.ChangeType(arg, targetType, CultureInfo.InvariantCulture);
             }
             catch (Exception e)

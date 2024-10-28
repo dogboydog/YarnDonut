@@ -35,6 +35,7 @@ using Godot;
 using Godot.Collections;
 using Yarn;
 using Node = Godot.Node;
+using Array = Godot.Collections.Array;
 
 namespace YarnSpinnerGodot;
 
@@ -435,6 +436,178 @@ public partial class DialogueRunner : Godot.Node
     public IEnumerable<string> GetTagsForNode(String nodeName) => Dialogue.GetTagsForNode(nodeName);
 
     #region CommandsAndFunctions
+
+    /// <summary>
+    /// Cast a list of arguments from a .yarn script to the type that the handler
+    /// expects based on type hinting. Used to cross back over from C# to GDScript
+    /// </summary>
+    /// <param name="argTypes">List of Variant.Types in order of the arguments
+    /// from the caller's command or function handler</param>
+    /// <param name="commandOrFunctionName">The name of the function or command
+    /// being registered, for error logging purposes</param>
+    /// <param name="args">params array of arguments to cast to their expected types</param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    private static Array CastToExpectedTypes(List<Variant.Type> argTypes,
+        string commandOrFunctionName,
+        params Variant[] args)
+    {
+        var castArgs = new Array();
+        var argIndex = 0;
+        foreach (var arg in args)
+        {
+            var argType = argTypes[argIndex];
+            var castArg = argType switch
+            {
+                Variant.Type.Bool => arg.AsBool(),
+                Variant.Type.Int => arg.AsInt32(),
+                Variant.Type.Float => arg.AsSingle(),
+                Variant.Type.String => arg.AsString(),
+                Variant.Type.Callable => arg.AsCallable(),
+                // if no type hint is given, assume string type
+                Variant.Type.Nil => arg.AsString(),
+                _ => Variant.From<GodotObject>(null),
+            };
+            castArgs.Add(castArg);
+            if (castArg.Obj == null)
+            {
+                GD.PushError(
+                    $"Argument for the handler for '{commandOrFunctionName}'" +
+                    $" at index {argIndex} has unexpected type {argType}");
+            }
+            argIndex++;
+        }
+        return castArgs;
+    }
+
+    /// <summary>
+    /// Add a command handler using a Callable rather than a C# delegate.
+    /// Mostly useful for integrating with GDScript.
+    /// If the last argument to your handler is a Callable, your command will be
+    /// considered an async blocking command. When the work for your command is done,
+    /// call the Callable that the DialogueRunner will pass to your handler. Then
+    /// the dialogue will continue.
+    ///
+    /// Callables are only supported as the last argument to your handler for the
+    /// purpose of making your command blocking.
+    /// </summary>
+    /// <param name="commandName">The name of the command.</param>
+    /// <param name="handler">The Callable for the <see cref="CommandHandler"/> that
+    /// will be invoked when the command is called.</param>
+    public void AddCommandHandlerCallable(string commandName, Callable handler)
+    {
+        if (!IsInstanceValid(handler.Target))
+        {
+            GD.PushError(
+                $"Callable provided to {nameof(AddCommandHandlerCallable)} is invalid. " +
+                "Could the Node associated with the callable have been freed?");
+            return;
+        }
+
+        var methodInfo = handler.Target.GetMethodList().Where(dict =>
+            dict["name"].AsString().Equals(handler.Method.ToString())).ToList();
+
+        if (methodInfo.Count == 0)
+        {
+            GD.PushError();
+            return;
+        }
+
+        var argsCount = methodInfo[0]["args"].AsGodotArray().Count;
+        var argTypes = methodInfo[0]["args"].AsGodotArray().ToList()
+            .ConvertAll((argDictionary) =>
+                (Variant.Type) argDictionary.AsGodotDictionary()["type"].AsInt32());
+        var invalidTargetMsg =
+            $"Handler node for {commandName} is invalid. Was it freed?";
+
+        var isAsync = argTypes.Count > 0 &&
+                        argTypes.Last().Equals(Variant.Type.Callable);
+
+
+        async Task GenerateCommandHandler(params Variant[] handlerArgs)
+        {
+            if (!IsInstanceValid(handler.Target))
+            {
+                GD.PushError(invalidTargetMsg);
+                return;
+            }
+
+            // how many milliseconds to wait between completion checks for async commands
+            const int completePollMs = 40;
+            var castArgs = CastToExpectedTypes(argTypes, commandName, handlerArgs);
+
+            var complete = false;
+            if (isAsync)
+            {
+                castArgs.Add(Callable.From(() => complete = true));
+            }
+
+            handler.Call(castArgs.ToArray());
+            if (isAsync)
+            {
+                while (!complete)
+                {
+                    await Task.Delay(completePollMs);
+                }
+            }
+        }
+
+        switch (argsCount)
+        {
+            case 0:
+            case 1 when isAsync:
+                AddCommandHandler(commandName,
+                    async Task () => await GenerateCommandHandler());
+                break;
+            case 1:
+            case 2 when isAsync:
+                AddCommandHandler(commandName,
+                    async Task (Variant arg0) =>
+                        await GenerateCommandHandler(arg0));
+                break;
+            case 2:
+            case 3 when isAsync:
+                AddCommandHandler(commandName,
+                    async Task (Variant arg0, Variant arg1) =>
+                        await GenerateCommandHandler(arg0, arg1));
+                break;
+            case 3:
+            case 4 when isAsync:
+                AddCommandHandler(commandName,
+                    async Task (Variant arg0, Variant arg1, Variant arg2) =>
+                        await GenerateCommandHandler(arg0, arg1, arg2));
+                break;
+            case 4:
+            case 5 when isAsync:
+                AddCommandHandler(commandName,
+                    async Task (Variant arg0, Variant arg1, Variant arg2,
+                            Variant arg3) =>
+                        await GenerateCommandHandler(arg0, arg1, arg2, arg3));
+                break;
+            case 5:
+            case 6 when isAsync:
+                AddCommandHandler(commandName,
+                    async Task (Variant arg0, Variant arg1, Variant arg2,
+                            Variant arg3, Variant arg4) =>
+                        await GenerateCommandHandler(arg0, arg1, arg2, arg3, arg4));
+                break;
+            case 6:
+            case 7 when isAsync:
+                // 6 arguments from the yarn script, but 1 more for the on_complete
+                // handler. 
+                AddCommandHandler(commandName,
+                    async Task (Variant arg0, Variant arg1, Variant arg2,
+                            Variant arg3, Variant arg4, Variant arg5) =>
+                        await GenerateCommandHandler(arg0, arg1, arg2,
+                            arg3, arg4, arg5));
+                break;
+            default:
+                GD.PushError($"You have specified a command handler with too " +
+                                $"many arguments at {argsCount}. The maximum supported " +
+                                $"number of arguments to a command handler is 6.");
+                break;
+        }
+    }
 
     /// <summary>
     /// Adds a command handler. Dialogue will pause execution after the
