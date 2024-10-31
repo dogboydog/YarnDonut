@@ -14,6 +14,7 @@ public partial class SampleEntryPoint : CanvasLayer
     [Export] private Button _pausingTypewriterButton;
     [Export] private Button _roundedViewsButton;
     [Export] private Button _sqliteButton;
+    [Export] private Button _gdscriptButton;
 
     /// <summary>
     /// Resource path to the packed scene of entry point scene
@@ -38,6 +39,8 @@ public partial class SampleEntryPoint : CanvasLayer
         _roundedViewsButton.Pressed += () => LoadSample(
             "res://Samples/RoundedViews/RoundedSample.tscn"
         );
+        _gdscriptButton.Pressed += () => LoadSample
+            ("res://Samples/GDScriptIntegration/GDScriptIntegrationSample.tscn");
         _sqliteButton.Pressed += () => LoadSample("res://Samples/SQLiteVariableStorage/SQLSample.tscn");
         _spaceButton.GrabFocus();
     }
@@ -55,7 +58,7 @@ public partial class SampleEntryPoint : CanvasLayer
     /// </summary>
     public static void Return()
     {
-        var root = ((SceneTree) Engine.GetMainLoop()).Root;
+        var root = ((SceneTree)Engine.GetMainLoop()).Root;
         var nodesToFree = new List<Node>();
         for (var i = 0; i < root.GetChildCount(); i++)
         {

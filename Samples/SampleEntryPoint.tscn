@@ -4,7 +4,7 @@
 [ext_resource type="Theme" uid="uid://b2mp0b1wvnu8s" path="res://Samples/sample_default_theme.tres" id="2"]
 [ext_resource type="Texture2D" uid="uid://pbrr5yyepbx8" path="res://addons/YarnSpinner-Godot/Editor/Icons/YarnSpinnerLogo.png" id="3_bcudv"]
 
-[node name="SampleEntryPoint" type="CanvasLayer" node_paths=PackedStringArray("_spaceButton", "_visualNovelButton", "_markupPaletteButton", "_pausingTypewriterButton", "_roundedViewsButton", "_sqliteButton")]
+[node name="SampleEntryPoint" type="CanvasLayer" node_paths=PackedStringArray("_spaceButton", "_visualNovelButton", "_markupPaletteButton", "_pausingTypewriterButton", "_roundedViewsButton", "_sqliteButton", "_gdscriptButton")]
 script = ExtResource("1")
 _spaceButton = NodePath("HBoxContainer/VBoxContainer/Space")
 _visualNovelButton = NodePath("HBoxContainer/VBoxContainer2/Visual Novel")
@@ -12,6 +12,7 @@ _markupPaletteButton = NodePath("HBoxContainer/VBoxContainer3/MarkupPalette")
 _pausingTypewriterButton = NodePath("HBoxContainer/VBoxContainer4/PausingTypewriter")
 _roundedViewsButton = NodePath("HBoxContainer/VBoxContainer5/RoundedViews")
 _sqliteButton = NodePath("HBoxContainer/VBoxContainer6/SQLite")
+_gdscriptButton = NodePath("HBoxContainer/VBoxContainer7/GDScriptIntegration")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 anchors_preset = 15
@@ -92,7 +93,8 @@ theme = ExtResource("2")
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 27
-text = "Visual Novel"
+text = "Visual
+ Novel"
 
 [node name="features" type="RichTextLabel" parent="HBoxContainer/VBoxContainer2"]
 layout_mode = 2
@@ -115,7 +117,8 @@ theme = ExtResource("2")
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 27
-text = "Markup Palette"
+text = "Markup 
+Palette"
 
 [node name="features" type="RichTextLabel" parent="HBoxContainer/VBoxContainer3"]
 layout_mode = 2
@@ -136,7 +139,8 @@ theme = ExtResource("2")
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 27
-text = "Pausing Typewriter"
+text = "Pausing
+Typewriter"
 
 [node name="features" type="RichTextLabel" parent="HBoxContainer/VBoxContainer4"]
 layout_mode = 2
@@ -178,7 +182,8 @@ theme = ExtResource("2")
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 27
-text = "SQLite Variable
+text = "SQLite
+Variable
 Storage"
 
 [node name="features" type="RichTextLabel" parent="HBoxContainer/VBoxContainer6"]
@@ -186,5 +191,27 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/normal_font_size = 28
 bbcode_enabled = true
-text = "Custom variable storage script that saves variables in a SQLite database"
+text = "Custom variable storage script storing variables in a SQLite database"
+scroll_active = false
+
+[node name="VBoxContainer7" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GDScriptIntegration" type="Button" parent="HBoxContainer/VBoxContainer7"]
+custom_minimum_size = Vector2(180, 100)
+layout_mode = 2
+theme = ExtResource("2")
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 27
+text = "GDScript"
+
+[node name="features" type="RichTextLabel" parent="HBoxContainer/VBoxContainer7"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 28
+bbcode_enabled = true
+text = "Demonstrates the use of GDScript with this plugin
+(Godot C# Engine still required)"
 scroll_active = false

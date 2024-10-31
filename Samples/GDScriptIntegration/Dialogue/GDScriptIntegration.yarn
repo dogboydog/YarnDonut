@@ -1,0 +1,10 @@
+﻿title: GDScriptIntegration
+tags:
+---
+Gary: So, can I use [fx type="wave"]GDScript[/fx] with YarnSpinner?  #my_metadata
+Derrick: Many features can be used with GDScript. For example, you can make a custom view like the one in this scene.
+Derrick: You can also interact with DialogueRunner and variable storage nodes with cross-language scripting.
+Derrick: And you can also write commands in GDScript by using AddCommandHandlerCallable. Look:
+<<show_ys_logo>> 
+Gary: That's cool. I will look at the GDScriptIntegration sample code to learn about this.
+===

@@ -11,7 +11,7 @@
         <PackageReference Include="Antlr4.Runtime.Standard" Version="4.7.2"/>
         <PackageReference Include="CsvHelper" Version="12.2.2" />
         <PackageReference Include="Google.Protobuf" Version="3.25.2"/>
-        <PackageReference Include="System.Text.Json" Version="8.0.4" />
+        <PackageReference Include="System.Text.Json" Version="8.0.5" />
         <Reference Include="YarnSpinner">
             <HintPath>addons\YarnSpinner-Godot\Runtime\DLLs\YarnSpinner.dll</HintPath>
         </Reference>

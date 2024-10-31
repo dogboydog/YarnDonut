@@ -17,10 +17,10 @@ startAutomatically = true
 
 [node name="LineView" parent="RoundedYarnSpinnerCanvasLayer" index="2"]
 useFadeEffect = true
-fadeInTime = 1.0
+fadeInTime = 0.2
 
 [node name="OptionsListView" parent="RoundedYarnSpinnerCanvasLayer" index="3"]
-fadeTime = 2.0
+fadeTime = 0.2
 
 [node name="ColorRect" type="ColorRect" parent="RoundedYarnSpinnerCanvasLayer"]
 z_index = -6

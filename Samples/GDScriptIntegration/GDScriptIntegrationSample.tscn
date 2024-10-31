@@ -1,0 +1,283 @@
+[gd_scene load_steps=13 format=3 uid="uid://hvtydqjfdlf5"]
+
+[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/DialogueRunner.cs" id="1_1er8s"]
+[ext_resource type="Resource" uid="uid://c0qdj0h48fu6a" path="res://Samples/GDScriptIntegration/GDScriptIntegration.yarnproject" id="2_15buf"]
+[ext_resource type="Resource" uid="uid://c631us202ijmk" path="res://Samples/MarkupPalette/example_markup_palette.tres" id="3_3qr8r"]
+[ext_resource type="Script" path="res://Samples/GDScriptIntegration/CrossLanguageScriptingExample.gd" id="3_05a7h"]
+[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Views/GDScriptViewAdapter.cs" id="3_8do86"]
+[ext_resource type="Script" path="res://Samples/ReturnOnComplete.cs" id="4_6b5el"]
+[ext_resource type="Script" path="res://Samples/GDScriptIntegration/SimpleGDScriptLineView.gd" id="4_ixyx4"]
+[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Views/OptionsListView.cs" id="5_jois6"]
+[ext_resource type="PackedScene" uid="uid://b56ngcrq31nc5" path="res://addons/YarnSpinner-Godot/Scenes/OptionView.tscn" id="6_0v15m"]
+[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/InMemoryVariableStorage.cs" id="8_fijq0"]
+[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/LineProviders/TextLineProvider.cs" id="9_a8pi7"]
+[ext_resource type="Texture2D" uid="uid://pbrr5yyepbx8" path="res://addons/YarnSpinner-Godot/Editor/Icons/YarnSpinnerLogo.png" id="11_4hnhr"]
+
+[node name="PaletteSample" type="Node2D"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 0
+
+[node name="BackgroundColor" type="ColorRect" parent="CanvasLayer"]
+z_index = -7
+z_as_relative = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.00260118, 0.121715, 0.193433, 1)
+
+[node name="GDScriptYarnSpinnerCanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="DialogueRunner" type="Control" parent="GDScriptYarnSpinnerCanvasLayer" node_paths=PackedStringArray("variableStorage", "dialogueViews", "lineProvider")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_1er8s")
+yarnProject = ExtResource("2_15buf")
+variableStorage = NodePath("../InMemoryVariableStorage")
+dialogueViews = [NodePath("../LineViewAdapter"), NodePath("../OptionsListView")]
+startNode = "GDScriptIntegration"
+lineProvider = NodePath("../TextLineProvider")
+
+[node name="CrossLanguageScriptingExample" type="Control" parent="GDScriptYarnSpinnerCanvasLayer" node_paths=PackedStringArray("dialogue_runner", "ys_logo")]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("3_05a7h")
+dialogue_runner = NodePath("../DialogueRunner")
+ys_logo = NodePath("../YsLogo")
+
+[node name="VariableDebugText" type="RichTextLabel" parent="GDScriptYarnSpinnerCanvasLayer"]
+
+[node name="LineViewAdapter" type="Control" parent="GDScriptYarnSpinnerCanvasLayer" node_paths=PackedStringArray("GDScriptView")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_8do86")
+GDScriptView = NodePath("SimpleGDScriptLineView")
+
+[node name="ViewControl" type="Control" parent="GDScriptYarnSpinnerCanvasLayer/LineViewAdapter"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LineText" type="RichTextLabel" parent="GDScriptYarnSpinnerCanvasLayer/LineViewAdapter/ViewControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -610.0
+offset_top = -352.0
+offset_right = 640.0
+offset_bottom = 193.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/bold_italics_font_size = 36
+theme_override_font_sizes/italics_font_size = 36
+theme_override_font_sizes/mono_font_size = 36
+theme_override_font_sizes/normal_font_size = 36
+theme_override_font_sizes/bold_font_size = 36
+bbcode_enabled = true
+text = "The dialogue text should appear here!"
+
+[node name="ColorRect" type="ColorRect" parent="GDScriptYarnSpinnerCanvasLayer/LineViewAdapter/ViewControl/LineText"]
+modulate = Color(0.203922, 0.192157, 0.192157, 0.458824)
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_right = -12.0
+offset_bottom = -158.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CharacterNameText" type="RichTextLabel" parent="GDScriptYarnSpinnerCanvasLayer/LineViewAdapter/ViewControl"]
+self_modulate = Color(0.321569, 0.87451, 0.254902, 1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -607.0
+offset_top = -415.0
+offset_right = 279.0
+offset_bottom = -362.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/bold_italics_font_size = 36
+theme_override_font_sizes/italics_font_size = 36
+theme_override_font_sizes/mono_font_size = 36
+theme_override_font_sizes/normal_font_size = 36
+theme_override_font_sizes/bold_font_size = 36
+bbcode_enabled = true
+text = "Character Name"
+
+[node name="ColorRect" type="ColorRect" parent="GDScriptYarnSpinnerCanvasLayer/LineViewAdapter/ViewControl/CharacterNameText"]
+modulate = Color(0.203922, 0.192157, 0.192157, 0.458824)
+show_behind_parent = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ContinueButton" type="Button" parent="GDScriptYarnSpinnerCanvasLayer/LineViewAdapter/ViewControl"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 337.0
+offset_top = -463.0
+offset_right = 569.0
+offset_bottom = -363.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_default_cursor_shape = 2
+theme_override_font_sizes/font_size = 36
+text = "Continue"
+
+[node name="SimpleGDScriptLineView" type="Control" parent="GDScriptYarnSpinnerCanvasLayer/LineViewAdapter" node_paths=PackedStringArray("continue_button", "character_name_label", "line_text_label")]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("4_ixyx4")
+continue_button = NodePath("../ViewControl/ContinueButton")
+character_name_label = NodePath("../ViewControl/CharacterNameText")
+line_text_label = NodePath("../ViewControl/LineText")
+
+[node name="OptionsListView" type="Control" parent="GDScriptYarnSpinnerCanvasLayer" node_paths=PackedStringArray("lastLineCharacterNameText", "lastLineText", "viewControl", "boxContainer")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("5_jois6")
+optionViewPrefab = ExtResource("6_0v15m")
+palette = ExtResource("3_3qr8r")
+lastLineCharacterNameText = NodePath("ViewControl/LastLineCharacterNameText")
+lastLineText = NodePath("ViewControl/LastLineText")
+viewControl = NodePath("ViewControl")
+boxContainer = NodePath("ViewControl/VBoxContainer")
+
+[node name="ViewControl" type="Control" parent="GDScriptYarnSpinnerCanvasLayer/OptionsListView"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GDScriptYarnSpinnerCanvasLayer/OptionsListView/ViewControl"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -547.0
+offset_top = -213.0
+offset_right = 547.0
+offset_bottom = 287.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LastLineText" type="RichTextLabel" parent="GDScriptYarnSpinnerCanvasLayer/OptionsListView/ViewControl"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -610.0
+offset_top = 100.0
+offset_right = 279.0
+offset_bottom = 185.0
+grow_horizontal = 2
+theme_override_font_sizes/bold_italics_font_size = 36
+theme_override_font_sizes/italics_font_size = 36
+theme_override_font_sizes/mono_font_size = 36
+theme_override_font_sizes/normal_font_size = 36
+theme_override_font_sizes/bold_font_size = 36
+bbcode_enabled = true
+text = "The last line text goes here"
+scroll_active = false
+
+[node name="ColorRect" type="ColorRect" parent="GDScriptYarnSpinnerCanvasLayer/OptionsListView/ViewControl/LastLineText"]
+modulate = Color(0.203922, 0.192157, 0.192157, 0.458824)
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LastLineCharacterNameText" type="RichTextLabel" parent="GDScriptYarnSpinnerCanvasLayer/OptionsListView/ViewControl"]
+visible = false
+self_modulate = Color(0.321569, 0.87451, 0.254902, 1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -608.0
+offset_top = -416.0
+offset_right = 278.0
+offset_bottom = -363.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/bold_italics_font_size = 36
+theme_override_font_sizes/italics_font_size = 36
+theme_override_font_sizes/mono_font_size = 36
+theme_override_font_sizes/normal_font_size = 36
+theme_override_font_sizes/bold_font_size = 36
+bbcode_enabled = true
+text = "Character Name"
+
+[node name="ColorRect" type="ColorRect" parent="GDScriptYarnSpinnerCanvasLayer/OptionsListView/ViewControl/LastLineCharacterNameText"]
+modulate = Color(0.203922, 0.192157, 0.192157, 0.458824)
+show_behind_parent = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="InMemoryVariableStorage" type="Node" parent="GDScriptYarnSpinnerCanvasLayer"]
+script = ExtResource("8_fijq0")
+
+[node name="TextLineProvider" type="Node2D" parent="GDScriptYarnSpinnerCanvasLayer"]
+script = ExtResource("9_a8pi7")
+
+[node name="YsLogo" type="TextureRect" parent="GDScriptYarnSpinnerCanvasLayer"]
+visible = false
+offset_left = 554.0
+offset_top = 358.0
+offset_right = 1066.0
+offset_bottom = 870.0
+texture = ExtResource("11_4hnhr")
+
+[node name="ReturnOnComplete" type="Node2D" parent="." node_paths=PackedStringArray("dialogueRunner")]
+script = ExtResource("4_6b5el")
+dialogueRunner = NodePath("../GDScriptYarnSpinnerCanvasLayer/DialogueRunner")
