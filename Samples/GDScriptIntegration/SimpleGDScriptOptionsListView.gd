@@ -9,6 +9,35 @@ var option_selected_handler: Callable
 func _ready() -> void: 
 	view_control.visible = false 
 	
+# Example options array: 
+#[
+	#{
+		#"dialogue_option_id": 0,
+		#"is_available": true,
+		#"line": {
+			#"metadata": [],
+			#"text": {
+				#"attributes": [],
+				#"text": "Yes",
+				#"text_without_character_name": "Yes"
+			#}
+		#},
+		#"text_id": "line:b7aaff9b"
+	#},
+	#{
+		#"dialogue_option_id": 1,
+		#"is_available": true,
+		#"line": {
+			#"metadata": [],
+			#"text": {
+				#"attributes": [],
+				#"text": "No",
+				#"text_without_character_name": "No"
+			#}
+		#},
+		#"text_id": "line:9bcbf175"
+	#}
+#]
 func run_options(options: Array, on_option_selected: Callable) -> void:
 	print("Options: %s"  % JSON.stringify(options))
 	option_selected_handler = on_option_selected
