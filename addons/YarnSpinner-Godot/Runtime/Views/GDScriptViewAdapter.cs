@@ -6,10 +6,11 @@ namespace YarnSpinnerGodot;
 
 /// <summary>
 /// Wrapper which allows you to implement a YarnSpinner DialogueViewBase via
-/// GDScript by calling snake_case versions of each method.
+/// GDScript by calling snake_case versions of each method. 
 /// Add this script to a node for each GDScript view you want to implement,
 /// then assign GDScriptView in the inspector to the node with your view script
-/// written in GDScript.
+/// written in GDScript. 
+/// 
 ///
 /// Note: You still have to use the version of Godot which supports C# in order to use
 /// this plugin. 
@@ -25,6 +26,7 @@ public partial class GDScriptViewAdapter : Node, DialogueViewBase
     public Action requestInterrupt { get; set; }
 
     /// <inheritdoc/>
+    /// Implement a GDScript method dialogue_started() -> void 
     public void DialogueStarted()
     {
         if (!IsInstanceValid(GDScriptView))
@@ -40,6 +42,7 @@ public partial class GDScriptViewAdapter : Node, DialogueViewBase
     }
 
     /// <inheritdoc/>
+    /// Implement a GDScript method run_line(line: dict, on_dialogue_line_finished: Callable) -> void
     public void RunLine(LocalizedLine dialogueLine, Action onDialogueLineFinished)
     {
         if (!IsInstanceValid(GDScriptView))
@@ -122,6 +125,7 @@ public partial class GDScriptViewAdapter : Node, DialogueViewBase
     }
 
     /// <inheritdoc/>
+    /// Implement a GDScript method interrupt_line(line: dict, on_dialogue_line_finished: Callable) 
     public void InterruptLine(LocalizedLine dialogueLine, Action onDialogueLineFinished)
     {
         if (!IsInstanceValid(GDScriptView))
@@ -143,6 +147,7 @@ public partial class GDScriptViewAdapter : Node, DialogueViewBase
     }
 
     /// <inheritdoc/>
+    /// Implement a GDScript method dismiss_line(on_dismissal_complete: Callable) -> void 
     public void DismissLine(Action onDismissalComplete)
     {
         if (!IsInstanceValid(GDScriptView))
@@ -164,6 +169,7 @@ public partial class GDScriptViewAdapter : Node, DialogueViewBase
     }
 
     /// <inheritdoc/>
+    /// Implement a GDScript method run_options(options: Array (of Dictionaries), on_option_selected: Callable (single int parameter)) -> void 
     public void RunOptions(DialogueOption[] dialogueOptions,
         Action<int> onOptionSelected)
     {
@@ -173,24 +179,27 @@ public partial class GDScriptViewAdapter : Node, DialogueViewBase
         }
 
         const string gdScriptName = "run_options";
-        if (GDScriptView.HasMethod(gdScriptName))
+        if (!GDScriptView.HasMethod(gdScriptName))
         {
-            var dialogueOptionsList = new Godot.Collections.Array();
-            foreach (var option in dialogueOptions)
-            {
-                var optionDict = new Godot.Collections.Dictionary();
-                optionDict["dialogue_option_id"] = option.DialogueOptionID;
-                optionDict["text_id"] = option.TextID;
-                optionDict["line"] = LocalizedLineToDict(option.Line);
-                optionDict["is_available"] = option.IsAvailable;
-                dialogueOptionsList.Add(optionDict);
-            }
-
-            GDScriptView.Call(gdScriptName, dialogueOptionsList, Callable.From(onOptionSelected));
+            return;
         }
+
+        var dialogueOptionsList = new Godot.Collections.Array();
+        foreach (var option in dialogueOptions)
+        {
+            var optionDict = new Godot.Collections.Dictionary();
+            optionDict["dialogue_option_id"] = option.DialogueOptionID;
+            optionDict["text_id"] = option.TextID;
+            optionDict["line"] = LocalizedLineToDict(option.Line);
+            optionDict["is_available"] = option.IsAvailable;
+            dialogueOptionsList.Add(optionDict);
+        }
+
+        GDScriptView.Call(gdScriptName, dialogueOptionsList, Callable.From(onOptionSelected));
     }
 
     /// <inheritdoc/>
+    /// Implement a GDScript method dialogue_complete() -> void
     public void DialogueComplete()
     {
         if (!IsInstanceValid(GDScriptView))
@@ -206,6 +215,7 @@ public partial class GDScriptViewAdapter : Node, DialogueViewBase
     }
 
     /// <inheritdoc/>
+    /// Implement a GDScript method user_requested_view_advancement() -> void 
     public void UserRequestedViewAdvancement()
     {
         if (!IsInstanceValid(GDScriptView))

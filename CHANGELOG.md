@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.14] 2024-11-02
+* GDScript: Add GDScriptViewAdapter, a C# Script which allows you to write custom dialogue views in GDScript. See GDScriptViewAdapter.cs for more details.
+* GDScript: Add new method AddCommandHandlerCallable to DialogueRunner, allowing commands to be registered from GDScript. GDScript command handlers that use asynchronous `await` functionality are also supported as blocking YarnSpinner commands, similar to using `async Task` commands in C#.
+* Samples: A new sample has been added called GDScriptIntegration, which demonstrates making a simple custom view in GDScript, and using cross-language scripting to access methods on C# components such as the DialogueRunner and InMemoryVariableStorage
+* Add new method to InMemoryVariableStorage: `public Variant GetVariantValue(string variableName)`. An example of a method that allows you to retrieve YarnSpinner story variables from GDScript. 
+* Thanks to @dbaz for taking my old code from the gdscript_integration branch and making sure it compiles with the current version of the plugin 
+
 ## [0.2.13] 2024-09-15
 * General code cleanup by @valkyrienyanko. Make use of some C# language features such as target-typed `new()` to simplify code.
 * Potential breaking change: DispatchCommandToNode on DialogueRunner has been marked static. Users generally do not need to call this method directly, so it shouldn't affect most or possibly any projects.
