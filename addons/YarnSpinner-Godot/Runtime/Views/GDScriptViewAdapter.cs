@@ -169,7 +169,7 @@ public partial class GDScriptViewAdapter : Node, DialogueViewBase
     }
 
     /// <inheritdoc/>
-    /// Implement a GDScript method run_options(options: Array (of Dictionaries), on_option_selected: Callable (single int parameter)) -> void 
+    /// Implement a GDScript method run_options(options: Array, on_option_selected: Callable (single int parameter)) -> void 
     public void RunOptions(DialogueOption[] dialogueOptions,
         Action<int> onOptionSelected)
     {

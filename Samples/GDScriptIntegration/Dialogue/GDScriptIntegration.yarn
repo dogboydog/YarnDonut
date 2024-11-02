@@ -7,5 +7,16 @@ Derrick: Many features can be used with GDScript. For example, you can make a cu
 Derrick: You can also interact with DialogueRunner and variable storage nodes with cross-language scripting. #line:0b086af 
 Derrick: And you can also write commands in GDScript by using AddCommandHandlerCallable. Your GDScript commands can even use 'await'. Look: #line:0c22e97 
 <<show_logo "res://addons/YarnSpinner-Godot/Editor/Icons/YarnSpinnerLogo.png">> 
+Derrick: Do you know about options, too? You can make an "OptionsListView" with GDScript, too. 
+-> Yes
+	Derrick: Nice.
+	<<jump GDScriptIntegrationFinish>>
+-> No 
+	Derrick: Well, you can prompt the player to pick an option.
+	<<jump GDScriptIntegrationFinish>>
+===
+
+title: GDScriptIntegrationFinish
+---
 Gary: {$myVariableSetFromGDScript} That's cool. I will look at the GDScriptIntegration sample code to learn about this. #line:020bb2b 
 ===

@@ -9,6 +9,9 @@ extends Node
 
 var on_line_finished : Callable
 
+func dialogue_started() -> void:
+	print("Dialogue started ")
+	
 func run_line(line: Dictionary, on_dialogue_line_finished: Callable) -> void:
 	# line is a Dictionary converted from the LocalizedLine C# Class
 	# example: 
@@ -50,3 +53,6 @@ func run_line(line: Dictionary, on_dialogue_line_finished: Callable) -> void:
 func continue_line() -> void:
 	continue_button.pressed.disconnect(continue_line)
 	self.on_line_finished.call()
+
+func dialogue_complete() -> void:
+	print("Dialogue complete ")
