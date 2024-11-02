@@ -1,4 +1,5 @@
 #nullable disable
+using System;
 using System.Collections.Generic;
 using Godot;
 
@@ -10,13 +11,12 @@ public partial class TextLineProvider : LineProviderBehaviour
     /// <summary>Specifies the language code to use for text content
     /// for this <see cref="TextLineProvider"/>.
     /// </summary>
-    [Language]
-    [Export] public string textLanguageCode = System.Globalization.CultureInfo.CurrentCulture.Name;
+    [Language] [Export] public string textLanguageCode = System.Globalization.CultureInfo.CurrentCulture.Name;
 
     public override LocalizedLine GetLocalizedLine(Yarn.Line line)
     {
         string text;
-        // By default this provider will treat "en" as matching "en-UK", "en-US" etc. You can 
+        // By default, this provider will treat "en" as matching "en-UK", "en-US" etc. You can 
         // remap language codes how you like if you don't want this behavior 
         if (textLanguageCode.ToLower().StartsWith(YarnProject.baseLocalization.LocaleCode.ToLower()))
         {

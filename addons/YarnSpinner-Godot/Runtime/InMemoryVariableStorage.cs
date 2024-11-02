@@ -226,6 +226,39 @@ public partial class InMemoryVariableStorage
     }
 
     /// <summary>
+    /// Example method to get a variable as a variant, so that this method can be called from GDScript.
+    /// </summary>
+    public Variant GetVariantValue(string variableName)
+    {
+        if (variables.TryGetValue(variableName, out var variable))
+        {
+            var type = variableTypes[variableName];
+            if (type == typeof(float))
+            {
+                return Variant.From(System.Convert.ToSingle(variable));
+            }
+
+            if (type == typeof(string))
+            {
+                return Variant.From(System.Convert.ToString(variable));
+            }
+
+            if (type == typeof(bool))
+            {
+                return Variant.From(System.Convert.ToBoolean(variable));
+            }
+
+            GD.Print($"{variableName} is not a valid type");
+        }
+        else
+        {
+            GD.Print($"Could not find variable: {variableName}");
+        }
+
+        return new Variant();
+    }
+
+    /// <summary>
     /// Removes all variables from storage.
     /// </summary>
     public override void Clear()

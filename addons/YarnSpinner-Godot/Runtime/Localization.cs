@@ -17,6 +17,7 @@ namespace YarnSpinnerGodot;
 /// https://docs.godotengine.org/en/stable/tutorials/i18n/locales.html#doc-locales
 /// </summary>
 [Tool]
+[GlobalClass]
 public partial class Localization : Resource
 {
     [Export]

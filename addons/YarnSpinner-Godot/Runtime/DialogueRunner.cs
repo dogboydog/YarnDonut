@@ -475,8 +475,10 @@ public partial class DialogueRunner : Godot.Node
                     $"Argument for the handler for '{commandOrFunctionName}'" +
                     $" at index {argIndex} has unexpected type {argType}");
             }
+
             argIndex++;
         }
+
         return castArgs;
     }
 
@@ -520,9 +522,6 @@ public partial class DialogueRunner : Godot.Node
         var invalidTargetMsg =
             $"Handler node for {commandName} is invalid. Was it freed?";
 
-        var isAsync = argTypes.Count > 0 &&
-                        argTypes.Last().Equals(Variant.Type.Callable);
-
 
         async Task GenerateCommandHandler(params Variant[] handlerArgs)
         {
@@ -536,65 +535,48 @@ public partial class DialogueRunner : Godot.Node
             const int completePollMs = 40;
             var castArgs = CastToExpectedTypes(argTypes, commandName, handlerArgs);
 
-            var complete = false;
-            if (isAsync)
+            var current = handler.Call(castArgs.ToArray());
+            if (current.As<GodotObject>().GetClass() == "GDScriptFunctionState")
             {
-                castArgs.Add(Callable.From(() => complete = true));
-            }
-
-            handler.Call(castArgs.ToArray());
-            if (isAsync)
-            {
-                while (!complete)
-                {
-                    await Task.Delay(completePollMs);
-                }
+                // callable is from GDScript with await statements
+                await ((SceneTree) Engine.GetMainLoop()).ToSignal(current.AsGodotObject(), "completed");
             }
         }
 
         switch (argsCount)
         {
             case 0:
-            case 1 when isAsync:
                 AddCommandHandler(commandName,
                     async Task () => await GenerateCommandHandler());
                 break;
             case 1:
-            case 2 when isAsync:
                 AddCommandHandler(commandName,
                     async Task (Variant arg0) =>
                         await GenerateCommandHandler(arg0));
                 break;
             case 2:
-            case 3 when isAsync:
                 AddCommandHandler(commandName,
                     async Task (Variant arg0, Variant arg1) =>
                         await GenerateCommandHandler(arg0, arg1));
                 break;
             case 3:
-            case 4 when isAsync:
                 AddCommandHandler(commandName,
                     async Task (Variant arg0, Variant arg1, Variant arg2) =>
                         await GenerateCommandHandler(arg0, arg1, arg2));
                 break;
             case 4:
-            case 5 when isAsync:
                 AddCommandHandler(commandName,
                     async Task (Variant arg0, Variant arg1, Variant arg2,
                             Variant arg3) =>
                         await GenerateCommandHandler(arg0, arg1, arg2, arg3));
                 break;
             case 5:
-            case 6 when isAsync:
                 AddCommandHandler(commandName,
                     async Task (Variant arg0, Variant arg1, Variant arg2,
                             Variant arg3, Variant arg4) =>
                         await GenerateCommandHandler(arg0, arg1, arg2, arg3, arg4));
                 break;
             case 6:
-            case 7 when isAsync:
-                // 6 arguments from the yarn script, but 1 more for the on_complete
-                // handler. 
                 AddCommandHandler(commandName,
                     async Task (Variant arg0, Variant arg1, Variant arg2,
                             Variant arg3, Variant arg4, Variant arg5) =>
@@ -603,8 +585,8 @@ public partial class DialogueRunner : Godot.Node
                 break;
             default:
                 GD.PushError($"You have specified a command handler with too " +
-                                $"many arguments at {argsCount}. The maximum supported " +
-                                $"number of arguments to a command handler is 6.");
+                             $"many arguments at {argsCount}. The maximum supported " +
+                             $"number of arguments to a command handler is 6.");
                 break;
         }
     }

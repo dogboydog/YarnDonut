@@ -14,6 +14,7 @@ namespace YarnSpinnerGodot;
 /// Note: You still have to use the version of Godot which supports C# in order to use
 /// this plugin. 
 /// </summary>
+[GlobalClass]
 public partial class GDScriptViewAdapter : Node, DialogueViewBase
 {
     /// <summary>
@@ -60,7 +61,24 @@ public partial class GDScriptViewAdapter : Node, DialogueViewBase
         }
     }
 
-    private Godot.Collections.Dictionary LocalizedLineToDict(LocalizedLine dialogueLine)
+    /// <summary>
+    /// Convert a LocalizedLine to a Godot Dictionary that is more accessible from GDScript. 
+    /// 	# example: 
+    ///  {"metadata":["my_metadata"],
+    ///  "text":
+    ///      {
+    ///        "attributes":[
+    ///            { "length":8,"name":"fx","position":20,"properties":[{"type":"wave"}]},
+    ///         	{ "length":6,"name":"character","position":0,"properties":[{"name":"Gary"}]}
+    ///      ],
+    ///      "text":"Gary: So, can I use GDScript with YarnSpinner?",
+    ///      "text_without_character_name":"So, can I use GDScript with YarnSpinner?"
+    ///   }
+    ///  }
+    /// </summary>
+    /// <param name="dialogueLine"></param>
+    /// <returns></returns>
+    public static Godot.Collections.Dictionary LocalizedLineToDict(LocalizedLine dialogueLine)
     {
         var dialogueLineDict = new Godot.Collections.Dictionary();
         var metadataArray = new Godot.Collections.Array();

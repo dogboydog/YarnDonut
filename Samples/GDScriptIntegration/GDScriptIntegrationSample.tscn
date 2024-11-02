@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://hvtydqjfdlf5"]
+[gd_scene load_steps=12 format=3 uid="uid://hvtydqjfdlf5"]
 
 [ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/DialogueRunner.cs" id="1_1er8s"]
 [ext_resource type="Resource" uid="uid://c0qdj0h48fu6a" path="res://Samples/GDScriptIntegration/GDScriptIntegration.yarnproject" id="2_15buf"]
@@ -11,7 +11,6 @@
 [ext_resource type="PackedScene" uid="uid://b56ngcrq31nc5" path="res://addons/YarnSpinner-Godot/Scenes/OptionView.tscn" id="6_0v15m"]
 [ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/InMemoryVariableStorage.cs" id="8_fijq0"]
 [ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/LineProviders/TextLineProvider.cs" id="9_a8pi7"]
-[ext_resource type="Texture2D" uid="uid://pbrr5yyepbx8" path="res://addons/YarnSpinner-Godot/Editor/Icons/YarnSpinnerLogo.png" id="11_4hnhr"]
 
 [node name="PaletteSample" type="Node2D"]
 
@@ -46,14 +45,15 @@ dialogueViews = [NodePath("../LineViewAdapter"), NodePath("../OptionsListView")]
 startNode = "GDScriptIntegration"
 lineProvider = NodePath("../TextLineProvider")
 
-[node name="CrossLanguageScriptingExample" type="Control" parent="GDScriptYarnSpinnerCanvasLayer" node_paths=PackedStringArray("dialogue_runner", "ys_logo")]
+[node name="CrossLanguageScriptingExample" type="Control" parent="GDScriptYarnSpinnerCanvasLayer" node_paths=PackedStringArray("dialogue_runner", "logo")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("3_05a7h")
 dialogue_runner = NodePath("../DialogueRunner")
-ys_logo = NodePath("../YsLogo")
+logo = NodePath("../Logo")
+yarn_project = ExtResource("2_15buf")
 
 [node name="VariableDebugText" type="RichTextLabel" parent="GDScriptYarnSpinnerCanvasLayer"]
 
@@ -270,13 +270,12 @@ script = ExtResource("8_fijq0")
 [node name="TextLineProvider" type="Node2D" parent="GDScriptYarnSpinnerCanvasLayer"]
 script = ExtResource("9_a8pi7")
 
-[node name="YsLogo" type="TextureRect" parent="GDScriptYarnSpinnerCanvasLayer"]
+[node name="Logo" type="TextureRect" parent="GDScriptYarnSpinnerCanvasLayer"]
 visible = false
 offset_left = 554.0
 offset_top = 358.0
 offset_right = 1066.0
 offset_bottom = 870.0
-texture = ExtResource("11_4hnhr")
 
 [node name="ReturnOnComplete" type="Node2D" parent="." node_paths=PackedStringArray("dialogueRunner")]
 script = ExtResource("4_6b5el")

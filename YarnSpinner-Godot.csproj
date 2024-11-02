@@ -12,6 +12,7 @@
     <None Include="addons\YarnSpinner-Godot\plugin.cfg" />
     <None Include="**\*.md" />
     <None Include="**\*.yarn" />
+    <None Include="**\*.gd" />
   </ItemGroup>
   <ItemGroup>
     <!-- For SQL variable storage sample -->
