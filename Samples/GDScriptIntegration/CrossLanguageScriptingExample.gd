@@ -2,7 +2,7 @@
 # components from GDScript. 
 
 extends Control
-@export var dialogue_runner: DialogueRunner  
+@export var dialogue_runner: Node  
 @export var logo: Control 
 @export var yarn_project: YarnProject
 func _ready() -> void:
