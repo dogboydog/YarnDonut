@@ -435,7 +435,7 @@ public static class YarnProjectEditorUtility
                 .Select(ProjectSettings.GlobalizePath).ToList();
             // Store the compiled program
             byte[] compiledBytes = null;
-            CompilationResult? compilationResult = new CompilationResult?();
+            CompilationResult? compilationResult = new CompilationResult();
             if (scriptAbsolutePaths.Count > 0)
             {
                 var job = CompilationJob.CreateFromFiles(scriptAbsolutePaths);
@@ -444,7 +444,7 @@ public static class YarnProjectEditorUtility
                 job.Library = library;
                 compilationResult = Yarn.Compiler.Compiler.Compile(job);
 
-                errors = compilationResult.Value.Diagnostics.Where(d =>
+                errors = compilationResult.Diagnostics.Where(d =>
                     d.Severity == Diagnostic.DiagnosticSeverity.Error);
 
                 if (errors.Any())
@@ -471,7 +471,7 @@ public static class YarnProjectEditorUtility
                     return;
                 }
 
-                if (compilationResult.Value.Program == null)
+                if (compilationResult.Program == null)
                 {
                     GD.PushError(
                         "public error: Failed to compile: resulting program was null, but compiler did not report errors.");
@@ -487,7 +487,7 @@ public static class YarnProjectEditorUtility
                 // the user.
 
                 var newDeclarations = new List<Declaration>() //localDeclarations
-                    .Concat(compilationResult.Value.Declarations)
+                    .Concat(compilationResult.Declarations)
                     .Where(decl => !decl.Name.StartsWith("$Yarn.Internal."))
                     .Where(decl => decl.Type is not FunctionType)
                     .Select(decl =>
@@ -512,12 +512,12 @@ public static class YarnProjectEditorUtility
                 // compilation
                 project.ProjectErrors = Array.Empty<YarnProjectError>();
 
-                CreateYarnInternalLocalizationAssets(project, compilationResult.Value);
+                CreateYarnInternalLocalizationAssets(project, compilationResult);
 
                 using var memoryStream = new MemoryStream();
                 using var outputStream = new CodedOutputStream(memoryStream);
                 // Serialize the compiled program to memory
-                compilationResult.Value.Program.WriteTo(outputStream);
+                compilationResult.Program.WriteTo(outputStream);
                 outputStream.Flush();
 
                 compiledBytes = memoryStream.ToArray();
@@ -673,7 +673,7 @@ public static class YarnProjectEditorUtility
         }
 
         var errors =
-            compilationResult.Value.Diagnostics.Where(d => d.Severity == Diagnostic.DiagnosticSeverity.Error);
+            compilationResult.Diagnostics.Where(d => d.Severity == Diagnostic.DiagnosticSeverity.Error);
 
         if (errors.Any())
         {
@@ -681,7 +681,7 @@ public static class YarnProjectEditorUtility
             return null;
         }
 
-        return GetStringTableEntries(project, compilationResult.Value);
+        return GetStringTableEntries(project, compilationResult);
     }
 
     private static CompilationResult? CompileStringsOnly(YarnProject project)

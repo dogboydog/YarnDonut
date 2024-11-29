@@ -109,7 +109,7 @@ public partial class InMemoryVariableStorage
     /// </summary>
     void SetVariable(string name, Yarn.IType type, string value)
     {
-        if (type == Yarn.BuiltinTypes.Boolean)
+        if (type == Yarn.Types.Boolean)
         {
             bool newBool;
             if (bool.TryParse(value, out newBool))
@@ -122,7 +122,7 @@ public partial class InMemoryVariableStorage
                     $"Couldn't initialize default variable {name} with value {value} as Bool");
             }
         }
-        else if (type == Yarn.BuiltinTypes.Number)
+        else if (type == Yarn.Types.Number)
         {
             float newNumber;
             if (float.TryParse(value, out newNumber))
@@ -136,7 +136,7 @@ public partial class InMemoryVariableStorage
                     $"Couldn't initialize default variable {name} with value {value} as Number (Float)");
             }
         }
-        else if (type == Yarn.BuiltinTypes.String)
+        else if (type == Yarn.Types.String)
         {
             SetValue(name, value); // no special type conversion required
         }

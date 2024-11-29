@@ -38,6 +38,7 @@ namespace YarnSpinnerGodot;
 /// </remarks>
 /// <seealso cref="LineProviderBehaviour"/>
 /// <seealso cref="DialogueRunner.dialogueViews"/>
+[Obsolete("Use " + nameof(AsyncDialogueViewBase))]
 public interface DialogueViewBase
 {
     /// <summary>

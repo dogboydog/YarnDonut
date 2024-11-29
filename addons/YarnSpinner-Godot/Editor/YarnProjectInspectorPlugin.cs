@@ -161,15 +161,15 @@ public partial class YarnProjectInspectorPlugin : EditorInspectorPlugin
 
                         var typeName = declaration.typeName;
                         var defaultValue = "";
-                        if (typeName == BuiltinTypes.String.Name)
+                        if (typeName == Types.String.Name)
                         {
                             defaultValue = declaration.defaultValueString;
                         }
-                        else if (typeName == BuiltinTypes.Boolean.Name)
+                        else if (typeName == Types.Boolean.Name)
                         {
                             defaultValue = declaration.defaultValueBool.ToString();
                         }
-                        else if (typeName == BuiltinTypes.Number.Name)
+                        else if (typeName == Types.Number.Name)
                         {
                             defaultValue = declaration.defaultValueNumber.ToString(CultureInfo.InvariantCulture);
                         }

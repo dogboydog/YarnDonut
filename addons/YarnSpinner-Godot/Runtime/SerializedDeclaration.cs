@@ -13,16 +13,16 @@ namespace YarnSpinnerGodot;
 [Tool]
 public class SerializedDeclaration
 {
-    public static List<IType> BuiltInTypesList = new()
+    public static List<IType> TypesList = new()
     {
-        BuiltinTypes.String,
-        BuiltinTypes.Boolean,
-        BuiltinTypes.Number
+        Types.String,
+        Types.Boolean,
+        Types.Number
     };
 
     public string name;
 
-    public string typeName = BuiltinTypes.String.Name;
+    public string typeName = Types.String.Name;
 
     public bool defaultValueBool;
     public float defaultValueNumber;
@@ -47,15 +47,15 @@ public class SerializedDeclaration
         isImplicit = decl.IsImplicit;
         sourceYarnAssetPath = ProjectSettings.LocalizePath(decl.SourceFileName);
 
-        if (typeName == BuiltinTypes.String.Name)
+        if (typeName == Types.String.Name)
         {
             defaultValueString = Convert.ToString(decl.DefaultValue);
         }
-        else if (typeName == BuiltinTypes.Boolean.Name)
+        else if (typeName == Types.Boolean.Name)
         {
             defaultValueBool = Convert.ToBoolean(decl.DefaultValue);
         }
-        else if (typeName == BuiltinTypes.Number.Name)
+        else if (typeName == Types.Number.Name)
         {
             defaultValueNumber = Convert.ToSingle(decl.DefaultValue);
         }

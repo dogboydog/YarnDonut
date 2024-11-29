@@ -1,7 +1,9 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Godot;
+using Yarn.Markup;
 
 namespace YarnSpinnerGodot;
 
@@ -13,7 +15,7 @@ public partial class TextLineProvider : LineProviderBehaviour
     /// </summary>
     [Language] [Export] public string textLanguageCode = System.Globalization.CultureInfo.CurrentCulture.Name;
 
-    public override LocalizedLine GetLocalizedLine(Yarn.Line line)
+    public override async YarnTask<LocalizedLine> GetLocalizedLineAsync(Yarn.Line line, CancellationToken cancellationToken)
     {
         string text;
         // By default, this provider will treat "en" as matching "en-UK", "en-US" etc. You can 
@@ -41,12 +43,22 @@ public partial class TextLineProvider : LineProviderBehaviour
         };
     }
 
-    public override void PrepareForLines(IEnumerable<string> lineIDs)
+    public override void RegisterMarkerProcessor(string attributeName, IAttributeMarkerProcessor markerProcessor)
     {
-        // No-op; text lines are always available
+        throw new NotImplementedException();
     }
+
+    public override void DeregisterMarkerProcessor(string attributeName)
+    {
+        throw new NotImplementedException();
+    }
+
 
     public override bool LinesAvailable => YarnProject?.baseLocalization?.stringTable != null;
 
-    public override string LocaleCode => textLanguageCode;
+    public override string LocaleCode
+    {
+        get => textLanguageCode;
+        set => textLanguageCode = value;
+    }
 }
