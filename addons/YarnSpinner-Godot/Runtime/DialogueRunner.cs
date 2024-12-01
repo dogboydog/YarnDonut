@@ -530,9 +530,7 @@ public partial class DialogueRunner : Godot.Node
                 GD.PushError(invalidTargetMsg);
                 return;
             }
-
-            // how many milliseconds to wait between completion checks for async commands
-            const int completePollMs = 40;
+            
             var castArgs = CastToExpectedTypes(argTypes, commandName, handlerArgs);
 
             var current = handler.Call(castArgs.ToArray());
