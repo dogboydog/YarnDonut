@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 using Yarn.Markup;
 
@@ -52,14 +53,14 @@ public partial class PaletteMarkerProcessor : AttributeMarkerProcessor
 
         // we will always add the colour because we don't really know what the
         // default is anyways
-        childBuilder.Insert(0, $"<color=#{ColorUtility.ToHtmlStringRGBA(style.Color)}>");
-        childBuilder.Append("</color>");
+        childBuilder.Insert(0, $"[color=#{(style.Color.ToHtml())}]");
+        childBuilder.Append("[/color]");
 
         // do we need to bold it?
         if (style.Boldened)
         {
-            childBuilder.Insert(0, "<b>");
-            childBuilder.Append("</b>");
+            childBuilder.Insert(0, "[b]");
+            childBuilder.Append("[/b]");
         }
 
         // do we need to italicise it?
@@ -95,9 +96,10 @@ public partial class PaletteMarkerProcessor : AttributeMarkerProcessor
     /// </summary>
     protected void Start()
     {
-        if (lineProvider == null)
+        if (!IsInstanceValid(lineProvider))
         {
-            lineProvider = (LineProviderBehaviour) GameObject.FindAnyObjectByType<DialogueRunner>().LineProvider;
+            lineProvider = (LineProviderBehaviour) ((DialogueRunner) (DialogueRunner.FindChild(nameof(DialogueRunner))))
+                .LineProvider;
         }
 
         if (palette == null)

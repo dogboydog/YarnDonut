@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-
 using Yarn.Markup;
-
 #nullable enable
 using System.Diagnostics;
 using System.Threading;
@@ -14,7 +12,6 @@ namespace YarnSpinnerGodot;
 /// A Dialogue View that presents lines of dialogue, using Unity UI
 /// elements.
 /// </summary>
-
 public partial class AsyncLineView : AsyncDialogueViewBase
 {
     [Export] public DialogueRunner? dialogueRunner;
@@ -29,15 +26,13 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// and dismissal.
     /// </remarks>
     /// <seealso cref="useFadeEffect"/>
-    [Export]
-    public CanvasGroup? canvasGroup;
+    [Export] public Control? viewControl;
 
     /// <summary>
     /// The <see cref="RichTextLabel"/> object that displays the text of
     /// dialogue lines.
     /// </summary>
-    [Export]
-    public RichTextLabel? lineText;
+    [Export] public RichTextLabel? lineText;
 
     /// <summary>
     /// The <see cref="Button"/> that represents an on-screen button that
@@ -67,8 +62,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// <para>If this value is <see langword="false"/>, character names will
     /// not be shown in the <see cref="lineText"/> object.</para>
     /// </remarks>
-    [Export]
-    public bool showCharacterNameInLineView = true;
+    [Export] public bool showCharacterNameInLineView = true;
 
     /// <summary>
     /// The <see cref="RichTextLabel"/> object that displays the character
@@ -78,8 +72,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// If the <see cref="LineView"/> receives a line that does not contain
     /// a character name, this object will be left blank.
     /// </remarks>
-    [Export]
-    public RichTextLabel? characterNameText;
+    [Export] public RichTextLabel? characterNameText;
 
     /// <summary>
     /// The game object that holds the <see cref="characterNameText"/> text
@@ -90,8 +83,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// within an entirely different game object. Most of the time this will
     /// just be the same game object as <see cref="characterNameText"/>.
     /// </remarks>
-    [Export]
-    public CanvasItem? characterNameContainer = null;
+    [Export] public CanvasItem? characterNameContainer = null;
 
 
     /// <summary>
@@ -99,18 +91,17 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// fade out when lines disappear.
     /// </summary>
     /// <remarks><para>If this value is <see langword="true"/>, the <see
-    /// cref="canvasGroup"/> object's alpha property will animate from 0 to
+    /// cref="viewControl"/> object's alpha property will animate from 0 to
     /// 1 over the course of <see cref="fadeUpDuration"/> seconds when lines
     /// appear, and animate from 1 to zero over the course of <see
     /// cref="fadeDownDuration"/> seconds when lines disappear.</para>
     /// <para>If this value is <see langword="false"/>, the <see
-    /// cref="canvasGroup"/> object will appear instantaneously.</para>
+    /// cref="viewControl"/> object will appear instantaneously.</para>
     /// </remarks>
-    /// <seealso cref="canvasGroup"/>
+    /// <seealso cref="viewControl"/>
     /// <seealso cref="fadeUpDuration"/>
     /// <seealso cref="fadeDownDuration"/>
-    [Export]
-    public bool useFadeEffect = true;
+    [Export] public bool useFadeEffect = true;
 
     /// <summary>
     /// The time that the fade effect will take to fade lines in.
@@ -118,8 +109,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// <remarks>This value is only used when <see cref="useFadeEffect"/> is
     /// <see langword="true"/>.</remarks>
     /// <seealso cref="useFadeEffect"/>
-    [Export]
-    public float fadeUpDuration = 0.25f;
+    [Export] public float fadeUpDuration = 0.25f;
 
     /// <summary>
     /// The time that the fade effect will take to fade lines out.
@@ -127,8 +117,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// <remarks>This value is only used when <see cref="useFadeEffect"/> is
     /// <see langword="true"/>.</remarks>
     /// <seealso cref="useFadeEffect"/>
-    [Export]
-    public float fadeDownDuration = 0.1f;
+    [Export] public float fadeDownDuration = 0.1f;
 
 
     /// <summary>
@@ -151,8 +140,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// read lines of dialogue at their own pace, and give them control over
     /// when to advance to the next line.</para></para>
     /// </remarks>
-    [Export]
-    public bool autoAdvance = false;
+    [Export] public bool autoAdvance = false;
 
     /// <summary>
     /// The amount of time after the line finishes appearing before
@@ -160,8 +148,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// </summary>
     /// <remarks>This value is only used when <see cref="autoAdvance"/> is
     /// <see langword="true"/>.</remarks>
-    [Export]
-    public float autoAdvanceDelay = 1f;
+    [Export] public float autoAdvanceDelay = 1f;
 
 
     // typewriter fields
@@ -186,15 +173,13 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// <seealso cref="lineText"/>
     /// <seealso cref="onCharacterTyped"/>
     /// <seealso cref="typewriterEffectSpeed"/>
-    [Export]
-    public bool useTypewriterEffect = true;
+    [Export] public bool useTypewriterEffect = true;
 
     /// <summary>
     /// The number of characters per second that should appear during a
     /// typewriter effect.
     /// </summary>
-    [Export]
-    public int typewriterEffectSpeed = 60;
+    [Export] public int typewriterEffectSpeed = 60;
 
 
     /// <summary>
@@ -228,7 +213,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// <seealso cref="useTypewriterEffect"/>
     [Signal]
     public delegate void onPauseEndedEventHandler();
-    
+
     private TypewriterHandler? typewriter;
 
     /// <summary>
@@ -240,20 +225,22 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// <inheritdoc/>
     public override YarnTask OnDialogueCompleteAsync()
     {
-        if (canvasGroup != null)
+        if (IsInstanceValid(viewControl))
         {
-            canvasGroup.alpha = 0;
+            viewControl.Visible = true;
         }
+
         return YarnTask.CompletedTask;
     }
 
     /// <inheritdoc/>
     public override YarnTask OnDialogueStartedAsync()
     {
-        if (canvasGroup != null)
+        if (IsInstanceValid(viewControl))
         {
-            canvasGroup.alpha = 0;
+            viewControl.Visible = true;
         }
+
         return YarnTask.CompletedTask;
     }
 
@@ -264,25 +251,27 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     {
         if (useTypewriterEffect)
         {
-            typewriter = gameObject.AddComponent<TypewriterHandler>();
+            typewriter = new TypewriterHandler();
+            AddChild(typewriter);
             typewriter.lettersPerSecond = typewriterEffectSpeed;
-            typewriter.onCharacterTyped = onCharacterTyped;
-            typewriter.hideFlags = HideFlags.HideInInspector | HideFlags.DontSaveInEditor;
+            typewriter.onCharacterTyped += () => EmitSignal(SignalName.onCharacterTyped);
             temporalProcessors.Add(typewriter);
         }
 
         if (characterNameContainer == null && characterNameText != null)
         {
-            characterNameContainer = characterNameText.gameObject;
+            characterNameContainer = characterNameText;
         }
 
         if (dialogueRunner == null)
         {
             // If we weren't provided with a dialogue runner at design time, try to find one now
-            dialogueRunner = FindAnyObjectByType<DialogueRunner>();
+            dialogueRunner = DialogueRunner.FindChild(nameof(DialogueRunner)) as DialogueRunner;
             if (dialogueRunner == null)
             {
-                Debug.LogWarning($"{nameof(AsyncLineView)} failed to find a dialogue runner! Please ensure that a {nameof(DialogueRunner)} is present, or set the {nameof(dialogueRunner)} property in the Inspector.", this);
+                GD.PushWarning(
+                    $"{nameof(AsyncLineView)} failed to find a dialogue runner! Please ensure that a {nameof(DialogueRunner)} is present, or set the {nameof(dialogueRunner)} property in the Inspector.",
+                    this);
             }
         }
     }
@@ -305,39 +294,36 @@ public partial class AsyncLineView : AsyncDialogueViewBase
         {
             if (characterNameText == null)
             {
-                Debug.LogWarning($"Line view is configured to show character names, but no character name text view was provided.", this);
+                GD.PushWarning(
+                    $"Line view is configured to show character names, but no character name text view was provided.",
+                    this);
             }
             else
             {
-                characterNameText.text = line.CharacterName;
+                characterNameText.Text = line.CharacterName;
             }
+
             text = line.TextWithoutCharacterName;
         }
         else
         {
             // we don't want to show character names but do have a valid container for showing them
             // so we should just disable that and continue as if it didn't exist
-            if (characterNameContainer != null)
+            if (IsInstanceValid(characterNameContainer))
             {
-                characterNameContainer.SetActive(false);
+                characterNameContainer!.Visible = false;
             }
+
             text = line.Text;
         }
-        lineText.text = text.Text;
 
+        lineText.Text = text.Text;
+
+        var continueHandler = Callable.From(OnContinuePressed);
         // setting the continue button up to let us advance dialogue
         if (continueButton != null)
         {
-            continueButton.onClick.AddListener(() =>
-            {
-                if (dialogueRunner == null)
-                {
-                    Debug.LogWarning($"Continue button was clicked, but {nameof(dialogueRunner)} is null!", this);
-                    return;
-                }
-
-                dialogueRunner.RequestNextLine();
-            });
+            continueButton.Connect(BaseButton.SignalName.Pressed, continueHandler);
         }
 
         // letting every temporal processor know that fade up (if set) is about to begin
@@ -349,17 +335,19 @@ public partial class AsyncLineView : AsyncDialogueViewBase
             }
         }
 
-        if (canvasGroup != null)
+        if (IsInstanceValid(viewControl))
         {
             // fading up the UI
             if (useFadeEffect)
             {
-                await Effects.FadeAlphaAsync(canvasGroup, 0, 1, fadeDownDuration, token.HurryUpToken);
+                await Effects.FadeAlphaAsync(viewControl, 0, 1, fadeDownDuration, token.HurryUpToken);
             }
             else
             {
                 // We're not fading up, so set the canvas group's alpha to 1 immediately.
-                canvasGroup.alpha = 1;
+                viewControl.Visible = true;
+                var oldModulate = viewControl.Modulate;
+                viewControl.Modulate = new Color(oldModulate.R, oldModulate.G, oldModulate.B, 1.0f);
             }
         }
 
@@ -382,7 +370,8 @@ public partial class AsyncLineView : AsyncDialogueViewBase
                     {
                         if (typewriter == null)
                         {
-                            throw new System.InvalidOperationException($"Error when displaying line: {nameof(useTypewriterEffect)} was enabled but {nameof(typewriter)} is null?");
+                            throw new System.InvalidOperationException(
+                                $"Error when displaying line: {nameof(useTypewriterEffect)} was enabled but {nameof(typewriter)} is null?");
                         }
 
                         var task = processor.PresentCharacter(i, lineText, token.HurryUpToken);
@@ -390,6 +379,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
                         {
                             typewriter.StopwatchRunning = false;
                         }
+
                         await task;
                         typewriter.StopwatchRunning = true;
                     }
@@ -410,30 +400,30 @@ public partial class AsyncLineView : AsyncDialogueViewBase
         // if we are set to autoadvance how long do we hold for before continuing?
         if (autoAdvance)
         {
-            await YarnTask.Delay((int)(autoAdvanceDelay * 1000), token.NextLineToken);
+            await YarnTask.Delay((int) (autoAdvanceDelay * 1000), token.NextLineToken);
         }
         else
         {
             await YarnTask.WaitUntilCanceled(token.NextLineToken);
         }
 
-        if (canvasGroup != null)
+        if (IsInstanceValid(viewControl))
         {
             // we fade down the UI
             if (useFadeEffect)
             {
-                await Effects.FadeAlphaAsync(canvasGroup, 1, 0, fadeDownDuration, token.HurryUpToken);
+                await Effects.FadeAlphaAsync(viewControl, 1, 0, fadeDownDuration, token.HurryUpToken);
             }
             else
             {
-                canvasGroup.alpha = 0;
+                viewControl.Visible = false;
             }
         }
 
         // the final bit of clean up is to remove the cancel listener from the button
         if (continueButton != null)
         {
-            continueButton.onClick.RemoveAllListeners();
+            continueButton.Disconnect(BaseButton.SignalName.Pressed, Callable.From(OnContinuePressed));
         }
     }
 
@@ -443,9 +433,21 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// <remarks>
     /// This dialogue view does not handle any options.
     /// </remarks>
-    public override YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions, CancellationToken cancellationToken)
+    public override YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions,
+        CancellationToken cancellationToken)
     {
         return YarnTask<DialogueOption?>.FromResult(null);
+    }
+
+    private void OnContinuePressed()
+    {
+        if (!IsInstanceValid(dialogueRunner))
+        {
+            GD.PushWarning($"Continue button was clicked, but {nameof(dialogueRunner)} is invalid!", this);
+            return;
+        }
+
+        dialogueRunner!.RequestNextLine();
     }
 }
 
@@ -509,7 +511,8 @@ public abstract partial class TemporalMarkupHandler : Node
     /// cref="TemporalMarkupHandler"/> has completed presenting this
     /// character. Dialogue views will wait until this task is complete
     /// before displaying the remainder of the line.</returns>
-    public abstract YarnTask PresentCharacter(int currentCharacterIndex, RichTextLabel text, CancellationToken cancellationToken);
+    public abstract YarnTask PresentCharacter(int currentCharacterIndex, RichTextLabel text,
+        CancellationToken cancellationToken);
 
     /// <summary>
     /// Called after the last call to <see cref="PresentCharacter(int,
@@ -525,7 +528,7 @@ public abstract partial class TemporalMarkupHandler : Node
 /// A <see cref="TemporalMarkupHandler"/> that progressively reveals the
 /// text of a line at a fixed rate of time.
 /// </summary>
-public sealed class TypewriterHandler : TemporalMarkupHandler
+public sealed partial class TypewriterHandler : TemporalMarkupHandler
 {
     /// <summary>
     /// The number of letters that will be shown per second.
@@ -543,17 +546,14 @@ public sealed class TypewriterHandler : TemporalMarkupHandler
     /// <seealso cref="useTypewriterEffect"/>
     [Signal]
     public delegate void onCharacterTypedEventHandler();
-    
-    private float accumulatedTime = 0;
+
+    private double accumulatedTime = 0;
     private Stack<(int position, float duration)> pauses = new Stack<(int position, float duration)>();
     private float accumulatedPauses = 0;
 
     private float SecondsPerLetter
     {
-        get
-        {
-            return 1f / lettersPerSecond;
-        }
+        get { return 1f / lettersPerSecond; }
     }
 
     /// <summary>
@@ -563,11 +563,11 @@ public sealed class TypewriterHandler : TemporalMarkupHandler
     /// </summary>
     internal bool StopwatchRunning { get; set; } = false;
 
-    void Update()
+    public override void _Process(double deltaTime)
     {
         if (StopwatchRunning)
         {
-            accumulatedTime += Time.deltaTime;
+            accumulatedTime += deltaTime;
         }
     }
 
@@ -575,7 +575,7 @@ public sealed class TypewriterHandler : TemporalMarkupHandler
     /// <inheritdoc cref="TemporalMarkupHandler.PrepareForLine" path="/param"/>
     public override void PrepareForLine(MarkupParseResult line, RichTextLabel text)
     {
-        text.maxVisibleCharacters = 0;
+        text.VisibleRatio = 0;
         accumulatedPauses = 0;
     }
 
@@ -610,7 +610,8 @@ public sealed class TypewriterHandler : TemporalMarkupHandler
     /// RichTextLabel, CancellationToken)" path="/param"/>
     /// <inheritdoc cref="TemporalMarkupHandler.PresentCharacter(int,
     /// RichTextLabel, CancellationToken)" path="/returns"/>
-    public override async YarnTask PresentCharacter(int currentCharacterIndex, RichTextLabel text, CancellationToken cancellationToken)
+    public override async YarnTask PresentCharacter(int currentCharacterIndex, RichTextLabel text,
+        CancellationToken cancellationToken)
     {
         float pauseDuration = 0;
         if (pauses.Count > 0)
@@ -622,17 +623,18 @@ public sealed class TypewriterHandler : TemporalMarkupHandler
                 pauseDuration = pause.duration;
             }
         }
+
         accumulatedPauses += pauseDuration;
 
         float timePoint = accumulatedPauses;
         if (lettersPerSecond > 0)
         {
-            timePoint += (float)currentCharacterIndex * SecondsPerLetter;
+            timePoint += (float) currentCharacterIndex * SecondsPerLetter;
         }
 
         await YarnTask.WaitUntil(() => accumulatedTime >= timePoint, cancellationToken);
-        text.maxVisibleCharacters += 1;
+        text.VisibleCharacters += 1;
 
-        onCharacterTyped?.Invoke();
+        EmitSignal(SignalName.onCharacterTyped);
     }
 }

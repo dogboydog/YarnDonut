@@ -183,7 +183,7 @@ public partial class DialogueRunner : Godot.Node
     /// The list of dialogue views that the dialogue runner delivers content
     /// to.
     /// </summary>
-    [Export] Array<Godot.Node?> dialogueViews = new ();
+    [Export] Array<Godot.Node?> dialogueViews = new();
 
     /// <summary>
     /// Gets a value that indicates if the dialogue is actively
@@ -287,8 +287,7 @@ public partial class DialogueRunner : Godot.Node
     /// </summary>
     public IEnumerable<AsyncDialogueViewBase?> DialogueViews
     {
-        get => dialogueViews;
-        set => dialogueViews = value.ToList();
+        get => dialogueViews.ToList().ConvertAll(v => (AsyncDialogueViewBase?) v);
     }
 
     /// <summary>
@@ -417,7 +416,7 @@ public partial class DialogueRunner : Godot.Node
 
     private void OnDialogueCompleted()
     {
-        onDialogueComplete?.Invoke();
+        EmitSignal(SignalName.onDialogueComplete);
         OnDialogueCompleteAsync().Forget();
     }
 
@@ -443,11 +442,11 @@ public partial class DialogueRunner : Godot.Node
             {
                 try
                 {
-                    await view.OnDialogueCompleteAsync();
+                    await ((AsyncDialogueViewBase) view).OnDialogueCompleteAsync();
                 }
                 catch (System.Exception e)
                 {
-                    Debug.LogException(e, view);
+                    GD.PushError(e, view);
                 }
             }
 
@@ -462,12 +461,12 @@ public partial class DialogueRunner : Godot.Node
 
     private void OnNodeCompleted(string completedNodeName)
     {
-        onNodeComplete?.Invoke(completedNodeName);
+        EmitSignal(SignalName.onNodeComplete, completedNodeName);
     }
 
     private void OnNodeStarted(string startedNodeName)
     {
-        onNodeStart?.Invoke(startedNodeName);
+        EmitSignal(SignalName.onNodeStart, startedNodeName);
     }
 
     private void OnCommandReceived(Command command)
@@ -506,7 +505,7 @@ public partial class DialogueRunner : Godot.Node
             case CommandDispatchResult.StatusType.CommandUnknown:
                 // Attempt a last-ditch dispatch by invoking our 'onCommand'
                 // Unity Event.
-                if (onUnhandledCommand != null && onUnhandledCommand.GetPersistentEventCount() > 0)
+                if (onUnhandledCommand != null)
                 {
                     // We can invoke the event!
                     onUnhandledCommand.Invoke(command.Text);
@@ -628,11 +627,11 @@ public partial class DialogueRunner : Godot.Node
                 }
                 catch (System.Exception e)
                 {
-                    Debug.LogException(e, view);
+                    GD.PushError(e, view);
                 }
             }
 
-            YarnTask task = RunLineAndInvokeCompletion(view, localisedLine, metaToken);
+            YarnTask task = RunLineAndInvokeCompletion((AsyncDialogueViewBase) view, localisedLine, metaToken);
 
             pendingTasks.Add(task);
         }
@@ -714,7 +713,7 @@ public partial class DialogueRunner : Godot.Node
         var pendingTasks = new List<YarnTask>();
         foreach (var view in this.dialogueViews)
         {
-            pendingTasks.Add(WaitForOptionsView(view));
+            pendingTasks.Add(WaitForOptionsView((AsyncDialogueViewBase?) view));
         }
 
         await YarnTask.WhenAll(pendingTasks);
@@ -732,7 +731,7 @@ public partial class DialogueRunner : Godot.Node
         {
             // If a view threw an exception while getting the option,
             // propagate it
-            Debug.LogException(e);
+            GD.PushError(e);
             return;
             // throw;
         }
@@ -831,7 +830,7 @@ public partial class DialogueRunner : Godot.Node
         Dialogue.SetProgram(yarnProject.Program);
         Dialogue.SetNode(nodeName);
 
-        onDialogueStart?.Invoke();
+        EmitSignal(SignalName.onDialogueStart);
 
         StartDialogueAsync().Forget();
 
@@ -915,5 +914,13 @@ public partial class DialogueRunner : Godot.Node
         }
 
         currentLineHurryUpSource.Cancel();
+    }
+
+    /// <summary>
+    /// Find a node by name in the tree starting with the root.
+    /// </summary>
+    public static Godot.Node FindChild(string name)
+    {
+        return ((SceneTree) Engine.GetMainLoop()).Root.FindChild(name, true, false);
     }
 }

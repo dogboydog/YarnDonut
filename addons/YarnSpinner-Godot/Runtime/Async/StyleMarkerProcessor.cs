@@ -14,11 +14,11 @@ namespace YarnSpinnerGodot;
 /// </summary>
 public partial class StyleMarkerProcessor : AttributeMarkerProcessor
 {
-    [Export]
-    public LineProviderBehaviour? lineProvider;
+    [Export] public LineProviderBehaviour? lineProvider;
 
     /// <inheritdoc/>
-    public override List<LineParser.MarkupDiagnostic> ProcessReplacementMarker(MarkupAttribute marker, StringBuilder childBuilder, List<MarkupAttribute> childAttributes, string localeCode)
+    public override List<LineParser.MarkupDiagnostic> ProcessReplacementMarker(MarkupAttribute marker,
+        StringBuilder childBuilder, List<MarkupAttribute> childAttributes, string localeCode)
     {
         // throw new System.NotImplementedException();
         // ok so we check if we have a property called style
@@ -38,13 +38,15 @@ public partial class StyleMarkerProcessor : AttributeMarkerProcessor
         return AttributeMarkerProcessor.NoDiagnostics;
     }
 
-    // Start is called before the first frame update
-    void Start()
+
+    public override void _Ready()
     {
         if (lineProvider == null)
         {
-            lineProvider = (LineProviderBehaviour)GameObject.FindAnyObjectByType<DialogueRunner>().LineProvider;
+            lineProvider = (LineProviderBehaviour) ((DialogueRunner) (DialogueRunner.FindChild(nameof(DialogueRunner))))
+                .LineProvider;
         }
+
         lineProvider.RegisterMarkerProcessor("style", this);
     }
 }

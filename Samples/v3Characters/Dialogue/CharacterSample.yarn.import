@@ -1,0 +1,14 @@
+[remap]
+
+importer="yarnscript"
+type="Resource"
+uid="uid://bvucc8lvq2xbc"
+path="res://.godot/imported/CharacterSample.yarn-8f8e4e876a8653200dffbe98994de57a.tres"
+
+[deps]
+
+source_file="res://Samples/v3Characters/Dialogue/CharacterSample.yarn"
+dest_files=["res://.godot/imported/CharacterSample.yarn-8f8e4e876a8653200dffbe98994de57a.tres"]
+
+[params]
+

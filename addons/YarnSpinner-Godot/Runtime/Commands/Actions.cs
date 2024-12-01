@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
 using Yarn;
+using Node = Godot.Node;
 
 
 #nullable enable
@@ -27,6 +28,7 @@ public enum RegistrationType
     /// Actions are being registered during a Yarn script compilation.
     /// </summary>
     Compilation,
+
     /// <summary>
     /// Actions are being registered for runtime use (i.e. during gameplay.)
     /// </summary>
@@ -51,6 +53,7 @@ internal static class DiagnosticUtility
         {
             result = name + "s";
         }
+
         if (prefixCount)
         {
             return count.ToString() + " " + result;
@@ -73,8 +76,6 @@ internal static class DiagnosticUtility
         }
     }
 }
-
-
 
 public class Actions : ICommandDispatcher
 {
@@ -106,7 +107,8 @@ public class Actions : ICommandDispatcher
             {
                 // The instance method's declaring type is not a Component,
                 // which means we won't be able to look up a target.
-                throw new ArgumentException($"Cannot register method {GetFullMethodName(method)} as a command: instance methods must declared on {nameof(Component)} classes.");
+                throw new ArgumentException(
+                    $"Cannot register method {GetFullMethodName(method)} as a command: instance methods must declared on {nameof(Component)} classes.");
             }
 
             Name = name;
@@ -142,14 +144,17 @@ public class Actions : ICommandDispatcher
                 {
                     return CommandType.IsVoid;
                 }
+
                 if (typeof(IEnumerator).IsAssignableFrom(returnType))
                 {
                     return CommandType.IsCoroutine;
                 }
-                if (typeof(Coroutine).IsAssignableFrom(returnType))
+
+                if (typeof(Task).IsAssignableFrom(returnType))
                 {
-                    return CommandType.ReturnsCoroutine;
+                    return CommandType.ReturnsTask;
                 }
+
                 return CommandType.Invalid;
             }
         }
@@ -160,11 +165,13 @@ public class Actions : ICommandDispatcher
             /// The method returns <see cref="void"/>.
             /// </summary>
             IsVoid,
+
             /// <summary>
-            /// The method returns a <see cref="Coroutine"/> object.
+            /// The method returns a <see cref="Task"/> object.
             /// </summary>
             /// <remarks>
-            ReturnsCoroutine,
+            ReturnsTask,
+
             /// <summary>
             /// The method returns <see cref="IEnumerator"/> (that is, it is
             /// a coroutine).
@@ -175,6 +182,7 @@ public class Actions : ICommandDispatcher
             /// the coroutine.
             /// </remarks>
             IsCoroutine,
+
             /// <summary>
             /// The method is not a valid command (that is, it does not
             /// return <see cref="void"/>, <see cref="Coroutine"/>, or <see
@@ -186,7 +194,8 @@ public class Actions : ICommandDispatcher
         /// <summary>
         /// Attempt to parse the arguments with cached converters.
         /// </summary>
-        public CommandDispatchResult.ParameterParseStatusType TryParseArgs(string[] args, out object?[]? result, out string? message)
+        public CommandDispatchResult.ParameterParseStatusType TryParseArgs(string[] args, out object?[]? result,
+            out string? message)
         {
             var parameters = Method.GetParameters();
 
@@ -199,17 +208,21 @@ public class Actions : ICommandDispatcher
                 string requirementDescription;
                 if (min == 0)
                 {
-                    requirementDescription = $"at most {max} {DiagnosticUtility.EnglishPluraliseNounCount(max, "parameter")}";
+                    requirementDescription =
+                        $"at most {max} {DiagnosticUtility.EnglishPluraliseNounCount(max, "parameter")}";
                 }
                 else if (min != max)
                 {
-                    requirementDescription = $"between {min} and {max} {DiagnosticUtility.EnglishPluraliseNounCount(max, "parameter")}";
+                    requirementDescription =
+                        $"between {min} and {max} {DiagnosticUtility.EnglishPluraliseNounCount(max, "parameter")}";
                 }
                 else
                 {
                     requirementDescription = $"{min} {DiagnosticUtility.EnglishPluraliseNounCount(max, "parameter")}";
                 }
-                message = $"{this.Name} requires {requirementDescription}, but {argumentCount} {DiagnosticUtility.EnglishPluraliseWasVerb(argumentCount)} provided.";
+
+                message =
+                    $"{this.Name} requires {requirementDescription}, but {argumentCount} {DiagnosticUtility.EnglishPluraliseWasVerb(argumentCount)} provided.";
                 result = default;
                 return CommandDispatchResult.ParameterParseStatusType.InvalidParameterCount;
             }
@@ -250,13 +263,16 @@ public class Actions : ICommandDispatcher
                             }
                             catch (Exception e)
                             {
-                                message = $"Can't convert parameter {i} to {parameterArrayElementType.Name}: {e.Message}";
+                                message =
+                                    $"Can't convert parameter {i} to {parameterArrayElementType.Name}: {e.Message}";
                                 result = default;
                                 return CommandDispatchResult.ParameterParseStatusType.InvalidParameterType;
                             }
                         }
+
                         i += 1;
                     }
+
                     finalArgs[paramIndex] = paramsArray;
                 }
                 else
@@ -281,6 +297,7 @@ public class Actions : ICommandDispatcher
                     }
                 }
             }
+
             for (int i = argumentCount; i < finalArgs.Length; i++)
             {
                 var parameter = parameters[i];
@@ -298,9 +315,11 @@ public class Actions : ICommandDispatcher
                 }
                 else
                 {
-                    throw new InvalidOperationException($"Can't provide a default value for parameter {parameter.Name}");
+                    throw new InvalidOperationException(
+                        $"Can't provide a default value for parameter {parameter.Name}");
                 }
             }
+
             result = finalArgs;
             message = default;
             return CommandDispatchResult.ParameterParseStatusType.Succeeded;
@@ -319,6 +338,7 @@ public class Actions : ICommandDispatcher
                     {
                         optional += 1;
                     }
+
                     if (parameter.ParameterType.IsArray && parameter.GetCustomAttribute<ParamArrayAttribute>() != null)
                     {
                         // If the parameter is a params array, then:
@@ -339,6 +359,7 @@ public class Actions : ICommandDispatcher
                 {
                     max = int.MaxValue;
                 }
+
                 return (min, max);
             }
         }
@@ -355,7 +376,8 @@ public class Actions : ICommandDispatcher
                 {
                     // We need at least one parameter, which is the
                     // component to look for
-                    return new CommandDispatchResult(CommandDispatchResult.StatusType.InvalidParameterCount, YarnTask.CompletedTask)
+                    return new CommandDispatchResult(CommandDispatchResult.StatusType.InvalidParameterCount,
+                        YarnTask.CompletedTask)
                     {
                         Message = $"{this.Name} needs a target, but none was specified",
                     };
@@ -368,7 +390,7 @@ public class Actions : ICommandDispatcher
 
                 parameters.RemoveAt(0);
 
-                var gameObject = GameObject.Find(gameObjectName);
+                var gameObject = DialogueRunner.FindChild(gameObjectName);
 
                 if (gameObject == null)
                 {
@@ -379,15 +401,18 @@ public class Actions : ICommandDispatcher
                     };
                 }
 
-                // We've found a target.  Does it have a component that's
+                // We've found a target.  Does it have a childthat's
                 // the right type of object to call the method on?
-                var targetComponent = gameObject.GetComponent(this.DeclaringType);
+                var targetComponent = gameObject.GetType().IsAssignableTo(this.DeclaringType)
+                    ? gameObject
+                    : FindTypedNodeInChildren(gameObject, this.DeclaringType);
 
-                if (targetComponent == null)
+                if (!GodotObject.IsInstanceValid(targetComponent))
                 {
                     return new CommandDispatchResult(CommandDispatchResult.StatusType.TargetMissingComponent)
                     {
-                        Message = $"{this.Name} can't be called on {gameObjectName}, because it doesn't have a {this.DeclaringType.Name}",
+                        Message =
+                            $"{this.Name} can't be called on {gameObjectName}, because it doesn't have a {this.DeclaringType.Name}",
                     };
                 }
 
@@ -407,19 +432,25 @@ public class Actions : ICommandDispatcher
             else
             {
                 // We don't know what to call this method on.
-                throw new InvalidOperationException($"Internal error: {nameof(CommandRegistration)} \"{this.Name}\" has no {nameof(Target)}, but method is not static and ${DynamicallyFindsTarget} is false");
+                throw new InvalidOperationException(
+                    $"Internal error: {nameof(CommandRegistration)} \"{this.Name}\" has no {nameof(Target)}, but method is not static and ${DynamicallyFindsTarget} is false");
             }
 
-            var parseArgsStatus = this.TryParseArgs(parameters.ToArray(), out var finalParameters, out var errorMessage);
+            var parseArgsStatus =
+                this.TryParseArgs(parameters.ToArray(), out var finalParameters, out var errorMessage);
 
             if (parseArgsStatus != CommandDispatchResult.ParameterParseStatusType.Succeeded)
             {
                 var status = parseArgsStatus switch
                 {
-                    CommandDispatchResult.ParameterParseStatusType.Succeeded => CommandDispatchResult.StatusType.Succeeded,
-                    CommandDispatchResult.ParameterParseStatusType.InvalidParameterType => CommandDispatchResult.StatusType.InvalidParameter,
-                    CommandDispatchResult.ParameterParseStatusType.InvalidParameterCount => CommandDispatchResult.StatusType.InvalidParameterCount,
-                    _ => throw new InvalidOperationException("Internal error: invalid parameter parse result " + parseArgsStatus),
+                    CommandDispatchResult.ParameterParseStatusType.Succeeded => CommandDispatchResult.StatusType
+                        .Succeeded,
+                    CommandDispatchResult.ParameterParseStatusType.InvalidParameterType => CommandDispatchResult
+                        .StatusType.InvalidParameter,
+                    CommandDispatchResult.ParameterParseStatusType.InvalidParameterCount => CommandDispatchResult
+                        .StatusType.InvalidParameterCount,
+                    _ => throw new InvalidOperationException("Internal error: invalid parameter parse result " +
+                                                             parseArgsStatus),
                 };
 
                 return new CommandDispatchResult(status)
@@ -430,23 +461,7 @@ public class Actions : ICommandDispatcher
 
             var returnValue = this.Method.Invoke(target, finalParameters);
 
-            if (returnValue is Coroutine coro)
-            {
-                // The method returned a Coroutine object.
-                return new CommandDispatchResult(
-                    CommandDispatchResult.StatusType.Succeeded,
-                    dispatcher.WaitForCoroutine(coro)
-                );
-            }
-            else if (returnValue is IEnumerator enumerator)
-            {
-                // The method returned an IEnumerator.
-                return new CommandDispatchResult(
-                    CommandDispatchResult.StatusType.Succeeded,
-                    dispatcher.WaitForCoroutine(enumerator)
-                );
-            }
-            else if (returnValue is System.Threading.Tasks.Task task)
+            if (returnValue is System.Threading.Tasks.Task task)
             {
                 // The method returned a task. Convert it to a YarnTask.
                 return new CommandDispatchResult(
@@ -454,17 +469,6 @@ public class Actions : ICommandDispatcher
                     task
                 );
             }
-#if USE_UNITASK
-                else if (returnValue is Cysharp.Threading.Tasks.UniTask unitask) {
-                    // The method returned a UniTask. No need to convert it to
-                    // YarnTask, because if UniTask is installed, YarnTask means
-                    // UniTask.
-                    return new CommandDispatchResult(
-                        CommandDispatchResult.StatusType.Succeeded, 
-                        unitask
-                    );
-                }
-#endif
             else
             {
                 // The method returned no value.
@@ -501,7 +505,6 @@ public class Actions : ICommandDispatcher
                     if (parameter.IsOptional)
                     {
                         displayName = $"[{displayName} = {parameter.DefaultValue}]";
-
                     }
 
                     components.Add(displayName);
@@ -511,15 +514,15 @@ public class Actions : ICommandDispatcher
             }
         }
 
-        readonly Dictionary<Type, string> TypeFriendlyNames = new Dictionary<Type, string> {
-            { typeof(int), "number" },
-            { typeof(float), "number" },
-            { typeof(double), "number" },
-            { typeof(Decimal), "number" },
-            { typeof(string), "string" },
-            { typeof(bool), "bool" },
+        readonly Dictionary<Type, string> TypeFriendlyNames = new Dictionary<Type, string>
+        {
+            {typeof(int), "number"},
+            {typeof(float), "number"},
+            {typeof(double), "number"},
+            {typeof(Decimal), "number"},
+            {typeof(string), "string"},
+            {typeof(bool), "bool"},
         };
-
     }
 
     private Dictionary<string, CommandRegistration> _commands = new Dictionary<string, CommandRegistration>();
@@ -552,7 +555,8 @@ public class Actions : ICommandDispatcher
     {
         if (_commands.ContainsKey(commandName))
         {
-            GD.PushError($"Failed to register command {commandName}: a command by this name has already been registered.");
+            GD.PushError(
+                $"Failed to register command {commandName}: a command by this name has already been registered.");
             return;
         }
         else
@@ -582,7 +586,8 @@ public class Actions : ICommandDispatcher
     {
         if (_commands.ContainsKey(commandName))
         {
-            GD.PushError($"Failed to register command {commandName}: a command by this name has already been registered.");
+            GD.PushError(
+                $"Failed to register command {commandName}: a command by this name has already been registered.");
             return;
         }
         else
@@ -590,13 +595,14 @@ public class Actions : ICommandDispatcher
             _commands.Add(commandName, new CommandRegistration(commandName, methodInfo));
         }
     }
+
     public void RemoveCommandHandler(string commandName)
     {
         if (_commands.Remove(commandName) == false)
         {
-            GD.PushError($"Can't remove command {commandName}, because no command with this name is currently registered.");
+            GD.PushError(
+                $"Can't remove command {commandName}, because no command with this name is currently registered.");
         }
-
     }
 
     public void RemoveFunction(string name)
@@ -606,6 +612,7 @@ public class Actions : ICommandDispatcher
             GD.PushError($"Cannot remove function {name}: no function with that name exists in the library");
             return;
         }
+
         Library.DeregisterFunction(name);
     }
 
@@ -653,6 +660,7 @@ public class Actions : ICommandDispatcher
             result[i] = CreateConverter(parameterInfo, i);
             i++;
         }
+
         return result;
     }
 
@@ -671,7 +679,6 @@ public class Actions : ICommandDispatcher
             var paramsArrayType = targetType.GetElementType();
             var elementConverter = CreateConverterFunction(paramsArrayType, name);
             return elementConverter;
-
         }
         else
         {
@@ -683,28 +690,24 @@ public class Actions : ICommandDispatcher
 
     private static Converter CreateConverterFunction(Type targetType, string parameterName)
     {
-
         // well, I mean...
-        if (targetType == typeof(string)) { return (arg, i) => arg; }
-
-        // find the GameObject.
-        if (typeof(GameObject).IsAssignableFrom(targetType))
+        if (targetType == typeof(string))
         {
-            return (arg, i) => GameObject.Find(arg);
+            return (arg, i) => arg;
         }
 
-        // find components of the GameObject with the component, if
-        // available
-        if (typeof(Component).IsAssignableFrom(targetType))
+        // find the Node with the handler
+        if (typeof(Node).IsAssignableFrom(targetType))
         {
             return (arg, i) =>
             {
-                GameObject gameObject = GameObject.Find(arg);
-                if (gameObject == null)
+                Godot.Node gameObject = DialogueRunner.FindChild(arg);
+                if (!GodotObject.IsInstanceValid(gameObject))
                 {
                     return null;
                 }
-                return gameObject.GetComponentInChildren(targetType);
+
+                return FindTypedNodeInChildren(gameObject, targetType);
             };
         }
 
@@ -750,8 +753,28 @@ public class Actions : ICommandDispatcher
         };
     }
 
+    private static Godot.Node FindTypedNodeInChildren(Godot.Node node, Type type)
+    {
+        if (type.IsInstanceOfType(node))
+        {
+            return node;
+        }
 
-    internal static HashSet<ActionRegistrationMethod> ActionRegistrationMethods = new HashSet<ActionRegistrationMethod>();
+        for (var i = 0; i < node.GetChildCount(); i++)
+        {
+            var child = node.GetChild(i);
+            var childResult = FindTypedNodeInChildren(child, type);
+            if (childResult != null)
+            {
+                return childResult;
+            }
+        }
+
+        return null;
+    }
+
+    internal static HashSet<ActionRegistrationMethod> ActionRegistrationMethods =
+        new HashSet<ActionRegistrationMethod>();
 
 
     public static void AddRegistrationMethod(ActionRegistrationMethod registerActions)
@@ -775,7 +798,7 @@ public class Actions : ICommandDispatcher
 
     public void AddCommandHandler(string commandName, Func<object> handler)
     {
-        this.AddCommandHandler(commandName, (Delegate)handler);
+        this.AddCommandHandler(commandName, (Delegate) handler);
     }
 
     /// <summary>
@@ -811,14 +834,18 @@ public class Actions : ICommandDispatcher
             // and error out if it does
             if (library.FunctionExists(name))
             {
-                throw new ArgumentException($"Cannot register function {name}: a function with this name already exists");
+                throw new ArgumentException(
+                    $"Cannot register function {name}: a function with this name already exists");
             }
+
             // Register this function in the library
             library.RegisterFunction(name, implementation);
         }
 
-        public void RemoveCommandHandler(string commandName) => throw new InvalidOperationException("This class does not support removing actions.");
+        public void RemoveCommandHandler(string commandName) =>
+            throw new InvalidOperationException("This class does not support removing actions.");
 
-        public void RemoveFunction(string name) => throw new InvalidOperationException("This class does not support removing actions.");
+        public void RemoveFunction(string name) =>
+            throw new InvalidOperationException("This class does not support removing actions.");
     }
 }

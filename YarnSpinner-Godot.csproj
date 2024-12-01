@@ -19,10 +19,14 @@
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Samples\v3Characters\Dialogue\CharacterSample.yarnproject" />
     <Content Include="todotest\NodeCompleteTest.yarn.import" />
     <Content Include="todotest\test.tscn" />
     <Content Include="todotest\test.yarnproject" />
     <Content Include="todotest\test.yarnproject.import" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Samples\v3Characters\" />
   </ItemGroup>
   <Import Project="addons\YarnSpinner-Godot\YarnSpinner-Godot.props" />
 </Project>

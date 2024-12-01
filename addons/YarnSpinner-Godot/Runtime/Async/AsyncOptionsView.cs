@@ -1,10 +1,5 @@
 using System.Collections.Generic;
-
-
-
-
 #nullable enable
-
 using System.Threading;
 using Godot;
 using Yarn;
@@ -16,11 +11,11 @@ namespace YarnSpinnerGodot;
 /// manages a collection of <see cref="AsyncOptionItem"/> views for the user
 /// to choose from.
 /// </summary>
-public class AsyncOptionsView : AsyncDialogueViewBase
+public partial class AsyncOptionsView : AsyncDialogueViewBase
 {
-    [Export] CanvasGroup? canvasGroup;
+    [Export] Control? viewControl;
 
-    [Export] AsyncOptionItem? optionViewPrefab;
+    [Export] PackedScene? optionViewPrefab;
 
     // A cached pool of OptionView objects so that we can reuse them
     List<AsyncOptionItem> optionViews = new List<AsyncOptionItem>();
@@ -42,8 +37,7 @@ public class AsyncOptionsView : AsyncDialogueViewBase
     /// cref="OptionSet.Option.IsAvailable"/> value is <see
     /// langword="false"/>.
     /// </summary>
-    [Export]
-    public bool showUnavailableOptions = false;
+    [Export] public bool showUnavailableOptions = false;
 
     /// <summary>
     /// Called by a <see cref="DialogueRunner"/> to dismiss the options view
@@ -52,11 +46,9 @@ public class AsyncOptionsView : AsyncDialogueViewBase
     /// <returns>A completed task.</returns>
     public override YarnTask OnDialogueCompleteAsync()
     {
-        if (canvasGroup != null)
+        if (IsInstanceValid(viewControl))
         {
-            canvasGroup.alpha = 0;
-            canvasGroup.interactable = false;
-            canvasGroup.blocksRaycasts = false;
+            viewControl.Visible = false;
         }
 
         return YarnTask.CompletedTask;
@@ -67,20 +59,19 @@ public class AsyncOptionsView : AsyncDialogueViewBase
     /// </summary>
     public override void _Ready()
     {
-        if (canvasGroup != null)
+        if (IsInstanceValid(viewControl))
         {
-            canvasGroup.alpha = 0;
-            canvasGroup.interactable = false;
-            canvasGroup.blocksRaycasts = false;
+            viewControl.Visible = false;
         }
 
-        if (lastLineContainer == null && lastLineText != null)
+        if (!IsInstanceValid(lastLineContainer) && lastLineText != null)
         {
             lastLineContainer = lastLineText;
         }
-        if (lastLineCharacterNameContainer == null && lastLineCharacterNameText != null)
+
+        if (!IsInstanceValid(lastLineCharacterNameContainer) && lastLineCharacterNameText != null)
         {
-            lastLineCharacterNameContainer = lastLineCharacterNameText.gameObject;
+            lastLineCharacterNameContainer = lastLineCharacterNameText;
         }
     }
 
@@ -91,11 +82,9 @@ public class AsyncOptionsView : AsyncDialogueViewBase
     /// <returns>A completed task.</returns>
     public override YarnTask OnDialogueStartedAsync()
     {
-        if (canvasGroup != null)
+        if (IsInstanceValid(viewControl))
         {
-            canvasGroup.alpha = 0;
-            canvasGroup.interactable = false;
-            canvasGroup.blocksRaycasts = false;
+            viewControl.Visible = false;
         }
 
         return YarnTask.CompletedTask;
@@ -118,6 +107,7 @@ public class AsyncOptionsView : AsyncDialogueViewBase
         {
             lastSeenLine = line;
         }
+
         return YarnTask.CompletedTask;
     }
 
@@ -129,7 +119,8 @@ public class AsyncOptionsView : AsyncDialogueViewBase
     /// path="/param"/>
     /// <inheritdoc cref="AsyncDialogueViewBase.RunOptionsAsync"
     /// path="/returns"/>
-    public override async YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions, CancellationToken cancellationToken)
+    public override async YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions,
+        CancellationToken cancellationToken)
     {
         // If we don't already have enough option views, create more
         while (dialogueOptions.Length > optionViews.Count)
@@ -139,7 +130,8 @@ public class AsyncOptionsView : AsyncDialogueViewBase
         }
 
         // A completion source that represents the selected option.
-        YarnTaskCompletionSource<DialogueOption?> selectedOptionCompletionSource = new YarnTaskCompletionSource<DialogueOption?>();
+        YarnTaskCompletionSource<DialogueOption?> selectedOptionCompletionSource =
+            new YarnTaskCompletionSource<DialogueOption?>();
 
         // A cancellation token source that becomes cancelled when any
         // option item is selected, or when this entire option view is
@@ -178,7 +170,7 @@ public class AsyncOptionsView : AsyncDialogueViewBase
                 continue;
             }
 
-            optionView.gameObject.SetActive(true);
+            optionView.Visible = true;
             optionView.Option = option;
 
             optionView.OnOptionSelected = selectedOptionCompletionSource;
@@ -187,8 +179,9 @@ public class AsyncOptionsView : AsyncDialogueViewBase
             // The first available option is selected by default
             if (optionViewsCreated == 0)
             {
-                optionView.Select();
+                optionView.GrabFocus();
             }
+
             optionViewsCreated += 1;
         }
 
@@ -205,15 +198,15 @@ public class AsyncOptionsView : AsyncDialogueViewBase
                 {
                     if (string.IsNullOrWhiteSpace(lastSeenLine.CharacterName))
                     {
-                        lastLineCharacterNameContainer.SetActive(false);
+                        lastLineCharacterNameContainer.Visible = false;
                     }
                     else
                     {
                         line = lastSeenLine.TextWithoutCharacterName;
-                        lastLineCharacterNameContainer.SetActive(true);
+                        lastLineCharacterNameContainer.Visible = true;
                         if (lastLineCharacterNameText != null)
                         {
-                            lastLineCharacterNameText.text = lastSeenLine.CharacterName;
+                            lastLineCharacterNameText.Text = lastSeenLine.CharacterName;
                         }
                     }
                 }
@@ -224,46 +217,40 @@ public class AsyncOptionsView : AsyncDialogueViewBase
 
                 if (lastLineText != null)
                 {
-                    lastLineText.text = line.Text;
+                    lastLineText.Text = line.Text;
                 }
 
-                lastLineContainer.SetActive(true);
+                lastLineContainer.Visible = true;
             }
             else
             {
-                lastLineContainer.SetActive(false);
+                lastLineContainer.Visible = false;
             }
         }
 
         // fade up the UI now
-        await Effects.FadeAlphaAsync(canvasGroup, 0, 1, 1, cancellationToken);
+        await Effects.FadeAlphaAsync(viewControl, 0, 1, 1, cancellationToken);
 
         // allow interactivity and wait for an option to be selected
-        if (canvasGroup != null)
+        if (IsInstanceValid(viewControl))
         {
-            canvasGroup.interactable = true;
-            canvasGroup.blocksRaycasts = true;
+            viewControl.Visible = true;
         }
 
         // Wait for a selection to be made, or for the task to be completed.
         var completedTask = await selectedOptionCompletionSource.Task;
         completionCancellationSource.Cancel();
 
-        // now one of the option items has been selected so we do cleanup
-        if (canvasGroup != null)
-        {
-            canvasGroup.interactable = false;
-            canvasGroup.blocksRaycasts = false;
-        }
 
         // fade down
-        await Effects.FadeAlphaAsync(canvasGroup, 1, 0, 1, cancellationToken);
+        await Effects.FadeAlphaAsync(viewControl, 1, 0, 1, cancellationToken);
 
         // disabling ALL the options views now
         foreach (var optionView in optionViews)
         {
-            optionView.gameObject.SetActive(false);
+            optionView.Visible = false;
         }
+
         await YarnTask.Yield();
 
         // if we are cancelled we still need to return but we don't want to have a selection, so we return no selected option
@@ -278,18 +265,21 @@ public class AsyncOptionsView : AsyncDialogueViewBase
 
     private AsyncOptionItem CreateNewOptionView()
     {
-        var optionView = Instantiate(optionViewPrefab);
+        if (optionViewPrefab == null)
+        {
+            throw new System.InvalidOperationException($"Can't create new option view: {nameof(optionViewPrefab)} is null");
+        }
 
-        var targetTransform = canvasGroup != null ? canvasGroup.transform : this.transform;
+        var optionView = optionViewPrefab.Instantiate<AsyncOptionItem>();
+
 
         if (optionView == null)
         {
             throw new System.InvalidOperationException($"Can't create new option view: {nameof(optionView)} is null");
         }
 
-        optionView.transform.SetParent(targetTransform.transform, false);
-        optionView.transform.SetAsLastSibling();
-        optionView.gameObject.SetActive(false);
+        viewControl.AddChild(optionView);
+        optionView.Visible = false;
 
         return optionView;
     }

@@ -1,4 +1,4 @@
-#nullable disable
+#nullable enable
 #if TOOLS
 using System;
 using System.Collections;
@@ -664,7 +664,7 @@ public static class YarnProjectEditorUtility
     {
         CompilationResult? compilationResult = CompileStringsOnly(project);
 
-        if (!compilationResult.HasValue)
+        if (compilationResult == null)
         {
             // We only get no value if we have no scripts to work with.
             // In this case, return an empty collection - there's no
