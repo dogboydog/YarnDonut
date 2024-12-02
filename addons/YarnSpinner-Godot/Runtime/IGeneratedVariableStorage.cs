@@ -46,7 +46,7 @@ public static class GeneratedVariableStorageExtensions
         }
         else
         {
-            UnityEngine.Debug.Log($"Failed to get a value of type {typeof(T)} for variable {variableName}.");
+            GD.PushError($"Failed to get a value of type {typeof(T)} for variable {variableName}.");
             return default(T);
         }
     }

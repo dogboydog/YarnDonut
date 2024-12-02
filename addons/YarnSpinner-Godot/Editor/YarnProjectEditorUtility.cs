@@ -96,7 +96,6 @@ public static class YarnProjectEditorUtility
             return;
         }
 
-        ;
         if (string.IsNullOrEmpty(project.ResourcePath))
         {
             return;
@@ -430,7 +429,7 @@ public static class YarnProjectEditorUtility
             IEnumerable<Diagnostic> errors;
             project.ProjectErrors = Array.Empty<YarnProjectError>();
 
-            // We now now compile!
+            // We now compile!
             var scriptAbsolutePaths = sourceScripts.ToList().Where(s => s != null)
                 .Select(ProjectSettings.GlobalizePath).ToList();
             // Store the compiled program
@@ -442,6 +441,8 @@ public static class YarnProjectEditorUtility
                 // job.VariableDeclarations = localDeclarations;
                 job.CompilationType = CompilationJob.Type.FullCompilation;
                 job.Library = library;
+                job.LanguageVersion = project.JSONProject.FileVersion;
+
                 compilationResult = Yarn.Compiler.Compiler.Compile(job);
 
                 errors = compilationResult.Diagnostics.Where(d =>
