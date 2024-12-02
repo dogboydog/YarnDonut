@@ -29,7 +29,7 @@ color = Color(0.00260118, 0.121715, 0.193433, 1)
 
 [node name="GDScriptYarnSpinnerCanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="DialogueRunner" type="Control" parent="GDScriptYarnSpinnerCanvasLayer" node_paths=PackedStringArray("variableStorage", "dialogueViews", "lineProvider")]
+[node name="DialogueRunner" type="Control" parent="GDScriptYarnSpinnerCanvasLayer" node_paths=PackedStringArray("variableStorage", "lineProvider", "dialogueViews")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -40,9 +40,9 @@ mouse_filter = 2
 script = ExtResource("1_1er8s")
 yarnProject = ExtResource("2_15buf")
 variableStorage = NodePath("../InMemoryVariableStorage")
+lineProvider = NodePath("../TextLineProvider")
 dialogueViews = [NodePath("../LineViewAdapter"), NodePath("../OptionsListView")]
 startNode = "GDScriptIntegration"
-lineProvider = NodePath("../TextLineProvider")
 
 [node name="CrossLanguageScriptingExample" type="Control" parent="GDScriptYarnSpinnerCanvasLayer" node_paths=PackedStringArray("dialogue_runner", "logo")]
 layout_mode = 3

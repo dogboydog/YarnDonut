@@ -119,19 +119,7 @@ public abstract partial class LineProviderBehaviour : Godot.Node, ILineProvider
 
     /// <inheritdoc/>
     public abstract string LocaleCode { get; set; }
-
-    /// <summary>
-    /// Called by Unity when the <see cref="LineProviderBehaviour"/> has
-    /// first appeared in the scene.
-    /// </summary>
-    /// <remarks>
-    /// This method is <see langword="public"/> <see langword="virtual"/> to
-    /// allow subclasses to override it.
-    /// </remarks>
-    public virtual void Start()
-    {
-    }
-
+    
     /// <inheritdoc/>
     public abstract void RegisterMarkerProcessor(string attributeName, IAttributeMarkerProcessor markerProcessor);
 

@@ -195,7 +195,7 @@ public partial class DialogueRunner : Godot.Node
     /// Whether the dialogue runner will immediately start running dialogue
     /// after loading.
     /// </summary>
-    [Export] public bool autoStart = false;
+    [Export] public bool autoStart;
 
     /// <summary>
     /// The name of the node that will start running immediately after
@@ -205,7 +205,7 @@ public partial class DialogueRunner : Godot.Node
     /// cref="YarnProject"/>.</remarks>
     /// <seealso cref="YarnProject"/>
     /// <seealso cref="StartDialogue(string)"/>
-    [Export] public string startNode = "Start";
+    [Export] public string startNode;
 
     /// <summary>
     /// If this value is set, when an option is selected, the line contained
@@ -216,7 +216,7 @@ public partial class DialogueRunner : Godot.Node
     /// <remarks>
     /// This allows a Yarn script to
     /// </remarks>
-    public bool runSelectedOptionAsLine = false;
+    [Export] public bool runSelectedOptionAsLine;
 
     /// <summary>
     /// An event that is called when a node starts running.
@@ -334,7 +334,7 @@ public partial class DialogueRunner : Godot.Node
     /// Called by Unity to start running dialogue if <see cref="autoStart"/>
     /// is enabled.
     /// </summary>
-    protected void Start()
+    public override void _Ready()
     {
         if (autoStart)
         {

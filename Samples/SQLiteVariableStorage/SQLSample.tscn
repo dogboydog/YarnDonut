@@ -13,7 +13,6 @@
 yarnProject = ExtResource("2_73843")
 variableStorage = NodePath("../SQLVariableStorage")
 startNode = "SqlSample"
-startAutomatically = true
 
 [node name="LineView" parent="RoundedYarnSpinnerCanvasLayer" index="2"]
 useFadeEffect = true

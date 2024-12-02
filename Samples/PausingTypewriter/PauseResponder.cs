@@ -7,7 +7,7 @@ public partial class PauseResponder : Control
     [Export] public TextureRect face;
     [Export] public Texture2D thinkingFace;
     [Export] public Texture2D talkingFace;
-    [Export] public LineView lineView;
+    [Export] public AsyncLineView lineView;
 
     public override void _Ready()
     {
