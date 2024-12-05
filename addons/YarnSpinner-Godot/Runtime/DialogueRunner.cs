@@ -125,7 +125,7 @@ public partial class DialogueRunner : Godot.Node
     /// <summary>
     /// The object that manages the Yarn variables used by this Dialogue Runner.
     /// </summary>
-    [Export] internal VariableStorageBehaviour? variableStorage;
+    [Export] private VariableStorageBehaviour? variableStorage;
 
     /// <summary>
     /// Gets the <see cref="YarnProject"/> asset that this dialogue runner uses.
@@ -136,6 +136,7 @@ public partial class DialogueRunner : Godot.Node
     /// <summary>
     /// Gets the VariableStorage that this dialogue runner uses to store and
     /// access Yarn variables.
+    /// 
     /// </summary>
     public VariableStorageBehaviour VariableStorage
     {
@@ -311,9 +312,9 @@ public partial class DialogueRunner : Godot.Node
     internal ICommandDispatcher CommandDispatcher { get; private set; }
 
     /// <summary>
-    /// Called by Unity to set up the object.
+    /// Called by Godot to set up the object.
     /// </summary>
-    protected void Awake()
+    public override void _EnterTree()
     {
         var actions = new Actions(this, Dialogue.Library);
         CommandDispatcher = actions;
@@ -376,7 +377,7 @@ public partial class DialogueRunner : Godot.Node
             {
                 while (IsDialogueRunning)
                 {
-                    await YarnTask.Yield();
+                    await YarnTask.NextFrame();
                 }
             }
 
@@ -613,27 +614,32 @@ public partial class DialogueRunner : Godot.Node
                 dialogueView.requestInterrupt = RequestNextLine;
             }
 #pragma warning restore CS0618 // 'construct' is obsolete
-
-            // Tell all of our views to run this line, and give them a
-            // cancellation token they can use to interrupt the line if needed.
-
-            async YarnTask RunLineAndInvokeCompletion(AsyncDialogueViewBase view, LocalizedLine line,
-                LineCancellationToken token)
+            else if (view is AsyncDialogueViewBase asyncView)
             {
-                try
+                // Tell all of our views to run this line, and give them a
+                // cancellation token they can use to interrupt the line if needed.
+
+                async YarnTask RunLineAndInvokeCompletion(AsyncDialogueViewBase view, LocalizedLine line,
+                    LineCancellationToken token)
                 {
-                    // Run the line and wait for it to finish
-                    await view.RunLineAsync(localisedLine, token);
+                    try
+                    {
+                        // Run the line and wait for it to finish
+                        await view.RunLineAsync(localisedLine, token);
+                    }
+                    catch (Exception e)
+                    {
+                        GD.PushError(e, view);
+                    }
                 }
-                catch (System.Exception e)
-                {
-                    GD.PushError(e, view);
-                }
+
+                YarnTask task = RunLineAndInvokeCompletion((AsyncDialogueViewBase) view, localisedLine, metaToken);
+
+                pendingTasks.Add(task);
+            } else if (view.GetScript().Obj != null && view.GetScript().As<Resource>() is GDScript)
+            {
+                // TODO : Duck typing to support GDScript 
             }
-
-            YarnTask task = RunLineAndInvokeCompletion((AsyncDialogueViewBase) view, localisedLine, metaToken);
-
-            pendingTasks.Add(task);
         }
 
         // Wait for all line view tasks to finish delivering the line.

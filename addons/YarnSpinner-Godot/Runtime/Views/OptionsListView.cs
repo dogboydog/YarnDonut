@@ -8,6 +8,7 @@ using Godot;
 namespace YarnSpinnerGodot;
 
 [GlobalClass]
+[Obsolete("Use " + nameof(AsyncOptionsView))]
 public partial class OptionsListView : Node, DialogueViewBase
 {
     [Export] PackedScene optionViewPrefab;

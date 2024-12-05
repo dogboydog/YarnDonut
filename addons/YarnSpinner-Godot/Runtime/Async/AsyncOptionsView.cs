@@ -29,6 +29,12 @@ public partial class AsyncOptionsView : AsyncDialogueViewBase
     [Export] RichTextLabel? lastLineCharacterNameText;
 
     [Export] CanvasItem? lastLineCharacterNameContainer;
+    
+    /// <summary>
+    /// The node that options will be parented to.
+    /// You can use a BoxContainer to automatically lay out your options.
+    /// </summary>
+    [Export] public Godot.Node optionParent;
 
     LocalizedLine? lastSeenLine;
 
@@ -251,7 +257,7 @@ public partial class AsyncOptionsView : AsyncDialogueViewBase
             optionView.Visible = false;
         }
 
-        await YarnTask.Yield();
+        await YarnTask.NextFrame();
 
         // if we are cancelled we still need to return but we don't want to have a selection, so we return no selected option
         if (cancellationToken.IsCancellationRequested)
@@ -278,7 +284,7 @@ public partial class AsyncOptionsView : AsyncDialogueViewBase
             throw new System.InvalidOperationException($"Can't create new option view: {nameof(optionView)} is null");
         }
 
-        viewControl.AddChild(optionView);
+        optionParent.AddChild(optionView);
         optionView.Visible = false;
 
         return optionView;

@@ -8,7 +8,7 @@ namespace YarnSpinnerGodot;
 
 [Serializable]
 [Tool]
-public class LineMetadata
+public class LineMetadata 
 {
 
     public Dictionary<string, LineMetadataTableEntry> lineMetadata =
@@ -65,7 +65,7 @@ public class LineMetadata
     /// </summary>
     /// <param name="lineID">The line ID.</param>
     /// <returns>An array of each piece of metadata if defined, otherwise returns null.</returns>
-    public string[] GetMetadata(string lineID)
+    public string[]? GetMetadata(string lineID)
     {
         if (lineMetadata.ContainsKey(lineID))
         {
@@ -86,7 +86,29 @@ public class LineMetadata
 
         return metadataList;
     }
+    public string? GetShadowLineSource(string lineID)
+    {
+        if (lineMetadata.TryGetValue(lineID, out var metadataString) == false)
+        {
+            // The line has no metadata, so it is not a shadow line.
+            return null;
+        }
 
+        var metadata = metadataString.Metadata;
+
+        foreach (var metadataEntry in metadata)
+        {
+            if (metadataEntry.StartsWith("shadow:") != false)
+            {
+                // This is a shadow line. Return the line ID that it's
+                // shadowing.
+                return "line:" + metadataEntry.Substring("shadow:".Length);
+            }
+        }
+
+        // The line had metadata, but it wasn't a shadow line.
+        return null;
+    }
     public void Clear()
     {
         lineMetadata.Clear();

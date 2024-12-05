@@ -1,10 +1,10 @@
 [gd_scene load_steps=4 format=3 uid="uid://dhnl6qatalt6x"]
 
 [ext_resource type="StyleBox" uid="uid://itxqi5xpilu6" path="res://addons/YarnSpinner-Godot/Scenes/RoundedViewStylebox.tres" id="1_brfok"]
-[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Views/OptionView.cs" id="1_uv0oc"]
-[ext_resource type="StyleBox" uid="uid://cqadffkf802cr" path="res://addons/YarnSpinner-Godot/Scenes/RoundedViewFocusedStylebox.tres" id="2_tuu8c"]
+[ext_resource type="StyleBox" uid="uid://cqadffkf802cr" path="res://addons/YarnSpinner-Godot/Scenes/RoundedViewFocusedStyleBox.tres" id="2_tuu8c"]
+[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Async/AsyncOptionItem.cs" id="3_kb3mh"]
 
-[node name="OptionView" type="Button" node_paths=PackedStringArray("label")]
+[node name="OptionView" type="Button" node_paths=PackedStringArray("text")]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -19,13 +19,15 @@ grow_vertical = 0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 36
-theme_override_styles/normal = ExtResource("1_brfok")
+theme_override_styles/focus = ExtResource("2_tuu8c")
+theme_override_styles/disabled = ExtResource("1_brfok")
 theme_override_styles/hover = ExtResource("1_brfok")
 theme_override_styles/pressed = ExtResource("1_brfok")
-theme_override_styles/disabled = ExtResource("1_brfok")
-theme_override_styles/focus = ExtResource("2_tuu8c")
-script = ExtResource("1_uv0oc")
-label = NodePath("VBoxContainer/RichTextLabel")
+theme_override_styles/normal = ExtResource("1_brfok")
+text = Object(RichTextLabel,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"physics_interpolation_mode":2,"auto_translate_mode":0,"editor_description":"","visible":true,"modulate":Color(1, 1, 1, 1),"self_modulate":Color(1, 1, 1, 1),"show_behind_parent":false,"top_level":false,"clip_children":0,"light_mask":1,"visibility_layer":1,"z_index":0,"z_as_relative":true,"y_sort_enabled":false,"texture_filter":0,"texture_repeat":0,"material":null,"use_parent_material":false,"clip_contents":true,"custom_minimum_size":Vector2(0, 0),"layout_direction":0,"layout_mode":2,"size_flags_horizontal":1,"size_flags_vertical":6,"size_flags_stretch_ratio":1.0,"localize_numeral_system":true,"tooltip_text":"","focus_neighbor_left":NodePath(""),"focus_neighbor_top":NodePath(""),"focus_neighbor_right":NodePath(""),"focus_neighbor_bottom":NodePath(""),"focus_next":NodePath(""),"focus_previous":NodePath(""),"focus_mode":0,"mouse_filter":2,"mouse_force_pass_scroll_events":true,"mouse_default_cursor_shape":0,"shortcut_context":null,"theme":null,"theme_type_variation":&"","theme_override_colors/table_border":Color(0, 0, 0, 1),"theme_override_colors/table_even_row_bg":Color(0, 0, 0, 1),"theme_override_colors/table_odd_row_bg":Color(0, 0, 0, 1),"theme_override_colors/default_color":Color(0, 0, 0, 1),"theme_override_colors/font_selected_color":Color(0, 0, 0, 1),"theme_override_colors/selection_color":Color(0, 0, 0, 1),"theme_override_colors/font_outline_color":Color(0, 0, 0, 1),"theme_override_colors/font_shadow_color":Color(0, 0, 0, 1),"theme_override_font_sizes/bold_italics_font_size":24,"theme_override_font_sizes/italics_font_size":24,"theme_override_font_sizes/mono_font_size":24,"theme_override_font_sizes/normal_font_size":24,"theme_override_font_sizes/bold_font_size":24,"bbcode_enabled":true,"text":"[center]Option View[/center]","fit_content":true,"scroll_active":false,"scroll_following":false,"autowrap_mode":3,"tab_size":4,"context_menu_enabled":false,"shortcut_keys_enabled":true,"custom_effects":[],"meta_underlined":true,"hint_underlined":true,"threaded":false,"progress_bar_delay":1000,"selection_enabled":false,"deselect_on_focus_loss_enabled":true,"drag_and_drop_selection_enabled":true,"visible_characters":-1,"visible_characters_behavior":0,"visible_ratio":1.0,"text_direction":0,"language":"","structured_text_bidi_override":0,"structured_text_bidi_override_options":[],"script":null)
+
+script = ExtResource("3_kb3mh")
+text = NodePath("VBoxContainer/RichTextLabel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -41,19 +43,19 @@ alignment = 1
 layout_mode = 2
 size_flags_vertical = 6
 mouse_filter = 2
+theme_override_colors/table_border = Color(0, 0, 0, 1)
+theme_override_colors/table_even_row_bg = Color(0, 0, 0, 1)
+theme_override_colors/table_odd_row_bg = Color(0, 0, 0, 1)
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 theme_override_colors/font_selected_color = Color(0, 0, 0, 1)
 theme_override_colors/selection_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_colors/table_odd_row_bg = Color(0, 0, 0, 1)
-theme_override_colors/table_even_row_bg = Color(0, 0, 0, 1)
-theme_override_colors/table_border = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/bold_italics_font_size = 24
+theme_override_font_sizes/italics_font_size = 24
+theme_override_font_sizes/mono_font_size = 24
 theme_override_font_sizes/normal_font_size = 24
 theme_override_font_sizes/bold_font_size = 24
-theme_override_font_sizes/italics_font_size = 24
-theme_override_font_sizes/bold_italics_font_size = 24
-theme_override_font_sizes/mono_font_size = 24
 bbcode_enabled = true
 text = "[center]Option View[/center]"
 fit_content = true

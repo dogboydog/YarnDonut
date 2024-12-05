@@ -42,6 +42,9 @@ lastLineContainer = NodePath("../LineView/ViewControl")
 lastLineCharacterNameText = NodePath("../LineView/ViewControl/CharacterNameText")
 lastLineCharacterNameContainer = NodePath("../LineView/ViewControl/CharacterNameText")
 
+[node name="TextLineProvider" parent="YarnSpinnerCanvasLayer" index="5"]
+YarnProject = ExtResource("2_j3415")
+
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15

@@ -12,14 +12,14 @@
 [node name="DialogueRunner" parent="RoundedYarnSpinnerCanvasLayer" index="0" node_paths=PackedStringArray("variableStorage")]
 yarnProject = ExtResource("2_73843")
 variableStorage = NodePath("../SQLVariableStorage")
+autoStart = true
 startNode = "SqlSample"
 
 [node name="LineView" parent="RoundedYarnSpinnerCanvasLayer" index="2"]
 useFadeEffect = true
-fadeInTime = 0.2
 
-[node name="OptionsListView" parent="RoundedYarnSpinnerCanvasLayer" index="3"]
-fadeTime = 0.2
+[node name="TextLineProvider" parent="RoundedYarnSpinnerCanvasLayer" index="5"]
+YarnProject = ExtResource("2_73843")
 
 [node name="ColorRect" type="ColorRect" parent="RoundedYarnSpinnerCanvasLayer"]
 z_index = -6

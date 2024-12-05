@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -23,7 +22,7 @@ public partial struct YarnTask
 
     public static implicit operator YarnTask(Task task)
     {
-        return new YarnTask { Task = task };
+        return new YarnTask {Task = task};
     }
 
     readonly public async void Forget()
@@ -42,7 +41,7 @@ public partial struct YarnTask
     {
         while (!token.IsCancellationRequested)
         {
-            await Task.Yield();
+            await DefaultActions.Wait(0.01);
         }
     }
 
@@ -61,23 +60,25 @@ public partial struct YarnTask
         return Task.Delay(timeSpan, token);
     }
 
-    public static partial async YarnTask WaitUntil(System.Func<bool> predicate, System.Threading.CancellationToken token)
+    public static partial async YarnTask WaitUntil(System.Func<bool> predicate,
+        System.Threading.CancellationToken token)
     {
         while (predicate() == false)
         {
-            await Task.Yield();
+            await NextFrame();
         }
     }
-    
+
     public static partial async YarnTask Yield()
     {
-        await Task.Yield();
+        await NextFrame();
     }
 
     public static partial YarnTask WhenAll(params YarnTask[] tasks)
     {
-        return WhenAll((IEnumerable<YarnTask>)tasks);
+        return WhenAll((IEnumerable<YarnTask>) tasks);
     }
+
     public static partial async YarnTask WhenAll(IEnumerable<YarnTask> tasks)
     {
         // Don't love this allocation here; try and find a better approach
@@ -88,7 +89,6 @@ public partial struct YarnTask
         }
 
         await Task.WhenAll(taskList.ToArray());
-
     }
 
     public static async partial YarnTask<T[]> WhenAll<T>(params YarnTask<T>[] tasks)
@@ -103,8 +103,8 @@ public partial struct YarnTask
         {
             uniTasks.Add(task);
         }
-        return await Task.WhenAll(uniTasks);
 
+        return await Task.WhenAll(uniTasks);
     }
 
     public readonly async partial YarnTask<bool> SuppressCancellationThrow()
@@ -117,8 +117,17 @@ public partial struct YarnTask
         {
             return true;
         }
-        return false;
 
+        return false;
+    }
+
+    /// <summary>
+    /// Wait for the next process frame.
+    /// </summary>
+    public static async Task NextFrame()
+    {
+        var mainLoop = (SceneTree) Engine.GetMainLoop();
+        await (mainLoop).ToSignal(mainLoop, "process_frame");
     }
 
 #if USE_ADDRESSABLES
@@ -132,7 +141,6 @@ public partial struct YarnTask
             return await operationHandle.Task;
         }
 #endif
-
 }
 
 public partial struct YarnTask<T>
@@ -150,7 +158,7 @@ public partial struct YarnTask<T>
 
     public static implicit operator YarnTask<T>(Task<T> task)
     {
-        return new YarnTask<T> { Task = task };
+        return new YarnTask<T> {Task = task};
     }
 
     public static partial YarnTask<T> FromResult(T value)
@@ -158,7 +166,9 @@ public partial struct YarnTask<T>
         return Task<T>.FromResult(value);
     }
 
-    readonly public void Forget() { }
+    readonly public void Forget()
+    {
+    }
 }
 
 public partial class YarnTaskCompletionSource
@@ -169,10 +179,12 @@ public partial class YarnTaskCompletionSource
     {
         return taskCompletionSource.TrySetResult(1);
     }
+
     public partial bool TrySetException(System.Exception exception)
     {
         return taskCompletionSource.TrySetException(exception);
     }
+
     public partial bool TrySetCanceled()
     {
         return taskCompletionSource.TrySetCanceled();
@@ -180,6 +192,7 @@ public partial class YarnTaskCompletionSource
 
     public YarnTask Task => taskCompletionSource.Task;
 }
+
 public partial class YarnTaskCompletionSource<T>
 {
     private TaskCompletionSource<T> taskCompletionSource = new TaskCompletionSource<T>();
@@ -188,10 +201,12 @@ public partial class YarnTaskCompletionSource<T>
     {
         return taskCompletionSource.TrySetResult(value);
     }
+
     public partial bool TrySetException(System.Exception exception)
     {
         return taskCompletionSource.TrySetException(exception);
     }
+
     public partial bool TrySetCanceled()
     {
         return taskCompletionSource.TrySetCanceled();
@@ -199,4 +214,3 @@ public partial class YarnTaskCompletionSource<T>
 
     public YarnTask<T> Task => taskCompletionSource.Task;
 }
-

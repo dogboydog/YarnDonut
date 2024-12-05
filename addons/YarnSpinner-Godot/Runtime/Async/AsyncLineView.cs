@@ -47,7 +47,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// signal that the current line should finish up.</para>
     /// </remarks>
     /// <seealso cref="autoAdvance"/>
-    public Button? continueButton;
+    [Export] public Button? continueButton;
 
     /// <summary>
     /// Controls whether the <see cref="lineText"/> object will show the
@@ -247,7 +247,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// <summary>
     /// Called by Unity on first frame.
     /// </summary>
-    protected void Awake()
+    public override void _Ready()
     {
         if (useTypewriterEffect)
         {
@@ -421,7 +421,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
         }
 
         // the final bit of clean up is to remove the cancel listener from the button
-        if (continueButton != null)
+        if (IsInstanceValid(continueButton))
         {
             continueButton.Disconnect(BaseButton.SignalName.Pressed, Callable.From(OnContinuePressed));
         }
