@@ -435,7 +435,7 @@ namespace YarnSpinnerGodot
             //
             //     nameSyntax = SyntaxFactory.GenericName(
             //         SyntaxFactory.Identifier(registrationMethodName),
-            //         // SyntaxFactory.TypeArgumentList(SyntaxFactory.SeparatedList(typeArguments))
+            //         SyntaxFactory.TypeArgumentList(SyntaxFactory.SeparatedList(typeArguments))
             //     );
             // }
             // else
