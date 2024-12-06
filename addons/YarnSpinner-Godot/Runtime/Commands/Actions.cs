@@ -562,7 +562,7 @@ public class Actions : ICommandDispatcher
         else
         {
 #if YARN_SOURCE_GENERATION_DEBUG_LOGGING
-                Debug.Log($"Registering command {commandName}");
+                GD.Print($"Registering command {commandName}");
 #endif
             _commands.Add(commandName, new CommandRegistration(commandName, handler));
         }
@@ -576,7 +576,7 @@ public class Actions : ICommandDispatcher
             return;
         }
 #if YARN_SOURCE_GENERATION_DEBUG_LOGGING
-            Debug.Log($"Registering command {name} from method {implementation.Method.DeclaringType.FullName}.{implementation.Method.Name}");
+            GD.Print($"Registering command {name} from method {implementation.Method.DeclaringType.FullName}.{implementation.Method.Name}");
 #endif
 
         Library.RegisterFunction(name, implementation);

@@ -21,7 +21,7 @@ using File = System.IO.File;
 using FileAccess = System.IO.FileAccess;
 using Path = System.IO.Path;
 
-namespace YarnSpinnerGodot.Editor;
+namespace YarnSpinnerGodot;
 
 [Tool]
 public static class YarnProjectEditorUtility

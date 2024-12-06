@@ -7,7 +7,7 @@ using System.Text.Json;
 using Godot;
 
 #if TOOLS
-using YarnSpinnerGodot.Editor;
+using YarnSpinnerGodot;
 #endif
 
 namespace YarnSpinnerGodot;

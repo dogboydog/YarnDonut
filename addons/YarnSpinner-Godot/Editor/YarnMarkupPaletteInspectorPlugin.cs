@@ -2,9 +2,9 @@
 #if TOOLS
 using System;
 using Godot;
-using YarnSpinnerGodot.Editor.UI;
+using YarnSpinnerGodot;
 
-namespace YarnSpinnerGodot.Editor;
+namespace YarnSpinnerGodot;
 
 /// <summary>
 /// Custom inspector for <see cref="MarkupPalette"/> that allows the user

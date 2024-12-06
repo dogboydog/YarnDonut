@@ -8,9 +8,9 @@ using Godot;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Yarn;
 using Yarn.Compiler;
-using YarnSpinnerGodot.Editor.UI;
+using YarnSpinnerGodot;
 
-namespace YarnSpinnerGodot.Editor;
+namespace YarnSpinnerGodot;
 
 [Tool]
 public partial class YarnProjectInspectorPlugin : EditorInspectorPlugin

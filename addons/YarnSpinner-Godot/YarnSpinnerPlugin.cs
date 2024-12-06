@@ -9,7 +9,7 @@ using System.Runtime.Serialization.Json;
 using System.Text.Json;
 using Godot;
 using Yarn.Compiler;
-using YarnSpinnerGodot.Editor;
+using YarnSpinnerGodot;
 using Array = Godot.Collections.Array;
 
 namespace YarnSpinnerGodot;

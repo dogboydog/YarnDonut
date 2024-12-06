@@ -42,6 +42,7 @@ public partial class OptionView : BaseButton
             {
                 label.Text =
                     $"[center]{LineView.PaletteMarkedUpText(line, palette)}[/center]";
+                
             }
             else
             {

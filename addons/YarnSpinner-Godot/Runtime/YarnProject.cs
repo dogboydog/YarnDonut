@@ -12,7 +12,7 @@ using Yarn;
 using Yarn.Compiler;
 using Array = System.Array;
 #if TOOLS
-using YarnSpinnerGodot.Editor;
+using YarnSpinnerGodot;
 #endif
 
 namespace YarnSpinnerGodot;

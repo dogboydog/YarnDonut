@@ -1,7 +1,7 @@
 #nullable disable
 using Godot;
 
-namespace YarnSpinnerGodot.Editor.UI;
+namespace YarnSpinnerGodot;
 
 /// <summary>
 /// Color pickup button used in the markup palette inspector.

@@ -1,7 +1,7 @@
 #nullable disable
 using Godot;
 
-namespace YarnSpinnerGodot.Editor.UI;
+namespace YarnSpinnerGodot;
 
 /// <summary>
 /// Inspector UI component to delete a tag from a
