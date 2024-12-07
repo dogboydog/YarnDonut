@@ -9,7 +9,7 @@ using Godot;
 namespace YarnSpinnerGodot;
 
 /// <summary>
-/// A Dialogue View that presents lines of dialogue, using Unity UI
+/// A Dialogue View that presents lines of dialogue, using Godot UI
 /// elements.
 /// </summary>
 public partial class AsyncLineView : AsyncDialogueViewBase
@@ -195,7 +195,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     public delegate void onCharacterTypedEventHandler();
 
     /// <summary>
-    /// A Unity Event that is called when a pause inside of the typewriter effect occurs.
+    /// A signal that is called when a pause inside of the typewriter effect occurs.
     /// </summary>
     /// <remarks>
     /// This event is only invoked when <see cref="useTypewriterEffect"/> is <see langword="true"/>.

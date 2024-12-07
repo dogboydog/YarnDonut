@@ -44,42 +44,7 @@ public partial class LineAdvancer : AsyncDialogueViewBase
     /// will be cancelled.
     /// </remarks>
     private int numberOfAdvancesThisLine = 0;
-
-    /// <summary>
-    /// The type of input that this line advancer responds to.
-    /// </summary>
-    public enum InputMode
-    {
-        /// <summary>
-        /// The line advancer responds to Input Actions from the <a
-        /// href="https://docs.unity3d.com/Packages/com.unity.inputsystem@latest">Unity
-        /// Input System</a>.
-        /// </summary>
-        InputActions,
-
-        /// <summary>
-        /// The line advancer responds to keypresses on the keyboard.
-        /// </summary>
-        KeyCodes,
-
-        /// <summary>
-        /// The line advancer does not respond to any input.
-        /// </summary>
-        /// <remarks>When a line advancer's <see cref="inputMode"/> is set
-        /// to <see cref="None"/>, call the <see
-        /// cref="RequestLineHurryUp"/>, <see cref="RequestNextLine"/> and
-        /// <see cref="RequestDialogueCancellation"/> methods directly from
-        /// your code to control line advancement.</remarks>
-        None,
-
-        /// <summary>
-        /// The line advancer responds to input from the legacy <a
-        /// href="https://docs.unity3d.com/Manual/class-InputManager.html">Input
-        /// Manager</a>.
-        /// </summary>
-        LegacyInputAxes,
-    }
-
+    
     /// <summary>
     /// The legacy Input Axis that triggers a request to advance to the next
     /// piece of content.

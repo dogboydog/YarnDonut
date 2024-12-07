@@ -7,12 +7,12 @@
     <!--Turn on Nullable so that we can fail the build if there are any incompatible scripts-->
     <Nullable>enable</Nullable>
     <!-- Include this when debugging source generation -->
-    <DefineConstants>YARN_SOURCE_GENERATION_DEBUG_LOGGING</DefineConstants>
+    <DefineConstants>$(DefineConstants);YARN_SOURCE_GENERATION_DEBUG_LOGGING</DefineConstants>
 
     <!-- Uncomment the following two lines if you want to see the generated 
     Command/Function C# file on disk for debugging purposes. -->
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+<!--    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>-->
+<!--    <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>-->
 
   </PropertyGroup>
   <ItemGroup>

@@ -62,7 +62,7 @@ public partial class OptionView : BaseButton
     /// Handler for when the option view is pressed. Will mark the option
     /// associated with this view as the one that was selected, to proceed
     /// with the dialogue.
-    /// </summary>
+    /// </summary> 
     public void InvokeOptionSelected()
     {
         // We only want to invoke this once, because it's an error to

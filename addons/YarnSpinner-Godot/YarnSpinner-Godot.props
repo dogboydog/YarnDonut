@@ -20,8 +20,8 @@
         <Reference Include="YarnSpinner.Compiler" >
             <HintPath>addons\YarnSpinner-Godot\Runtime\DLLs\YarnSpinner.Compiler.dll</HintPath>
         </Reference>
-        <ProjectReference Include="addons\YarnSpinner-Godot\SourceGenerator\YarnSpinnerGodotSourceGenerator.csproj" 
-                          ReferenceOutputAssembly="false"
-                          OutputItemType="analyzer" />
+<!--        <ProjectReference Include="addons\YarnSpinner-Godot\SourceGenerator\YarnSpinnerGodotSourceGenerator.csproj" -->
+<!--                          ReferenceOutputAssembly="false"-->
+<!--                          OutputItemType="analyzer" />-->
     </ItemGroup>
 </Project>

@@ -4,7 +4,8 @@
 extends Control
 @export var dialogue_runner: Node  
 @export var logo: Control 
-@export var yarn_project: YarnProject
+@export var yarn_project: Resource
+
 func _ready() -> void:
 	dialogue_runner.AddCommandHandlerCallable("show_logo", show_logo)
 	dialogue_runner.onDialogueComplete.connect(on_dialogue_complete)
