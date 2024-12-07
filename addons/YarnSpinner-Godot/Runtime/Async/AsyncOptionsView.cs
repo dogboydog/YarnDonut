@@ -71,6 +71,11 @@ public partial class AsyncOptionsView : AsyncDialogueViewBase
             viewControl.Visible = false;
         }
 
+        if (optionParent is Node2D parent2D && IsInstanceValid(parent2D))
+        {
+            parent2D.Visible = false;
+        }
+
         if (!IsInstanceValid(lastLineContainer) && lastLineText != null)
         {
             lastLineContainer = lastLineText;
@@ -232,15 +237,24 @@ public partial class AsyncOptionsView : AsyncDialogueViewBase
                 lastLineContainer.Visible = false;
             }
         }
-
-        // fade up the UI now
-        await Effects.FadeAlphaAsync(viewControl, 0, 1, 1, cancellationToken);
-
         // allow interactivity and wait for an option to be selected
+
         if (IsInstanceValid(viewControl))
         {
             viewControl.Visible = true;
         }
+
+        var parent2D = optionParent as Node2D;
+        if (IsInstanceValid(parent2D))
+        {
+            parent2D.Visible = true;
+        }
+
+
+
+        // fade up the UI now
+        await Effects.FadeAlphaAsync(viewControl, 0, 1, 1, cancellationToken);
+
 
         // Wait for a selection to be made, or for the task to be completed.
         var completedTask = await selectedOptionCompletionSource.Task;
@@ -256,9 +270,19 @@ public partial class AsyncOptionsView : AsyncDialogueViewBase
             optionView.Visible = false;
         }
 
+        if (IsInstanceValid(viewControl))
+        {
+            viewControl.Visible = false;
+        }
+
+        if (IsInstanceValid(parent2D))
+        {
+            parent2D.Visible = false;
+        }
+
         await YarnTask.NextFrame();
 
-        // if we are cancelled we still need to return but we don't want to have a selection, so we return no selected option
+        // if we are cancelled we still need to return, but we don't want to have a selection, so we return no selected option
         if (cancellationToken.IsCancellationRequested)
         {
             return await DialogueRunner.NoOptionSelected;

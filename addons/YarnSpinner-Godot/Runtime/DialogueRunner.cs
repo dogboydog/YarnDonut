@@ -84,6 +84,12 @@ public struct LineCancellationToken
 
 public partial class DialogueRunner : Godot.Node
 {
+    static DialogueRunner()
+    {
+        // See comments on below method - trigger action registration from code generation. 
+        YarnSpinnerGodotGenerated.ActionRegistration.Touch();
+    }
+
     private Dialogue? dialogue;
 
     /// <summary>
@@ -289,7 +295,7 @@ public partial class DialogueRunner : Godot.Node
     /// </summary>
     public IEnumerable<AsyncDialogueViewBase?> DialogueViews
     {
-        get => dialogueViews.ToList().ConvertAll(v => (AsyncDialogueViewBase?)v);
+        get => dialogueViews.ToList().ConvertAll(v => (AsyncDialogueViewBase?) v);
     }
 
     /// <summary>
@@ -444,7 +450,7 @@ public partial class DialogueRunner : Godot.Node
             {
                 try
                 {
-                    await ((AsyncDialogueViewBase)view).OnDialogueCompleteAsync();
+                    await ((AsyncDialogueViewBase) view).OnDialogueCompleteAsync();
                 }
                 catch (System.Exception e)
                 {
@@ -494,7 +500,7 @@ public partial class DialogueRunner : Godot.Node
                 break;
             case CommandDispatchResult.StatusType.NoTargetFound:
                 GD.PushError(
-                    $"Can't call command {commandName}: failed to find a game object named {parts.ElementAtOrDefault(1)}",
+                    $"Can't call command {commandName}: failed to find a node named {parts.ElementAtOrDefault(1)}",
                     this);
                 break;
             case CommandDispatchResult.StatusType.TargetMissingComponent:
@@ -506,8 +512,20 @@ public partial class DialogueRunner : Godot.Node
                 break;
             case CommandDispatchResult.StatusType.CommandUnknown:
                 // Attempt a last-ditch dispatch by emitting our 'onUnhandledCommand'
-                // signal
-                if (GetSignalConnectionList(SignalName.onUnhandledCommand).Count > 0)
+                // signal. Even with nothing connected, it seems there's a default handler registered as a fallback.
+                // ignore that one with a Linq expression.
+                List<Dictionary> connections = GetSignalConnectionList(SignalName.onUnhandledCommand).Where(
+                    dict =>
+                    {
+                        if (!dict.ContainsKey("callable"))
+                        {
+                            return false;
+                        }
+
+                        var handlerCallable = dict["callable"].AsCallable();
+                        return !(handlerCallable.Target == this && handlerCallable.Delegate == null);
+                    }).ToList();
+                if (connections.Count > 0)
                 {
                     // We can emit the signal!
                     EmitSignal(SignalName.onUnhandledCommand, command.Text);
@@ -634,7 +652,7 @@ public partial class DialogueRunner : Godot.Node
                     }
                 }
 
-                YarnTask task = RunLineAndInvokeCompletion((AsyncDialogueViewBase)view, localisedLine, metaToken);
+                YarnTask task = RunLineAndInvokeCompletion((AsyncDialogueViewBase) view, localisedLine, metaToken);
 
                 pendingTasks.Add(task);
             }
@@ -721,7 +739,7 @@ public partial class DialogueRunner : Godot.Node
         var pendingTasks = new List<YarnTask>();
         foreach (var view in this.dialogueViews)
         {
-            pendingTasks.Add(WaitForOptionsView((AsyncDialogueViewBase?)view));
+            pendingTasks.Add(WaitForOptionsView((AsyncDialogueViewBase?) view));
         }
 
         await YarnTask.WhenAll(pendingTasks);
@@ -929,6 +947,6 @@ public partial class DialogueRunner : Godot.Node
     /// </summary>
     public static Godot.Node FindChild(string name)
     {
-        return ((SceneTree)Engine.GetMainLoop()).Root.FindChild(name, true, false);
+        return ((SceneTree) Engine.GetMainLoop()).Root.FindChild(name, true, false);
     }
 }

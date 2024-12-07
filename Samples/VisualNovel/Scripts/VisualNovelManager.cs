@@ -65,7 +65,7 @@ public partial class VisualNovelManager : Node
         ((TextLineProvider)_dialogueRunner.lineProvider).textLanguageCode = locale;
         _dialogueStartUi.Visible = false;
         _dialogueCanvas.Visible = true;
-        _dialogueRunner.StartDialogue(_dialogueRunner.startNode);
+        _dialogueRunner.StartDialogue("Start");
     }
 
     private void OnDialogueComplete()

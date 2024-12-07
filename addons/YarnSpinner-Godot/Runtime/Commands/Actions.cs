@@ -96,19 +96,19 @@ public class Actions : ICommandDispatcher
             {
                 DynamicallyFindsTarget = false;
             }
-            else if (typeof(Component).IsAssignableFrom(method.DeclaringType))
+            else if (typeof(Node).IsAssignableFrom(method.DeclaringType))
             {
-                // This method is an instance method on a Component (or one
+                // This method is an instance method on a Node (or one
                 // of its subclasses). We'll dynamically find a target to
                 // invoke the method on at runtime.
                 DynamicallyFindsTarget = true;
             }
             else
             {
-                // The instance method's declaring type is not a Component,
+                // The instance method's declaring type is not a Node,
                 // which means we won't be able to look up a target.
                 throw new ArgumentException(
-                    $"Cannot register method {GetFullMethodName(method)} as a command: instance methods must declared on {nameof(Component)} classes.");
+                    $"Cannot register method {GetFullMethodName(method)} as a command: instance methods must declared on {nameof(Node)} classes.");
             }
 
             Name = name;

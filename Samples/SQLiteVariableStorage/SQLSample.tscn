@@ -9,30 +9,14 @@
 [node name="RoundedYarnSpinnerCanvasLayer" parent="." instance=ExtResource("1_8wwci")]
 
 [node name="DialogueRunner" parent="RoundedYarnSpinnerCanvasLayer" index="0" node_paths=PackedStringArray("dialogueViews")]
-yarnProject = null
 dialogueViews = []
-autoStart = null
-startNode = null
-runSelectedOptionAsLine = null
+startNode = ""
 
 [node name="LineView" parent="RoundedYarnSpinnerCanvasLayer" index="2"]
-showCharacterNameInLineView = null
-useFadeEffect = null
-fadeUpDuration = null
-fadeDownDuration = null
-autoAdvance = null
-autoAdvanceDelay = null
-useTypewriterEffect = null
-typewriterEffectSpeed = null
+useFadeEffect = true
 
 [node name="OptionsListView" parent="RoundedYarnSpinnerCanvasLayer" index="3"]
 optionViewPrefab = null
-showsLastLine = null
-showUnavailableOptions = null
-
-[node name="TextLineProvider" parent="RoundedYarnSpinnerCanvasLayer" index="5"]
-textLanguageCode = null
-YarnProject = null
 
 [node name="ColorRect" type="ColorRect" parent="RoundedYarnSpinnerCanvasLayer"]
 z_index = -6

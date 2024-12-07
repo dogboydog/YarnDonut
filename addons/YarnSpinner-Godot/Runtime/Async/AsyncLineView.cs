@@ -354,6 +354,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
         if (continueButton != null)
         {
             continueButton.Connect(BaseButton.SignalName.Pressed, continueHandler);
+            continueButton.Disabled = false;
         }
 
         // letting every temporal processor know that fade up (if set) is about to begin
@@ -430,7 +431,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
         // if we are set to autoadvance how long do we hold for before continuing?
         if (autoAdvance)
         {
-            await YarnTask.Delay((int)(autoAdvanceDelay * 1000), token.NextLineToken);
+            await YarnTask.Delay((int) (autoAdvanceDelay * 1000), token.NextLineToken);
         }
         else
         {
@@ -454,6 +455,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
         if (IsInstanceValid(continueButton))
         {
             continueButton.Disconnect(BaseButton.SignalName.Pressed, Callable.From(OnContinuePressed));
+            continueButton.Disabled = true;
         }
     }
 
@@ -677,7 +679,7 @@ public sealed partial class TypewriterHandler : TemporalMarkupHandler
         float timePoint = accumulatedPauses;
         if (lettersPerSecond > 0)
         {
-            timePoint += (float)currentCharacterIndex * SecondsPerLetter;
+            timePoint += (float) currentCharacterIndex * SecondsPerLetter;
         }
 
         await YarnTask.WaitUntil(() => accumulatedTime >= timePoint, cancellationToken);

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 #nullable enable
 
 namespace YarnSpinnerGodot
@@ -115,11 +116,16 @@ namespace YarnSpinnerGodot
             var namespaceDecl = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(@namespace));
 
             var classDeclaration = SyntaxFactory.ClassDeclaration(className);
-            classDeclaration = classDeclaration.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
+            classDeclaration = classDeclaration.WithModifiers(
+                TokenList(
+                    new[]{
+                        Token(SyntaxKind.PublicKeyword),
+                        Token(SyntaxKind.PartialKeyword)}
+            ));
             classDeclaration = classDeclaration.AddAttributeLists(GeneratedCodeAttributeList);
 
             MethodDeclarationSyntax registrationMethod = GenerateRegistrationMethod(actions);
-            MethodDeclarationSyntax initializationMethod = GenerateInitialisationMethod();
+            ConstructorDeclarationSyntax initializationMethod = GenerateInitialisationMethod();
 
             classDeclaration = classDeclaration.AddMembers(
                 initializationMethod,
@@ -132,54 +138,33 @@ namespace YarnSpinnerGodot
             return namespaceDecl.NormalizeWhitespace().ToFullString();
         }
 
-        private static MethodDeclarationSyntax GenerateInitialisationMethod()
+        private static ConstructorDeclarationSyntax GenerateInitialisationMethod()
         {
-            return SyntaxFactory.MethodDeclaration(
-                    SyntaxFactory.PredefinedType(
-                        SyntaxFactory.Token(SyntaxKind.VoidKeyword)
-                    ),
-                    SyntaxFactory.Identifier(initialisationMethodName)
-                )
-                .WithAttributeLists(
-                    SyntaxFactory.List(
-                        new AttributeListSyntax[]
-                        {
-                        }
-                    )
-                )
+            return ConstructorDeclaration(
+                    Identifier("ActionRegistration"))
                 .WithModifiers(
-                    SyntaxFactory.TokenList(
-                        new[]
-                        {
-                            SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                            SyntaxFactory.Token(SyntaxKind.StaticKeyword)
-                        }
-                    )
-                )
+                    TokenList(
+                        Token(SyntaxKind.StaticKeyword)))
                 .WithBody(
-                    SyntaxFactory.Block(
-                        SyntaxFactory.SingletonList<StatementSyntax>(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
+                    Block(
+                        SingletonList<StatementSyntax>(
+                            ExpressionStatement(
+                                InvocationExpression(
+                                        MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ParseTypeName("global::YarnSpinnerGodot.Actions"),
-                                            SyntaxFactory.IdentifierName("AddRegistrationMethod")
-                                        )
-                                    )
+                                            MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                AliasQualifiedName(
+                                                    IdentifierName(
+                                                        Token(SyntaxKind.GlobalKeyword)),
+                                                    IdentifierName("YarnSpinnerGodot")),
+                                                IdentifierName("Actions")),
+                                            IdentifierName("AddRegistrationMethod")))
                                     .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.IdentifierName(registrationMethodName)
-                                                )
-                                            )
-                                        )
-                                    )
-                            )
-                        )
-                    )
-                )
+                                        ArgumentList(
+                                            SingletonSeparatedList<ArgumentSyntax>(
+                                                Argument(
+                                                        IdentifierName(registrationMethodName)))))))))
                 .NormalizeWhitespace();
         }
 
