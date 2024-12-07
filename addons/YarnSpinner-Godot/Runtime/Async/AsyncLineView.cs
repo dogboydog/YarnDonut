@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Yarn.Markup;
 #nullable enable
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Godot;
 
@@ -181,6 +182,19 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// </summary>
     [Export] public int typewriterEffectSpeed = 60;
 
+    /// <summary>
+    /// If enabled, matched pairs of the characters '<' and `>`  will be replaced by
+    /// [ and ] respectively, so that you can write, for example, 
+    /// writing <b>my text</b> in your yarn script would be converted to
+    /// [b]my text[/b] at runtime to take advantage of the RichTextLabel's
+    /// BBCode feature. Turning this feature on, would prevent you from using the characters
+    /// '<' or '>' in your dialogue.
+    /// If you need a more advanced or nuanced way to use
+    /// BBCode in your yarn scripts, it's recommended to implement your own custom
+    /// dialogue view. 
+    /// https://docs.godotengine.org/en/stable/tutorials/ui/bbcode_in_richtextlabel.html
+    /// </summary>
+    [Export] public bool ConvertHTMLToBBCode;
 
     /// <summary>
     /// A signal that is emitted each time a character is revealed
@@ -205,7 +219,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     public delegate void onPauseStartedEventHandler();
 
     /// <summary>
-    /// A Unity Event that is called when a pause inside of the typewriter effect finishes and the typewriter has started once again.
+    /// A signal that is called when a pause inside of the typewriter effect finishes and the typewriter has started once again.
     /// </summary>
     /// <remarks>
     /// This event is only invoked when <see cref="useTypewriterEffect"/> is <see langword="true"/>.
@@ -227,7 +241,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     {
         if (IsInstanceValid(viewControl))
         {
-            viewControl.Visible = true;
+            viewControl.Visible = false;
         }
 
         return YarnTask.CompletedTask;
@@ -244,11 +258,14 @@ public partial class AsyncLineView : AsyncDialogueViewBase
         return YarnTask.CompletedTask;
     }
 
-    /// <summary>
-    /// Called by Unity on first frame.
-    /// </summary>
+
     public override void _Ready()
     {
+        if (IsInstanceValid(viewControl))
+        {
+            viewControl.Visible = false;
+        }
+
         if (useTypewriterEffect)
         {
             typewriter = new TypewriterHandler();
@@ -263,7 +280,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
             characterNameContainer = characterNameText;
         }
 
-        if (dialogueRunner == null)
+        if (!IsInstanceValid(dialogueRunner))
         {
             // If we weren't provided with a dialogue runner at design time, try to find one now
             dialogueRunner = DialogueRunner.FindChild(nameof(DialogueRunner)) as DialogueRunner;
@@ -272,6 +289,19 @@ public partial class AsyncLineView : AsyncDialogueViewBase
                 GD.PushWarning(
                     $"{nameof(AsyncLineView)} failed to find a dialogue runner! Please ensure that a {nameof(DialogueRunner)} is present, or set the {nameof(dialogueRunner)} property in the Inspector.",
                     this);
+            }
+        }
+
+        if (ConvertHTMLToBBCode)
+        {
+            if (characterNameText != null)
+            {
+                characterNameText.BbcodeEnabled = true;
+            }
+
+            if (lineText != null)
+            {
+                lineText.BbcodeEnabled = true;
             }
         }
     }
@@ -318,7 +348,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
         }
 
         lineText.Text = text.Text;
-
+        ConvertHTMLToBBCodeIfConfigured();
         var continueHandler = Callable.From(OnContinuePressed);
         // setting the continue button up to let us advance dialogue
         if (continueButton != null)
@@ -400,7 +430,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
         // if we are set to autoadvance how long do we hold for before continuing?
         if (autoAdvance)
         {
-            await YarnTask.Delay((int) (autoAdvanceDelay * 1000), token.NextLineToken);
+            await YarnTask.Delay((int)(autoAdvanceDelay * 1000), token.NextLineToken);
         }
         else
         {
@@ -448,6 +478,24 @@ public partial class AsyncLineView : AsyncDialogueViewBase
         }
 
         dialogueRunner!.RequestNextLine();
+    }
+
+    /// <summary>
+    /// If <see cref="ConvertHTMLToBBCode"/> is true, replace any HTML tags in the line text and
+    /// character name text with BBCode tags.
+    /// </summary>
+    private void ConvertHTMLToBBCodeIfConfigured()
+    {
+        if (ConvertHTMLToBBCode)
+        {
+            const string htmlTagPattern = @"<(.*?)>";
+            if (IsInstanceValid(characterNameText))
+            {
+                characterNameText.Text = Regex.Replace(characterNameText.Text, htmlTagPattern, "[$1]");
+            }
+
+            lineText.Text = Regex.Replace(lineText.Text, htmlTagPattern, "[$1]");
+        }
     }
 }
 
@@ -629,7 +677,7 @@ public sealed partial class TypewriterHandler : TemporalMarkupHandler
         float timePoint = accumulatedPauses;
         if (lettersPerSecond > 0)
         {
-            timePoint += (float) currentCharacterIndex * SecondsPerLetter;
+            timePoint += (float)currentCharacterIndex * SecondsPerLetter;
         }
 
         await YarnTask.WaitUntil(() => accumulatedTime >= timePoint, cancellationToken);

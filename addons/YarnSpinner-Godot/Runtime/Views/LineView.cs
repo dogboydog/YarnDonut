@@ -154,7 +154,7 @@ public partial class LineView : Node, DialogueViewBase
     public delegate void onCharacterTypedEventHandler();
 
     /// <summary>
-    /// A Unity Event that is called when a pause inside of the typewriter effect occurs.
+    /// A signal that is called when a pause inside of the typewriter effect occurs.
     /// </summary>
     /// <remarks>
     /// This event is only invoked when <see cref="useTypewriterEffect"/> is <see langword="true"/>.
@@ -164,7 +164,7 @@ public partial class LineView : Node, DialogueViewBase
     public delegate void onPauseStartedEventHandler();
 
     /// <summary>
-    /// A Unity Event that is called when a pause inside of the typewriter effect finishes and the typewriter has started once again.
+    /// A signal that is called when a pause inside of the typewriter effect finishes and the typewriter has started once again.
     /// </summary>
     /// <remarks>
     /// This event is only invoked when <see cref="useTypewriterEffect"/> is <see langword="true"/>.

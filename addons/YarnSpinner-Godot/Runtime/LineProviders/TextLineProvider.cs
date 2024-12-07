@@ -1,15 +1,11 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
+
 using System.Threading;
 using Godot;
 using Yarn.Markup;
 
 namespace YarnSpinnerGodot;
 
-/// <summary>
-/// TODO: rename to BuiltInLocalisedLineProvider to match up with YS Unity v3
-/// </summary>
 [GlobalClass]
 public partial class TextLineProvider : LineProviderBehaviour
 {
@@ -50,6 +46,11 @@ public partial class TextLineProvider : LineProviderBehaviour
             GD.PushError(
                 $"{nameof(YarnProject)} is not set on {nameof(TextLineProvider)}. You must set the yarn project for this " +
                 $"script to work properly. ");
+        }
+
+        if (string.IsNullOrWhiteSpace(LocaleCode))
+        {
+            LocaleCode = System.Globalization.CultureInfo.CurrentCulture.Name;
         }
     }
 

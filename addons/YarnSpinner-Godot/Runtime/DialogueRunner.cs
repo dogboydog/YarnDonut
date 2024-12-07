@@ -254,7 +254,7 @@ public partial class DialogueRunner : Godot.Node
     public delegate void onDialogueCompleteEventHandler();
 
     /// <summary>
-    /// A <see cref="UnityEventString"/> that is called when a <see
+    /// A signal that is emitted when a <see
     /// cref="Command"/> is received and no command handler was able to
     /// handle it.
     /// </summary>
@@ -280,15 +280,16 @@ public partial class DialogueRunner : Godot.Node
     /// </remarks>
     /// <seealso cref="AddCommandHandler(string, Delegate)"/>
     /// <seealso cref="YarnCommandAttribute"/>
-    public Action<string>? onUnhandledCommand;
+    [Signal]
+    public delegate void onUnhandledCommandEventHandler(string commandText);
 
     /// <summary>
     /// Gets or sets the collection of dialogue views attached to this
-    /// dialogue runner.
+    /// dialogue runner, assuming each is able to be cast to AsyncDialogueViewBase.
     /// </summary>
     public IEnumerable<AsyncDialogueViewBase?> DialogueViews
     {
-        get => dialogueViews.ToList().ConvertAll(v => (AsyncDialogueViewBase?) v);
+        get => dialogueViews.ToList().ConvertAll(v => (AsyncDialogueViewBase?)v);
     }
 
     /// <summary>
@@ -320,19 +321,19 @@ public partial class DialogueRunner : Godot.Node
         CommandDispatcher = actions;
         actions.RegisterActions();
 
-        if (this.VariableStorage != null && this.YarnProject != null)
+        if (IsInstanceValid(VariableStorage) && IsInstanceValid(yarnProject))
         {
             this.VariableStorage.Program = this.YarnProject.Program;
         }
 
-        if (this.LineProvider != null && this.YarnProject != null)
+        if (LineProvider != null && IsInstanceValid(yarnProject))
         {
             this.LineProvider.YarnProject = this.YarnProject;
         }
     }
 
     /// <summary>
-    /// Called by Unity to start running dialogue if <see cref="autoStart"/>
+    /// Called by Godot to start running dialogue if <see cref="autoStart"/>
     /// is enabled.
     /// </summary>
     public override void _Ready()
@@ -353,10 +354,10 @@ public partial class DialogueRunner : Godot.Node
     }
 
     /// <summary>
-    /// Called by Unity to cancel the current dialogue when the Dialogue
+    /// Called by Godot to cancel the current dialogue when the Dialogue
     /// Runner is destroyed.
     /// </summary>
-    protected void OnDestroy()
+    public override void _ExitTree()
     {
         CancelDialogue();
     }
@@ -443,7 +444,7 @@ public partial class DialogueRunner : Godot.Node
             {
                 try
                 {
-                    await ((AsyncDialogueViewBase) view).OnDialogueCompleteAsync();
+                    await ((AsyncDialogueViewBase)view).OnDialogueCompleteAsync();
                 }
                 catch (System.Exception e)
                 {
@@ -504,12 +505,12 @@ public partial class DialogueRunner : Godot.Node
                 GD.PushError($"Can't call command {commandName}: incorrect number of parameters");
                 break;
             case CommandDispatchResult.StatusType.CommandUnknown:
-                // Attempt a last-ditch dispatch by invoking our 'onCommand'
-                // Unity Event.
-                if (onUnhandledCommand != null)
+                // Attempt a last-ditch dispatch by emitting our 'onUnhandledCommand'
+                // signal
+                if (GetSignalConnectionList(SignalName.onUnhandledCommand).Count > 0)
                 {
-                    // We can invoke the event!
-                    onUnhandledCommand.Invoke(command.Text);
+                    // We can emit the signal!
+                    EmitSignal(SignalName.onUnhandledCommand, command.Text);
                 }
                 else
                 {
@@ -633,10 +634,11 @@ public partial class DialogueRunner : Godot.Node
                     }
                 }
 
-                YarnTask task = RunLineAndInvokeCompletion((AsyncDialogueViewBase) view, localisedLine, metaToken);
+                YarnTask task = RunLineAndInvokeCompletion((AsyncDialogueViewBase)view, localisedLine, metaToken);
 
                 pendingTasks.Add(task);
-            } else if (view.GetScript().Obj != null && view.GetScript().As<Resource>() is GDScript)
+            }
+            else if (view.GetScript().Obj != null && view.GetScript().As<Resource>() is GDScript)
             {
                 // TODO : Duck typing to support GDScript 
             }
@@ -719,7 +721,7 @@ public partial class DialogueRunner : Godot.Node
         var pendingTasks = new List<YarnTask>();
         foreach (var view in this.dialogueViews)
         {
-            pendingTasks.Add(WaitForOptionsView((AsyncDialogueViewBase?) view));
+            pendingTasks.Add(WaitForOptionsView((AsyncDialogueViewBase?)view));
         }
 
         await YarnTask.WhenAll(pendingTasks);
@@ -927,6 +929,6 @@ public partial class DialogueRunner : Godot.Node
     /// </summary>
     public static Godot.Node FindChild(string name)
     {
-        return ((SceneTree) Engine.GetMainLoop()).Root.FindChild(name, true, false);
+        return ((SceneTree)Engine.GetMainLoop()).Root.FindChild(name, true, false);
     }
 }

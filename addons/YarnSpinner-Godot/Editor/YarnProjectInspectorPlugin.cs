@@ -133,7 +133,7 @@ public partial class YarnProjectInspectorPlugin : EditorInspectorPlugin
                     SizeFlagsVertical = Control.SizeFlags.ExpandFill,
                 });
                 AddCustomControl(header);
-                if (_project.SerializedDeclarations is {Length: >= 1})
+                if (_project.SerializedDeclarations is { Length: >= 1 })
                 {
                     var scrollContainer = new ScrollContainer
                     {
@@ -282,7 +282,7 @@ public partial class YarnProjectInspectorPlugin : EditorInspectorPlugin
     {
         try
         {
-            _project = (YarnProject) @object;
+            _project = (YarnProject)@object;
             if (IsTresYarnProject(_project))
             {
                 AddCustomControl(new Label
@@ -303,8 +303,12 @@ public partial class YarnProjectInspectorPlugin : EditorInspectorPlugin
                 Yarn.Compiler.Project.LoadFromFile(
                     ProjectSettings.GlobalizePath(_project.JSONProjectPath));
 
-            var recompileButton = new Button();
-            recompileButton.Text = "Re-compile Scripts in Project";
+            var yarnProjectVersionLabel = new Label { Text = $"Language Version: {_project.JSONProject.FileVersion}" };
+            AddCustomControl(yarnProjectVersionLabel);
+            var recompileButton = new Button
+            {
+                Text = "Re-compile Scripts in Project"
+            };
             recompileButton.Connect(BaseButton.SignalName.Pressed,
                 Callable.From(OnRecompileClicked));
             AddCustomControl(recompileButton);
@@ -342,9 +346,9 @@ public partial class YarnProjectInspectorPlugin : EditorInspectorPlugin
             foreach (var pattern in _project.JSONProject.SourceFilePatterns)
             {
                 scriptPatternsGrid.AddChild(new Label()); // spacer
-                scriptPatternsGrid.AddChild(new Label {Text = pattern});
+                scriptPatternsGrid.AddChild(new Label { Text = pattern });
                 var patternDeleteButton = new SourcePatternDeleteButton
-                    {Text = "x", Project = _project, Pattern = pattern};
+                    { Text = "x", Project = _project, Pattern = pattern };
 
                 scriptPatternsGrid.AddChild(patternDeleteButton);
             }
@@ -382,7 +386,7 @@ public partial class YarnProjectInspectorPlugin : EditorInspectorPlugin
                 SizeFlagsVertical = Control.SizeFlags.ExpandFill,
                 SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
             };
-            matchingScriptsHeader.AddChild(new Label {Text = "Matching Scripts"});
+            matchingScriptsHeader.AddChild(new Label { Text = "Matching Scripts" });
             matchingScriptsHeader.AddChild(new Label
             {
                 Text = numScriptsText,
@@ -407,17 +411,17 @@ public partial class YarnProjectInspectorPlugin : EditorInspectorPlugin
             AddCustomControl(_sourceScriptsListLabel);
 
             var localeGrid = new GridContainer
-                {SizeFlagsHorizontal = Control.SizeFlags.ExpandFill};
+                { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
             localeGrid.Columns = 3;
 
-            var label = new Label {Text = "Localization CSVs"};
+            var label = new Label { Text = "Localization CSVs" };
             localeGrid.AddChild(label);
 
             _localeTextEntry = new LineEditWithSubmit
             {
                 PlaceholderText = "locale code",
                 SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
-                SubmitButton = new Button {Text = "Add"},
+                SubmitButton = new Button { Text = "Add" },
             };
             localeGrid.AddChild(_localeTextEntry);
 
@@ -450,14 +454,14 @@ public partial class YarnProjectInspectorPlugin : EditorInspectorPlugin
                 pathLabel.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
                 pathLabel.ClipText = true;
                 picker.AddChild(pathLabel);
-                var pickerButton = new Button {Text = "Browse"};
+                var pickerButton = new Button { Text = "Browse" };
                 _pendingCSVFileLocaleCode = locale.Key;
                 pickerButton.Connect(BaseButton.SignalName.Pressed,
                     Callable.From(SelectLocaleCSVPath));
                 picker.AddChild(pickerButton);
                 localeGrid.AddChild(picker);
                 var deleteButton = new LocaleDeleteButton
-                    {Text = "X", LocaleCode = locale.Key, Plugin = this};
+                    { Text = "X", LocaleCode = locale.Key, Plugin = this };
                 deleteButton.Connect(BaseButton.SignalName.Pressed,
                     new Callable(deleteButton,
                         nameof(LocaleDeleteButton.OnPressed)));
@@ -470,9 +474,9 @@ public partial class YarnProjectInspectorPlugin : EditorInspectorPlugin
             {
                 SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
             };
-            baseLocaleRow.AddChild(new Label {Text = "Base language"});
+            baseLocaleRow.AddChild(new Label { Text = "Base language" });
 
-            var changeBaseLocaleButton = new Button {Text = "Change"};
+            var changeBaseLocaleButton = new Button { Text = "Change" };
             _baseLocaleInput = new LineEditWithSubmit
             {
                 Text = _project.JSONProject.BaseLanguage,

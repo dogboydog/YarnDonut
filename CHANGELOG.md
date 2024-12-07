@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.3.0] Pending 
+
+* Updated YarnSpinner DLLs to support version 3 of the Yarn Language, which supports many new features, described here:
+  * https://www.yarnspinner.dev/blog/yarn-spinner-30-what-to-expect
+* Update views to be async Task based, like the Unity plugin version 3. 
+* The existing `DialogueViewBase` interface is deprecated in favor of `AsyncDialogueViewBased`. Updated example views are provided.
+* TODO: More... 
+
+
 ## [0.2.14] 2024-11-02
 * GDScript: Add GDScriptViewAdapter, a C# Script which allows you to write custom dialogue views in GDScript. See GDScriptViewAdapter.cs for more details.
 * GDScript: Add new method AddCommandHandlerCallable to DialogueRunner, allowing commands to be registered from GDScript. GDScript command handlers that use asynchronous `await` functionality are also supported as blocking YarnSpinner commands, similar to using `async Task` commands in C#.

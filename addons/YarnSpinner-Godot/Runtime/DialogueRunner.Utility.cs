@@ -370,25 +370,4 @@ public partial class DialogueRunner
         return pausePositions;
     }
 
-    public static bool IsInPlaymode
-    {
-        get
-        {
-#if UNITY_EDITOR
-                if (!UnityEditor.EditorApplication.isPlaying)
-                {
-                    // We are not in playmode at all.
-                    return false;
-                }
-
-                if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
-                {
-                    // We are in playmode, but we're about to change out of
-                    // playmode.
-                    return false;
-                }
-#endif
-            return true;
-        }
-    }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 #nullable enable
+using System.Linq;
 using System.Threading;
 using Godot;
 using Yarn;
@@ -29,7 +30,7 @@ public partial class AsyncOptionsView : AsyncDialogueViewBase
     [Export] RichTextLabel? lastLineCharacterNameText;
 
     [Export] CanvasItem? lastLineCharacterNameContainer;
-    
+
     /// <summary>
     /// The node that options will be parented to.
     /// You can use a BoxContainer to automatically lay out your options.
@@ -182,14 +183,12 @@ public partial class AsyncOptionsView : AsyncDialogueViewBase
             optionView.OnOptionSelected = selectedOptionCompletionSource;
             optionView.completionToken = completionCancellationSource.Token;
 
-            // The first available option is selected by default
-            if (optionViewsCreated == 0)
-            {
-                optionView.GrabFocus();
-            }
 
             optionViewsCreated += 1;
         }
+        // The first available option is selected by default
+
+        optionViews.First(view => view.Visible).GrabFocus();
 
         // Update the last line, if one is configured
         if (lastLineContainer != null)
@@ -273,7 +272,8 @@ public partial class AsyncOptionsView : AsyncDialogueViewBase
     {
         if (optionViewPrefab == null)
         {
-            throw new System.InvalidOperationException($"Can't create new option view: {nameof(optionViewPrefab)} is null");
+            throw new System.InvalidOperationException(
+                $"Can't create new option view: {nameof(optionViewPrefab)} is null");
         }
 
         var optionView = optionViewPrefab.Instantiate<AsyncOptionItem>();

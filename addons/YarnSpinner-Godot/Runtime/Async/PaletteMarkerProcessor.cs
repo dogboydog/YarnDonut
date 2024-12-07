@@ -91,7 +91,8 @@ public partial class PaletteMarkerProcessor : AttributeMarkerProcessor
     }
 
     /// <summary>
-    /// Called by Unity when this script is enabled to register itself with <see
+    /// Called by Godot when this node is fully set up in the scene tree
+    /// to register itself with <see
     /// cref="lineProvider"/>.
     /// </summary>
     public override void _Ready()

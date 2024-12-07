@@ -3,7 +3,7 @@ tags:
 colorID: 0
 position: 524,111
 ---
-<<if visited("Sally") is false>>
+<<once>>
     Player: Hey, Sally. #line:794945
     // these HTML-style tags will only work with the ConvertHTMLToBBCode setting 
     // enabled on  the provided example LineView
@@ -11,9 +11,10 @@ position: 524,111
     Sally: <shake rate=20.0 level=5 connected=1>You snuck up on me!</shake> #line:34de2f
     Sally: Don't do that. #line:dcc2bc
 <<else>>
-    Player: Hey. #line:a8e70c
-    Sally: Hi.   #line:0af7f86 
-<<endif>>
+    => Sally: Hi.   #line:0af7f86 
+    => Sally: What's up.  #line:077a332 
+    => Sally: Yo.  #line:0b00ed4 
+<<endonce>>
 
 -> Anything exciting happen on your watch? <<if not visited("Sally_Watch")>> #line:5d7a7c
     <<jump Sally_Watch>>
