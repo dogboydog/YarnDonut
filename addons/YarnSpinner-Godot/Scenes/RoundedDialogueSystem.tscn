@@ -55,7 +55,7 @@ viewControl = NodePath("ViewControl")
 lineText = NodePath("ViewControl/LineText")
 continueButton = NodePath("ViewControl/LineText/LineBubble/ContinueButton")
 characterNameText = NodePath("ViewControl/LineText/CharacterNameText")
-characterNameContainer = NodePath("ViewControl/LineText/CharacterNameText")
+characterNameContainer = NodePath("ViewControl/LineText/CharacterNameText/CharacterNameBubble")
 useFadeEffect = false
 
 [node name="ViewControl" type="Panel" parent="LineView"]
@@ -204,7 +204,7 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -597.0
-offset_top = -140.0
+offset_top = -52.0
 offset_right = 496.0
 offset_bottom = 380.0
 grow_horizontal = 2

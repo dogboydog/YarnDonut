@@ -636,7 +636,8 @@ public sealed partial class TypewriterHandler : TemporalMarkupHandler
     public override void OnLineTextWillAppear(MarkupParseResult line, RichTextLabel text)
     {
         pauses = DialogueRunner.GetPauseDurationsInsideLine(line);
-
+        // make the characters not change position as words are partially revealed
+        text.VisibleCharactersBehavior = TextServer.VisibleCharactersBehavior.CharsAfterShaping;
         accumulatedTime = 0;
         StopwatchRunning = true;
     }
