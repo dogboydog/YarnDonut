@@ -21,6 +21,7 @@
     <None Include="addons\YarnSpinner-Godot\plugin.cfg" />
     <None Include="**\*.md" />
     <None Include="**\*.yarn" />
+    <None Include="**\*.yarnproject" />
     <None Include="**\*.gd" />
     <Compile Remove="Generated\**"/>
   </ItemGroup>

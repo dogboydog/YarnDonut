@@ -46,41 +46,22 @@ public partial class LineAdvancer : AsyncDialogueViewBase
     private int numberOfAdvancesThisLine = 0;
     
     /// <summary>
-    /// The legacy Input Axis that triggers a request to advance to the next
-    /// piece of content.
-    /// </summary>
-    [Export] string? hurryUpLineAxis = "Jump";
-
-    /// <summary>
-    /// The legacy Input Axis that triggers an instruction to cancel the
-    /// current line.
-    /// </summary>
-    [Export] string? nextLineAxis = "Cancel";
-
-    /// <summary>
-    /// The legacy Input Axis that triggers an instruction to cancel the
-    /// entire dialogue.
-    /// </summary>
-    [Export] string? cancelDialogueAxis = "";
-
-
-    /// <summary>
-    /// The <see cref="KeyCode"/> that triggers a request to advance to the
+    /// The input action that triggers a request to advance to the
     /// next piece of content.
     /// </summary>
-    [Export] public string hurryUpLineKeyCode = "ui_accept";
+    [Export] public string hurryUpAction = "ui_accept";
 
     /// <summary>
-    /// The <see cref="KeyCode"/> that triggers an instruction to cancel the
+    /// The input action that triggers an instruction to cancel the
     /// current line.
     /// </summary>
-    [Export] public string nextLineKeyCode = "ui_accept";
+    [Export] public string nextLineAction = "ui_accept";
 
     /// <summary>
-    /// The <see cref="KeyCode"/> that triggers an instruction to cancel the
+    /// The input action that triggers an instruction to cancel the
     /// entire dialogue.
     /// </summary>
-    [Export] public string cancelDialogueKeyCode = "ui_cancel";
+    [Export] public string cancelDialogueAction = "ui_cancel";
 
     /// <summary>
     /// Called by a dialogue runner when dialogue starts to add input action
@@ -201,17 +182,17 @@ public partial class LineAdvancer : AsyncDialogueViewBase
     /// </summary>
     public override void _Process(double delta)
     {
-        if (Input.IsActionJustReleased(hurryUpLineKeyCode))
+        if (Input.IsActionJustReleased(hurryUpAction))
         {
             this.RequestLineHurryUp();
         }
 
-        if (Input.IsActionJustReleased(nextLineKeyCode))
+        if (Input.IsActionJustReleased(nextLineAction))
         {
             this.RequestNextLine();
         }
 
-        if (Input.IsActionJustReleased(cancelDialogueKeyCode))
+        if (Input.IsActionJustReleased(cancelDialogueAction))
         {
             this.RequestDialogueCancellation();
         }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://ddbq27wcm6emj"]
+[gd_scene load_steps=21 format=3 uid="uid://ddbq27wcm6emj"]
 
 [ext_resource type="Texture2D" uid="uid://delt5hkois0xf" path="res://Samples/Space/Sprites/Ship-Face-Happy.png" id="2_b8xl3"]
 [ext_resource type="Script" path="res://Samples/Space/Scripts/SpaceSample.cs" id="3"]
@@ -16,6 +16,7 @@
 [ext_resource type="Script" path="res://Samples/Space/Scripts/StopButton.cs" id="14_1b0fg"]
 [ext_resource type="Script" path="res://Samples/Space/SpaceCamera.cs" id="15"]
 [ext_resource type="Script" path="res://Samples/Space/DialogueTarget.cs" id="16"]
+[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Async/LineAdvancer.cs" id="17_wrty4"]
 
 [sub_resource type="CapsuleShape2D" id="3"]
 radius = 40.02
@@ -184,5 +185,10 @@ offset_bottom = 832.0
 text = "Stop Dialogue"
 script = ExtResource("14_1b0fg")
 DialogueRunner = NodePath("../DialogueRunner")
+
+[node name="LineAdvancer" type="Node2D" parent="." node_paths=PackedStringArray("runner")]
+script = ExtResource("17_wrty4")
+runner = NodePath("../YarnSpinnerCanvasLayer/DialogueRunner")
+hurryUpAction = "dialogue_hurry"
 
 [editable path="YarnSpinnerCanvasLayer"]

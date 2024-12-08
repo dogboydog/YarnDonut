@@ -731,7 +731,7 @@ public static class YarnProjectEditorUtility
                 entry.File = ProjectSettings.LocalizePath(x.Value.fileName);
                 entry.Node = x.Value.nodeName;
                 entry.LineNumber = x.Value.lineNumber.ToString();
-                entry.Lock = YarnImporter.GetHashString(x.Value.text, 8);
+                entry.Lock = x.Value.text == null ? "" : YarnImporter.GetHashString(x.Value.text, 8);
                 entry.Comment = GenerateCommentWithLineMetadata(x.Value.metadata);
                 return entry;
             }
