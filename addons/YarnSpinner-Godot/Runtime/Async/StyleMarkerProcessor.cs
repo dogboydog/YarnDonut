@@ -9,6 +9,7 @@ using Yarn.Markup;
 namespace YarnSpinnerGodot;
 
 /// <summary>
+/// TODO: change to replace with BBcode tags? or remove? 
 /// An attribute marker processor that inserts TextMeshPro style tags where
 /// Yarn Spinner <c>[style]</c> tags appear in a line.
 /// </summary>
