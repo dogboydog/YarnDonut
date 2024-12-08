@@ -1,9 +1,15 @@
 #nullable disable
 #if TOOLS
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using Godot;
 using Godot.Collections;
+using Yarn;
+using Yarn.Compiler;
+using Yarn.Utility;
 
 namespace YarnSpinnerGodot;
 
@@ -87,7 +93,9 @@ public partial class YarnProjectImporter : EditorImportPlugin
         }
 
         YarnProjectEditorUtility.UpdateYarnProject(godotProject);
-        return (int) Error.Ok;
+
+        return (int)Error.Ok;
     }
+
 }
 #endif

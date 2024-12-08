@@ -26,8 +26,8 @@ public partial class YarnSpinnerPlugin : EditorPlugin
     public static EditorInterface editorInterface;
 #endif
 
-    private const string TOOLS_MENU_NAME = "YarnSpinner";
-
+    private const string ToolsMenuName = "YarnSpinner";
+    public const string VersionString = "0.3.0";
     private List<EditorInspectorPlugin> _inspectorPlugins =
         new();
 
@@ -136,7 +136,7 @@ public partial class YarnSpinnerPlugin : EditorPlugin
         }
 
         _popup.IdPressed += OnPopupIDPressed;
-        AddToolSubmenuItem(TOOLS_MENU_NAME, _popup);
+        AddToolSubmenuItem(ToolsMenuName, _popup);
 
         AddCustomType(nameof(DialogueRunner), "Node", dialogueRunnerScript,
             miniYarnSpinnerIcon);

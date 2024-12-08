@@ -17,6 +17,7 @@ using Google.Protobuf;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Yarn;
 using Yarn.Compiler;
+using Yarn.Utility;
 using File = System.IO.File;
 using FileAccess = System.IO.FileAccess;
 using Path = System.IO.Path;
@@ -129,8 +130,22 @@ public static class YarnProjectEditorUtility
 
         try
         {
-            CompileAllScripts(project);
+            var compilationResult = CompileAllScripts(project);
             SaveYarnProject(project);
+            if (project is { generateVariablesSourceFile: true, ResourcePath: not null }
+                && compilationResult != null)
+            {
+                var fileName = project.variablesClassName + ".cs";
+
+                var generatedSourcePath =
+                    Path.Combine(Path.GetDirectoryName(ProjectSettings.GlobalizePath(project.ResourcePath)),
+                        fileName);
+                bool generated = GenerateVariableSource(generatedSourcePath, project, compilationResult);
+                if (generated)
+                {
+                    YarnSpinnerPlugin.editorInterface.GetResourceFilesystem().ScanSources();
+                }
+            }
         }
         catch (Exception e)
         {
@@ -375,7 +390,7 @@ public static class YarnProjectEditorUtility
         var updateHandlerType = assembly.GetType("System.Text.Json.JsonSerializerOptionsUpdateHandler");
         var clearCacheMethod =
             updateHandlerType?.GetMethod("ClearCache", BindingFlags.Static | BindingFlags.Public);
-        clearCacheMethod?.Invoke(null, new object[] {null});
+        clearCacheMethod?.Invoke(null, new object[] { null });
     }
 
     public static void SaveYarnProject(YarnProject project)
@@ -407,7 +422,7 @@ public static class YarnProjectEditorUtility
         }
     }
 
-    public static void CompileAllScripts(YarnProject project)
+    public static CompilationResult? CompileAllScripts(YarnProject project)
     {
         lock (project)
         {
@@ -421,7 +436,7 @@ public static class YarnProjectEditorUtility
             {
                 GD.Print(
                     $"No .yarn files found matching the {nameof(project.JSONProject.SourceFilePatterns)} in {project.JSONProjectPath}");
-                return;
+                return null;
             }
 
             var library = new Library();
@@ -469,14 +484,14 @@ public static class YarnProjectEditorUtility
                             FileName = ProjectSettings.LocalizePath(e.FileName)
                         });
                     project.ProjectErrors = projectErrors.ToArray();
-                    return;
+                    return compilationResult;
                 }
 
                 if (compilationResult.Program == null)
                 {
                     GD.PushError(
                         "public error: Failed to compile: resulting program was null, but compiler did not report errors.");
-                    return;
+                    return compilationResult;
                 }
 
                 // Store _all_ declarations - both the ones in this
@@ -532,6 +547,8 @@ public static class YarnProjectEditorUtility
             {
                 GD.PushError($"Failed to save updated {nameof(YarnProject)}: {saveErr}");
             }
+
+            return compilationResult;
         }
     }
 
@@ -895,6 +912,319 @@ public static class YarnProjectEditorUtility
         }
 
         return projects;
+    }
+
+
+    /// <summary>
+    /// A regular expression that matches characters following the start of
+    /// the string or an underscore. 
+    /// </summary>
+    /// <remarks>
+    /// Used as part of converting variable names from snake_case to
+    /// CamelCase when generating C# variable source code.
+    /// </remarks>
+    private static readonly System.Text.RegularExpressions.Regex SnakeCaseToCamelCase =
+        new System.Text.RegularExpressions.Regex(@"(^|_)(\w)");
+
+
+    private static bool GenerateVariableSource(string outputPath, YarnProject project,
+        CompilationResult compilationResult)
+    {
+        if (!GodotObject.IsInstanceValid(project))
+        {
+            GD.PushError("Can't generate variable source for null project!");
+            return false;
+        }
+
+        string? existingContent = null;
+
+        if (File.Exists(outputPath))
+        {
+            // If the file already exists on disk, read it all in now. We'll
+            // compare it to what we generated and, if the contents match
+            // exactly, we don't need to re-import the resulting C# script.
+            existingContent = File.ReadAllText(outputPath);
+        }
+
+        if (string.IsNullOrEmpty(project.variablesClassName))
+        {
+            GD.PushError("Can't generate variable interface, because the specified class name is empty.");
+            return false;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int indentLevel = 0;
+        const int indentSize = 4;
+
+        void WriteLine(string line = "", int offset = 0)
+        {
+            if (line.Length > 0)
+            {
+                sb.Append(new string(' ', (indentLevel + offset) * indentSize));
+            }
+
+            sb.AppendLine(line);
+        }
+
+        void WriteComment(string comment = "") => WriteLine("// " + comment);
+
+        if (string.IsNullOrEmpty(project.variablesClassNamespace) == false)
+        {
+            WriteLine($"namespace {project.variablesClassNamespace} {{");
+            WriteLine();
+            indentLevel += 1;
+        }
+
+        WriteLine("using YarnSpinnerGodot;");
+        WriteLine();
+
+        void WriteGeneratedCodeAttribute()
+        {
+            var toolName = "YarnSpinner";
+            var toolVersion = YarnSpinnerPlugin.VersionString;
+            WriteLine($"[System.CodeDom.Compiler.GeneratedCode(\"{toolName}\", \"{toolVersion}\")]");
+        }
+
+        // For each user-defined enum, create a C# enum type
+        IEnumerable<EnumType> enumTypes = compilationResult.UserDefinedTypes.OfType<Yarn.EnumType>();
+
+        foreach (var type in enumTypes)
+        {
+            WriteLine($"/// <summary>");
+            if (string.IsNullOrEmpty(type.Description) == false)
+            {
+                WriteLine($"/// {type.Description}");
+            }
+            else
+            {
+                WriteLine($"/// {type.Name}");
+            }
+
+            WriteLine($"/// </summary>");
+
+            WriteLine($"/// <remarks>");
+            WriteLine($"/// Automatically generated from Yarn project at {project.ResourcePath}.");
+            WriteLine($"/// </remarks>");
+
+            WriteGeneratedCodeAttribute();
+
+            if (type.RawType == Types.String)
+            {
+                // String-backed enums are represented as CRC32 hashes of
+                // the raw value, which we store as uints
+                WriteLine($"public enum {type.Name} : uint {{");
+            }
+            else
+            {
+                WriteLine($"public enum {type.Name} {{");
+            }
+
+            indentLevel += 1;
+
+            foreach (var enumCase in type.EnumCases)
+            {
+                WriteLine();
+
+                WriteLine($"/// <summary>");
+                if (string.IsNullOrEmpty(enumCase.Value.Description) == false)
+                {
+                    WriteLine($"/// {enumCase.Value.Description}");
+                }
+                else
+                {
+                    WriteLine($"/// {enumCase.Key}");
+                }
+
+                WriteLine($"/// </summary>");
+
+                if (type.RawType == Types.Number)
+                {
+                    WriteLine($"{enumCase.Key} = {enumCase.Value.Value},");
+                }
+                else if (type.RawType == Types.String)
+                {
+                    WriteLine($"/// <remarks>");
+                    WriteLine($"/// Backing value: \"{enumCase.Value.Value}\"");
+                    WriteLine($"/// </remarks>");
+                    var stringValue = (string)enumCase.Value.Value;
+                    WriteComment($"\"{stringValue}\"");
+                    WriteLine($"{enumCase.Key} = {CRC32.GetChecksum(stringValue)},");
+                }
+                else
+                {
+                    WriteComment(
+                        $"Error: enum case {type.Name}.{enumCase.Key} has an invalid raw type {type.RawType.Name}");
+                }
+            }
+
+            indentLevel -= 1;
+
+            WriteLine($"}}");
+            WriteLine();
+        }
+
+        if (enumTypes.Any())
+        {
+            // Generate an extension class that extends the above enums with
+            // methods that accesses their backing value
+            WriteGeneratedCodeAttribute();
+            WriteLine($"internal static class {project.variablesClassName}TypeExtensions {{");
+            indentLevel += 1;
+            foreach (var enumType in enumTypes)
+            {
+                var backingType = enumType.RawType == Types.Number ? "int" : "string";
+                WriteLine($"internal static {backingType} GetBackingValue(this {enumType.Name} enumValue) {{");
+                indentLevel += 1;
+                WriteLine($"switch (enumValue) {{");
+                indentLevel += 1;
+
+                foreach (var @case in enumType.EnumCases)
+                {
+                    WriteLine($"case {enumType.Name}.{@case.Key}:", 1);
+                    if (enumType.RawType == Types.Number)
+                    {
+                        WriteLine($"return {@case.Value.Value};", 2);
+                    }
+                    else if (enumType.RawType == Types.String)
+                    {
+                        WriteLine($"return \"{@case.Value.Value}\";", 2);
+                    }
+                    else
+                    {
+                        throw new System.ArgumentException($"Invalid Yarn enum raw type {enumType.RawType}");
+                    }
+                }
+
+                WriteLine("default:", 1);
+                WriteLine("throw new System.ArgumentException($\"{enumValue} is not a valid enum case.\");");
+
+                indentLevel -= 1;
+                WriteLine("}");
+                indentLevel -= 1;
+                WriteLine("}");
+            }
+
+            indentLevel -= 1;
+            WriteLine("}");
+        }
+
+        WriteGeneratedCodeAttribute();
+        WriteLine(
+            $"public partial class {project.variablesClassName} : {project.variablesClassParent}, YarnSpinnerGodot.IGeneratedVariableStorage {{");
+
+        indentLevel += 1;
+
+        var declarationsToGenerate = compilationResult.Declarations
+            .Where(d => d.IsVariable == true)
+            .Where(d => d.Name.StartsWith("$Yarn.Internal") == false);
+
+        if (declarationsToGenerate.Count() == 0)
+        {
+            WriteComment("This yarn project does not declare any variables.");
+        }
+
+        foreach (var decl in declarationsToGenerate)
+        {
+            string? cSharpTypeName = null;
+
+            if (decl.Type == Yarn.Types.String)
+            {
+                cSharpTypeName = "string";
+            }
+            else if (decl.Type == Yarn.Types.Number)
+            {
+                cSharpTypeName = "float";
+            }
+            else if (decl.Type == Yarn.Types.Boolean)
+            {
+                cSharpTypeName = "bool";
+            }
+            else if (decl.Type is EnumType enumType1)
+            {
+                cSharpTypeName = enumType1.Name;
+            }
+            else
+            {
+                WriteLine(
+                    $"#warning Can't generate a property for variable {decl.Name}, because its type ({decl.Type}) can't be handled.");
+                WriteLine();
+            }
+
+
+            WriteComment($"Accessor for {decl.Type} {decl.Name}");
+
+            // Remove '$'
+            string cSharpVariableName = decl.Name.TrimStart('$');
+
+            // Convert snake_case to CamelCase
+            cSharpVariableName = SnakeCaseToCamelCase.Replace(cSharpVariableName,
+                (match) => { return match.Groups[2].Value.ToUpperInvariant(); });
+
+            // Capitalise first letter
+            cSharpVariableName =
+                cSharpVariableName.Substring(0, 1).ToUpperInvariant() + cSharpVariableName.Substring(1);
+
+            if (decl.Description != null)
+            {
+                WriteLine("/// <summary>");
+                WriteLine($"/// {decl.Description}");
+                WriteLine("/// </summary>");
+            }
+
+            WriteLine($"public {cSharpTypeName} {cSharpVariableName} {{");
+
+            indentLevel += 1;
+
+            if (decl.Type is EnumType enumType)
+            {
+                WriteLine($"get => this.GetEnumValueOrDefault<{cSharpTypeName}>(\"{decl.Name}\");");
+            }
+            else
+            {
+                WriteLine($"get => this.GetValueOrDefault<{cSharpTypeName}>(\"{decl.Name}\");");
+            }
+
+            if (decl.IsInlineExpansion == false)
+            {
+                // Only generate a setter if it's a variable that can be modified
+                if (decl.Type is EnumType e)
+                {
+                    WriteLine($"set => this.SetValue(\"{decl.Name}\", value.GetBackingValue());");
+                }
+                else
+                {
+                    WriteLine($"set => this.SetValue<{cSharpTypeName}>(\"{decl.Name}\", value);");
+                }
+            }
+
+            indentLevel -= 1;
+
+            WriteLine($"}}");
+
+            WriteLine();
+        }
+
+        indentLevel -= 1;
+
+        WriteLine($"}}");
+
+        if (string.IsNullOrEmpty(project.variablesClassNamespace) == false)
+        {
+            indentLevel -= 1;
+            WriteLine($"}}");
+        }
+
+        if (existingContent != null && existingContent.Equals(sb.ToString(), System.StringComparison.Ordinal))
+        {
+            // What we generated is identical to what's already on disk.
+            // Don't write it.
+            return false;
+        }
+
+        GD.Print($"Writing to {outputPath}");
+        File.WriteAllText(outputPath, sb.ToString());
+
+        return true;
     }
 }
 #endif
