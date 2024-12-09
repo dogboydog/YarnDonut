@@ -66,6 +66,8 @@ tags:
 colorID: 0
 position: 827,439
 ---
+<<declare $apologized_to_sally to false as bool>>
 Sally: Yeah. Don't do it again. #line:d7df49
+<<set $apologized_to_sally to true>>
 ===
 
