@@ -200,7 +200,7 @@ namespace YarnSpinnerGodot
 
         public List<Microsoft.CodeAnalysis.Diagnostic> Validate(Compilation compilation)
         {
-            var methodDeclaration = Declaration as MethodDeclarationSyntax;
+         var methodDeclaration = Declaration as MethodDeclarationSyntax;
 
             if (methodDeclaration == null)
             {
@@ -222,40 +222,34 @@ namespace YarnSpinnerGodot
             if (this.MethodSymbol.DeclaredAccessibility != Accessibility.Public)
             {
                 // Method is not public
-                diagnostics.Add(Diagnostic.Create(Diagnostics.YS1001ActionMethodsMustBePublic,
-                    methodDeclaration.Identifier.GetLocation(), methodDeclaration.Identifier,
-                    MethodSymbol.DeclaredAccessibility));
+                diagnostics.Add(Diagnostic.Create(Diagnostics.YS1001ActionMethodsMustBePublic, methodDeclaration.Identifier.GetLocation(), methodDeclaration.Identifier, MethodSymbol.DeclaredAccessibility));
             }
 
-            // Commands are parsed as whitespace, so spaces in the command name
-            // would render the command un-callable.
-            if (Name.Any(x => Char.IsWhiteSpace(x)))
+            // This is not a full validation of the naming rules of commands,
+            // but is good enough to catch the most common situations:
+            // whitespace and periods.
+            if (Name.Contains(".") || Name.Any(x => Char.IsWhiteSpace(x)))
             {
-                diagnostics.Add(Diagnostic.Create(Diagnostics.YS1002ActionMethodsMustHaveAValidName,
-                    methodDeclaration.Identifier.GetLocation(), this.Name));
+                diagnostics.Add(Diagnostic.Create(Diagnostics.YS1002ActionMethodsMustHaveAValidName, methodDeclaration.Identifier.GetLocation(), this.Name));
             }
 
             switch (Type)
             {
                 case ActionType.Invalid:
-                {
-                    var actionAttributes = MethodSymbol.GetAttributes()
-                        .Where(attr => Analyser.IsAttributeYarnCommand(attr));
-
-                    var count = actionAttributes.Count();
-
-                    if (count != 1)
                     {
-                        diagnostics.Add(Diagnostic.Create(Diagnostics.YS1005ActionMethodsMustHaveOneActionAttribute,
-                            methodDeclaration.Identifier.GetLocation(), 0));
+                        var actionAttributes = MethodSymbol.GetAttributes().Where(attr => Analyser.IsAttributeYarnCommand(attr));
+
+                        var count = actionAttributes.Count();
+
+                        if (count != 1)
+                        {
+                            diagnostics.Add(Diagnostic.Create(Diagnostics.YS1005ActionMethodsMustHaveOneActionAttribute, methodDeclaration.Identifier.GetLocation(), 0));
+                        }
+                        else
+                        {
+                            diagnostics.Add(Diagnostic.Create(Diagnostics.YS1000UnknownError, methodDeclaration.Identifier.GetLocation(), "Method marked as 'not an action' but it had one attribute"));
+                        }
                     }
-                    else
-                    {
-                        diagnostics.Add(Diagnostic.Create(Diagnostics.YS1000UnknownError,
-                            methodDeclaration.Identifier.GetLocation(),
-                            "Method marked as 'not an action' but it had one attribute"));
-                    }
-                }
                     break;
 
                 case ActionType.Command:
@@ -267,8 +261,7 @@ namespace YarnSpinnerGodot
                     break;
 
                 default:
-                    diagnostics.Add(Diagnostic.Create(Diagnostics.YS1000UnknownError,
-                        methodDeclaration.Identifier.GetLocation(), $"Internal error: invalid type {Type}"));
+                    diagnostics.Add(Diagnostic.Create(Diagnostics.YS1000UnknownError, methodDeclaration.Identifier.GetLocation(), $"Internal error: invalid type {Type}"));
                     break;
             }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Godot;
 using Yarn;
+using Node = Godot.Node;
 
 namespace YarnSpinnerGodot;
 
@@ -12,7 +13,7 @@ namespace YarnSpinnerGodot;
 /// manages a collection of <see cref="AsyncOptionItem"/> views for the user
 /// to choose from.
 /// </summary>
-public partial class AsyncOptionsView : AsyncDialogueViewBase
+public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
 {
     [Export] Control? viewControl;
 
@@ -51,7 +52,7 @@ public partial class AsyncOptionsView : AsyncDialogueViewBase
     /// when dialogue is complete.
     /// </summary>
     /// <returns>A completed task.</returns>
-    public override YarnTask OnDialogueCompleteAsync()
+    public YarnTask OnDialogueCompleteAsync()
     {
         if (IsInstanceValid(viewControl))
         {
@@ -92,7 +93,7 @@ public partial class AsyncOptionsView : AsyncDialogueViewBase
     /// when dialogue begins.
     /// </summary>
     /// <returns>A completed task.</returns>
-    public override YarnTask OnDialogueStartedAsync()
+    public YarnTask OnDialogueStartedAsync()
     {
         if (IsInstanceValid(viewControl))
         {
@@ -113,7 +114,7 @@ public partial class AsyncOptionsView : AsyncDialogueViewBase
     /// <inheritdoc cref="AsyncDialogueViewBase.RunLineAsync"
     /// path="/param"/>
     /// <returns>A completed task.</returns>
-    public override YarnTask RunLineAsync(LocalizedLine line, LineCancellationToken token)
+    public YarnTask RunLineAsync(LocalizedLine line, LineCancellationToken token)
     {
         if (showsLastLine)
         {
@@ -131,7 +132,7 @@ public partial class AsyncOptionsView : AsyncDialogueViewBase
     /// path="/param"/>
     /// <inheritdoc cref="AsyncDialogueViewBase.RunOptionsAsync"
     /// path="/returns"/>
-    public override async YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions,
+    public async YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions,
         CancellationToken cancellationToken)
     {
         // If we don't already have enough option views, create more
@@ -249,7 +250,6 @@ public partial class AsyncOptionsView : AsyncDialogueViewBase
         {
             parent2D.Visible = true;
         }
-
 
 
         // fade up the UI now

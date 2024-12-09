@@ -11,6 +11,7 @@ namespace YarnSpinnerGodot;
 /// <summary>
 /// A Dialogue View that presents lines of dialogue, using Godot UI Controls
 /// elements.
+/// Important: When implementing this interface, your class should extend from Godot.Node.
 /// </summary>
 [GlobalClass]
 public partial class LineView : Node, DialogueViewBase
@@ -22,7 +23,7 @@ public partial class LineView : Node, DialogueViewBase
     /// We don't want to constrain DialogueViewBase to only controls (in case
     /// you wanted to make a Node2D or 3D based dialogue view), so this example
     /// LineView uses a child control called <see cref="viewControl"/> as the parent
-    /// of all of the UI components for this view that can be hidden. 
+    /// of all the UI components for this view that can be hidden. 
     /// </summary>
     /// <remarks>
     /// If <see cref="useFadeEffect"/> is true, then the alpha value of this
@@ -336,6 +337,7 @@ public partial class LineView : Node, DialogueViewBase
             characterNameText.Text = dialogueLine.CharacterName;
             lineText.Text = dialogueLine.TextWithoutCharacterName.Text;
         }
+
         ConvertHTMLToBBCodeIfConfigured();
 
         // Show the entire line's text immediately.
@@ -546,7 +548,6 @@ public partial class LineView : Node, DialogueViewBase
 
             lineText.Text = Regex.Replace(lineText.Text, htmlTagPattern, "[$1]");
         }
-
     }
 
     private void SetCanvasInteractable(bool b)

@@ -39,6 +39,7 @@ public partial class MarkupPalette : Resource
     /// palette; <see langword="false"/> otherwise.</returns>
     public bool ColorForMarker(string Marker, out Color colour)
     {
+        FormatMarkers ??= new Array<FormatMarker>(); // default to empty array
         foreach (var item in FormatMarkers)
         {
             if (item.Marker == Marker)
@@ -65,6 +66,7 @@ public partial class MarkupPalette : Resource
     /// palette; <see langword="false"/> otherwise.</returns>
     public bool FormatForMarker(string markerName, out FormatMarker palette)
     {
+        FormatMarkers ??= new Array<FormatMarker>(); // default to empty array
         foreach (var item in FormatMarkers)
         {
             if (item.Marker == markerName)

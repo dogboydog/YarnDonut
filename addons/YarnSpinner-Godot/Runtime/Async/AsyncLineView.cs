@@ -13,7 +13,7 @@ namespace YarnSpinnerGodot;
 /// A Dialogue View that presents lines of dialogue, using Godot UI
 /// elements.
 /// </summary>
-public partial class AsyncLineView : AsyncDialogueViewBase
+public partial class AsyncLineView : Node, AsyncDialogueViewBase
 {
     [Export] public DialogueRunner? dialogueRunner;
 
@@ -237,7 +237,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     public List<TemporalMarkupHandler> temporalProcessors = new List<TemporalMarkupHandler>();
 
     /// <inheritdoc/>
-    public override YarnTask OnDialogueCompleteAsync()
+    public YarnTask OnDialogueCompleteAsync()
     {
         if (IsInstanceValid(viewControl))
         {
@@ -248,7 +248,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     }
 
     /// <inheritdoc/>
-    public override YarnTask OnDialogueStartedAsync()
+    public YarnTask OnDialogueStartedAsync()
     {
         if (IsInstanceValid(viewControl))
         {
@@ -309,7 +309,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// <summary>Presents a line using the configured text view.</summary>
     /// <inheritdoc cref="AsyncDialogueViewBase.RunLineAsync(LocalizedLine, LineCancellationToken)" path="/param"/>
     /// <inheritdoc cref="AsyncDialogueViewBase.RunLineAsync(LocalizedLine, LineCancellationToken)" path="/returns"/>
-    public override async YarnTask RunLineAsync(LocalizedLine line, LineCancellationToken token)
+    public async YarnTask RunLineAsync(LocalizedLine line, LineCancellationToken token)
     {
         if (lineText == null)
         {
@@ -465,7 +465,7 @@ public partial class AsyncLineView : AsyncDialogueViewBase
     /// <remarks>
     /// This dialogue view does not handle any options.
     /// </remarks>
-    public override YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions,
+    public YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions,
         CancellationToken cancellationToken)
     {
         return YarnTask<DialogueOption?>.FromResult(null);

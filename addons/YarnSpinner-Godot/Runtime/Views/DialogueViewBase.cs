@@ -1,9 +1,18 @@
 #nullable disable
 using System;
+using System.Net.Mime;
+using System.Threading;
+using Godot;
 
 namespace YarnSpinnerGodot;
 
 /// <summary>
+/// Note: As of version 0.3.0, use <see cref="AsyncDialogueViewBase"/> instead.
+/// This was formerly an interface, but is now a class so that it can inherit from
+/// AsyncDialogueViewBase. For your existing v2 views, if you do not want to update them
+/// to inherit directly from ASyncDialogueViewBase, change your inheritance from  `: DialogueViewBase, Node` to
+/// just `: DialogueViewBase`.
+/// 
 /// A <see cref="Godot.Node"/> that can present lines and options to the
 /// user, when it receives them from a  <see cref="DialogueRunner"/>.
 /// </summary>
@@ -39,7 +48,7 @@ namespace YarnSpinnerGodot;
 /// <seealso cref="LineProviderBehaviour"/>
 /// <seealso cref="DialogueRunner.dialogueViews"/>
 [Obsolete("Use " + nameof(AsyncDialogueViewBase))]
-public interface DialogueViewBase
+public interface DialogueViewBase : AsyncDialogueViewBase
 {
     /// <summary>
     /// Represents the method that should be called when this view wants the
@@ -361,5 +370,7 @@ public interface DialogueViewBase
     {
         // default implementation does nothing
     }
+
+    
     
 }
