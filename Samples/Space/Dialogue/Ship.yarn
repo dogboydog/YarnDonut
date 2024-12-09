@@ -59,16 +59,16 @@ when: always
 <<setsprite ShipFace happy>>
 Ship: I was built in the Gamma Quadrant. It's still my favorite quadrant.
 ===
-
-// TODO: causing runtime error
-// title: ShipChat
-// when: $apologized_to_sally
-// ---
-// <<setsprite ShipFace neutral>>
-// Don't feel too bad about the console. She probably didn't mean the thing about the flaying.
-// <<setsprite ShipFace happy>>
-// I mean she's only done that twice ever. And only once to a crew member.
-// ===
+ 
+ 
+title: ShipChat
+when: $apologized_to_sally
+---
+<<setsprite ShipFace neutral>>
+Ship: Don't feel too bad about the console. She probably didn't mean the thing about the flaying.
+<<setsprite ShipFace happy>>
+Ship: I mean she's only done that twice ever. And only once to a crew member.
+===
 
 title: ShipChat
 when: always

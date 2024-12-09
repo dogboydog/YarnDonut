@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://ddbq27wcm6emj"]
+[gd_scene load_steps=22 format=3 uid="uid://ddbq27wcm6emj"]
 
 [ext_resource type="Texture2D" uid="uid://delt5hkois0xf" path="res://Samples/Space/Sprites/Ship-Face-Happy.png" id="2_b8xl3"]
 [ext_resource type="Script" path="res://Samples/Space/Scripts/SpaceSample.cs" id="3"]
@@ -16,6 +16,7 @@
 [ext_resource type="Script" path="res://Samples/Space/Scripts/StopButton.cs" id="14_1b0fg"]
 [ext_resource type="Script" path="res://Samples/Space/SpaceCamera.cs" id="15"]
 [ext_resource type="Script" path="res://Samples/Space/DialogueTarget.cs" id="16"]
+[ext_resource type="Script" path="res://Samples/Space/Dialogue/SpaceYarnVariables.cs" id="16_i6fc8"]
 [ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Async/LineAdvancer.cs" id="17_wrty4"]
 
 [sub_resource type="CapsuleShape2D" id="3"]
@@ -171,6 +172,9 @@ showsLastLine = false
 lastLineContainer = NodePath("ViewControl/LastLineText")
 lastLineCharacterNameContainer = NodePath("ViewControl/LastLineCharacterNameText")
 optionParent = NodePath("ViewControl/VBoxContainer")
+
+[node name="InMemoryVariableStorage" parent="YarnSpinnerCanvasLayer" index="4"]
+script = ExtResource("16_i6fc8")
 
 [node name="TextLineProvider" parent="YarnSpinnerCanvasLayer" index="5"]
 YarnProject = ExtResource("12_qnfx0")

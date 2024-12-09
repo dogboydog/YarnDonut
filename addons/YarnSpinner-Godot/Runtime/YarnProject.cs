@@ -95,7 +95,7 @@ public partial class YarnProject : Resource
     /// <seealso cref="variablesClassName"/>
     /// <seealso cref="variablesClassNamespace"/>
     /// <seealso cref="variablesClassParent"/>
-    [Export] public bool generateVariablesSourceFile = false;
+    [Export] public bool generateVariablesSourceFile;
 
     /// <summary>
     /// The name of the generated variables storage class.

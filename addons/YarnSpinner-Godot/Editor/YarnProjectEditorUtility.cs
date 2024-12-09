@@ -130,6 +130,26 @@ public static class YarnProjectEditorUtility
 
         try
         {
+            UpdateYarnProjectImmediate(project);
+        }
+        finally
+        {
+            lock (_lastUpdateLock)
+            {
+                _projectPathToUpdateTask.Remove(project.ResourcePath);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Like <see cref="UpdateYarnProject"/>, but rather than queueing up an update,
+    /// update it immediately. Call this when you don't anticipate another
+    /// update request to be triggered  within a second or so.
+    /// </summary>
+    public static void UpdateYarnProjectImmediate(YarnProject project)
+    {
+        try
+        {
             var compilationResult = CompileAllScripts(project);
             SaveYarnProject(project);
             if (project is { generateVariablesSourceFile: true, ResourcePath: not null }
@@ -151,13 +171,6 @@ public static class YarnProjectEditorUtility
         {
             GD.PushError(
                 $"Error updating {nameof(YarnProject)} '{project.ResourcePath}': {e.Message}{e.StackTrace}");
-        }
-        finally
-        {
-            lock (_lastUpdateLock)
-            {
-                _projectPathToUpdateTask.Remove(project.ResourcePath);
-            }
         }
     }
 
