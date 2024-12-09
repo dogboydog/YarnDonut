@@ -296,15 +296,6 @@ public partial class DialogueRunner : Godot.Node
     public delegate void onUnhandledCommandEventHandler(string commandText);
 
     /// <summary>
-    /// Gets or sets the collection of dialogue views attached to this
-    /// dialogue runner, assuming each is able to be cast to AsyncDialogueViewBase.
-    /// </summary>
-    public IEnumerable<AsyncDialogueViewBase?> DialogueViews
-    {
-        get => dialogueViews.ToList().ConvertAll(v => (AsyncDialogueViewBase?) v);
-    }
-
-    /// <summary>
     /// Gets a completed <see cref="YarnTask{DialogueOption}"/> that
     /// contains a <see langword="null"/> value.
     /// </summary>
@@ -350,9 +341,19 @@ public partial class DialogueRunner : Godot.Node
     /// </summary>
     public override void _Ready()
     {
+        foreach (var view in dialogueViews)
+        {
+            if (view is not AsyncDialogueViewBase && view.GetScript().Obj is not GDScript)
+            {
+                GD.PushError(
+                    $"Node {view.Name} ({view.GetType()}) does not appear to be a dialogue view. " +
+                    $"Ensure only dialogue views are added to {nameof(dialogueViews)}.");
+            }
+        }
+
         if (autoStart)
         {
-            StartDialogue(startNode);
+            CallDeferred(nameof(StartDialogue), startNode);
         }
     }
 
@@ -391,6 +392,10 @@ public partial class DialogueRunner : Godot.Node
                 while (IsDialogueRunning)
                 {
                     await YarnTask.NextFrame();
+                    if (!IsInstanceValid(this))
+                    {
+                        return;
+                    }
                 }
             }
 
@@ -451,25 +456,51 @@ public partial class DialogueRunner : Godot.Node
                 continue;
             }
 
-            // Tell all of our views that the dialogue has finished
-            async YarnTask RunCompletion()
+            if (view is AsyncDialogueViewBase asyncView)
             {
-                try
+                // Tell all of our views that the dialogue has finished
+                async YarnTask RunCompletion()
                 {
-                    await ((AsyncDialogueViewBase) view).OnDialogueCompleteAsync();
+                    try
+                    {
+                        await ((AsyncDialogueViewBase) view).OnDialogueCompleteAsync();
+                    }
+                    catch (System.Exception e)
+                    {
+                        GD.PushError(e, view);
+                    }
                 }
-                catch (System.Exception e)
-                {
-                    GD.PushError(e, view);
-                }
+
+                YarnTask task = RunCompletion();
+
+                pendingTasks.Add(task);
             }
+            else if (view.GetScript().Obj is GDScript)
+            {
+                const string gdScriptMethodName = "on_dialogue_complete_async";
 
-            YarnTask task = RunCompletion();
+                async YarnTask RunGDScriptCompletion()
+                {
+                    if (!HasMethod(gdScriptMethodName))
+                    {
+                        return;
+                    }
 
-            pendingTasks.Add(task);
+                    var methodReturn = view.Call(gdScriptMethodName);
+
+                    if (methodReturn.Obj != null &&
+                        methodReturn.As<GodotObject>().GetClass() == "GDScriptFunctionState")
+                    {
+                        //  GDScript method with await statements - wait for them to finish.
+                        await ((SceneTree) Engine.GetMainLoop()).ToSignal(methodReturn.AsGodotObject(), "completed");
+                    }
+                }
+
+                pendingTasks.Add(RunGDScriptCompletion());
+            }
         }
 
-        // Wait for all views to finish doing their clean up
+        // Wait for all views to finish doing their clean-up
         await YarnTask.WhenAll(pendingTasks);
     }
 
@@ -674,7 +705,8 @@ public partial class DialogueRunner : Godot.Node
                     // todo cancel token... 
                     var methodReturn = gdScriptView.Call(gdscriptMethodName,
                         GDScriptViewAdapter.LocalizedLineToDict(localisedLine));
-                    if (methodReturn.As<GodotObject>().GetClass() == "GDScriptFunctionState")
+                    if (methodReturn.Obj != null &&
+                        methodReturn.As<GodotObject>().GetClass() == "GDScriptFunctionState")
                     {
                         //  GDScript method with await statements - wait for them to finish.
                         await ((SceneTree) Engine.GetMainLoop()).ToSignal(methodReturn.AsGodotObject(), "completed");
@@ -754,6 +786,11 @@ public partial class DialogueRunner : Godot.Node
             }
 
             var result = await view.RunOptionsAsync(localisedOptions, optionCancellationSource.Token);
+            if (!IsInstanceValid(this))
+            {
+                return;
+            }
+
             if (result != null)
             {
                 // We no longer need the other views, so tell them to stop
@@ -771,14 +808,15 @@ public partial class DialogueRunner : Godot.Node
                 return;
             }
 
-            int? selectedOption = null;
+            const int noOptionSelected = -99;
+            int selectedOption = noOptionSelected;
             var methodReturn = gdScriptView.Call(gdscriptMethodName,
                 GDScriptViewAdapter.DialogueOptionsToDictArray(localisedOptions),
                 Callable.From((int gdScriptSetOption) => selectedOption = gdScriptSetOption));
 
             var optionsTasks = new System.Collections.Generic.List<Task>();
 
-            if (methodReturn.As<GodotObject>().GetClass() == "GDScriptFunctionState")
+            if (methodReturn.Obj != null && methodReturn.As<GodotObject>().GetClass() == "GDScriptFunctionState")
             {
                 // callable is from GDScript with await statements
                 async Task waitForGDScriptReturn()
@@ -792,7 +830,7 @@ public partial class DialogueRunner : Godot.Node
             async Task waitForGDScriptOptionSelected()
             {
                 // selectedOption will be set by the Callable sent to the GDScript view.
-                while (selectedOption == null)
+                while (selectedOption == noOptionSelected)
                 {
                     await YarnTask.NextFrame();
                     if (!IsInstanceValid(this))
@@ -953,12 +991,33 @@ public partial class DialogueRunner : Godot.Node
             var tasks = new List<YarnTask>();
             foreach (var view in dialogueViews)
             {
-                if (view is not AsyncDialogueViewBase asyncView)
+                if (view is AsyncDialogueViewBase asyncView)
                 {
-                    continue;
+                    tasks.Add(asyncView.OnDialogueStartedAsync());
                 }
 
-                tasks.Add(asyncView.OnDialogueStartedAsync());
+                if (view.GetScript().Obj is GDScript)
+                {
+                    const string gdScriptMethodName = "on_dialogue_start_async";
+
+                    async Task GDScriptDialogueStart()
+                    {
+                        if (!view.HasMethod(gdScriptMethodName))
+                        {
+                            return;
+                        }
+
+                        var returnValue = view.Call(gdScriptMethodName);
+                        if (returnValue.Obj != null &&
+                            returnValue.As<GodotObject>().GetClass() == "GDScriptFunctionState")
+                        {
+                            // callable is from GDScript with await statements
+                            await ((SceneTree) Engine.GetMainLoop()).ToSignal(returnValue.AsGodotObject(), "completed");
+                        }
+                    }
+
+                    tasks.Add(GDScriptDialogueStart());
+                }
             }
 
             await YarnTask.WhenAll(tasks);
@@ -1096,7 +1155,7 @@ public partial class DialogueRunner : Godot.Node
             var castArgs = CastToExpectedTypes(argTypes, commandName, handlerArgs);
 
             var returnValue = handler.Call(castArgs.ToArray());
-            if (returnValue.As<GodotObject>().GetClass() == "GDScriptFunctionState")
+            if (returnValue.Obj != null && returnValue.As<GodotObject>().GetClass() == "GDScriptFunctionState")
             {
                 // callable is from GDScript with await statements
                 await ((SceneTree) Engine.GetMainLoop()).ToSignal(returnValue.AsGodotObject(), "completed");

@@ -118,7 +118,7 @@ public interface AsyncDialogueViewBase
             {
                 phaseComplete = false;
                 v2View.InterruptLine(line, PhaseComplete);
-                while (!GodotObject.IsInstanceValid((GodotObject) this) && phaseComplete == false)
+                while (GodotObject.IsInstanceValid((GodotObject) this) && phaseComplete == false)
                 {
                     await YarnTask.Yield();
                 }
@@ -194,7 +194,7 @@ public interface AsyncDialogueViewBase
             // for this view to be cancelled.
             v2View.RunOptions(dialogueOptions, (selectedID) => { selectedOptionID = selectedID; });
 
-            while (GodotObject.IsInstanceValid((GodotObject) this) ||
+            while (GodotObject.IsInstanceValid((GodotObject) this) &&
                    selectedOptionID == -1 && cancellationToken.IsCancellationRequested == false)
             {
                 await YarnTask.Yield();

@@ -562,7 +562,7 @@ public class Actions : ICommandDispatcher
         else
         {
 #if YARN_SOURCE_GENERATION_DEBUG_LOGGING
-                GD.Print($"Registering command {commandName}");
+            GD.Print($"Registering command {commandName}");
 #endif
             _commands.Add(commandName, new CommandRegistration(commandName, handler));
         }
@@ -576,7 +576,8 @@ public class Actions : ICommandDispatcher
             return;
         }
 #if YARN_SOURCE_GENERATION_DEBUG_LOGGING
-            GD.Print($"Registering command {name} from method {implementation.Method.DeclaringType.FullName}.{implementation.Method.Name}");
+        GD.Print(
+            $"Registering command {name} from method {implementation.Method.DeclaringType.FullName}.{implementation.Method.Name}");
 #endif
 
         Library.RegisterFunction(name, implementation);
@@ -742,6 +743,17 @@ public class Actions : ICommandDispatcher
         {
             try
             {
+                if (targetType == typeof(Variant))
+                {
+                    var nullableType = Nullable.GetUnderlyingType(arg.GetType());
+                    if (nullableType == null)
+                    {
+                        return Variant.From(arg);
+                    }
+                    // It's nullable, convert it to non-nullable for GDScript compatibility.
+                    return Variant.From(Convert.ChangeType(arg, nullableType));
+                }
+
                 return Convert.ChangeType(arg, targetType, CultureInfo.InvariantCulture);
             }
             catch (Exception e)
