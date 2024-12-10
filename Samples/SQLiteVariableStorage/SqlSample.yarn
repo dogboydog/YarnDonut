@@ -1,41 +1,45 @@
 ﻿title: SqlSample
 tags:
 ---
-<<declare $characterName = "" as string>>
+<<enum CharacterName>>
+  <<case Eskewwell ="Eskewell">>
+  <<case Seekwill ="Seekwill">>
+<<endenum>>
+<<declare $characterName = CharacterName.Eskewwell>>
 <<declare $numVariables = 0>>
 <<declare $impressed = false as bool>>
-Guide: Alright, I've been waiting for my last applicant of the day.  
-Guide: Hmm, how do you say your name!? It says "S-Q-L".
--> Eskew-well 
-  <<set $characterName to "Eskew-well">>
--> Seekwill
-  <<set $characterName to "Seekwill">>
-{$characterName}: My name is {$characterName}.
-{$characterName}: I have trained for one thousand years to store the most variables of all time.
-Guide: Wow. Impressive! Just how many variables do you think you could store?? 
--> There's no limit.
+Guide: Alright, I've been waiting for my last applicant of the day.   #line:0d2bca2 
+Guide: Hmm, how do you say your name!? It says "S-Q-L". #line:0e6b788 
+-> Eskew-well  #line:0f551f3 
+  <<set $characterName to CharacterName.Eskewwell>>
+-> Seekwill #line:07187e4 
+  <<set $characterName to CharacterName.Seekwill>>
+{$characterName}: My name is {$characterName}. #line:0d98ec4 
+{$characterName}: I have trained for one thousand years to store the most variables of all time. #line:089db20 
+Guide: Wow. Impressive! Just how many variables do you think you could store??  #line:0930b53 
+-> There's no limit. #line:03bddee 
    <<set $numVariables to -1>>
-   Guide: Wh- what? Unlimited?? 
-   Guide: Gahhh!!! 
-   The guide ran away. 
+   Guide: Wh- what? Unlimited??  #line:09af09f 
+   Guide: Gahhh!!!  #line:02fbbb2 
+   The guide ran away.  #line:0806472 
    <<stop>>
--> Sixty two thousand. 
+-> Sixty two thousand.  #line:0961fda 
    <<set $numVariables to 62000>>
-   Guide: Formidable... imagine the heights you could reach under our guidance.
+   Guide: Formidable... imagine the heights you could reach under our guidance. #line:0aed054 
    <<set $impressed to true>>
--> One thousand. 
+-> One thousand.  #line:0332341 
    <<set $numVariables to 1000>>
-   Guide: Hmm. That's not bad. 
+   Guide: Hmm. That's not bad.  #line:09737bd 
    <<set $impressed to true>>
--> Three. 
+-> Three.  #line:0ef43c6 
    <<set $numVariables to 3>>
-   Guide: I ...see.
+   Guide: I ...see. #line:0f34784 
    <<set $impressed to false>>
 
-Guide: Alright then, {$characterName}. You can store {$numVariables} variables... 
+Guide: Alright then, {$characterName}. You can store {$numVariables} variables...  #line:06ab48d 
 <<if $impressed>>
-Guide: Welcome to Variable Academy.
+Guide: Welcome to Variable Academy. #line:07f7e2a 
 <<else>>
-Guide: I'm afraid you're not cut out for Variable Academy.
+Guide: I'm afraid you're not cut out for Variable Academy. #line:02b6a1f 
 <<endif>>
 ===
