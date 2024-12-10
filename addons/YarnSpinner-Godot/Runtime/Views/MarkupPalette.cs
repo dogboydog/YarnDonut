@@ -17,12 +17,6 @@ namespace YarnSpinnerGodot;
 public partial class MarkupPalette : Resource
 {
     /// <summary>
-    /// The collection of colour markers inside this
-    /// </summary>
-    [Export] public Godot.Collections.Dictionary<string, Color> ColourMarkers = new();
-
-
-    /// <summary>
     /// A list containing all the color markers defined in this palette.
     /// </summary>
     [Export] public Array<FormatMarker> FormatMarkers;
