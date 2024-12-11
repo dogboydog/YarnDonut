@@ -5,10 +5,6 @@ using Yarn.Markup;
 namespace YarnSpinnerGodot;
 
 /// <summary>
-/// Represents a line, ready to be presented to the user in the
-/// localisation they have specified.
-/// </summary>
-/// <summary>
 /// Represents a line, ready to be presented to the user in the localisation
 /// they have specified.
 /// </summary>

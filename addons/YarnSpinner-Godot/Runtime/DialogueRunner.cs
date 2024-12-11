@@ -264,7 +264,19 @@ public partial class DialogueRunner : Godot.Node
     /// </summary>
     [Signal]
     public delegate void onDialogueCompleteEventHandler();
-
+    
+    /// <summary>
+    /// Clear all event handlers for <see cref="onDialogueComplete"/>
+    /// </summary>
+    public void ClearAllOnDialogueComplete() {
+        var connections = GetSignalConnectionList(SignalName.onDialogueComplete);
+        foreach (var connection in connections) {
+            var callable = connection["callable"].AsCallable();
+            if (IsConnected(SignalName.onDialogueComplete, callable)) {
+                Disconnect(SignalName.onDialogueComplete, callable);
+            }
+        }
+    }
     /// <summary>
     /// A signal that is emitted when a <see
     /// cref="Command"/> is received and no command handler was able to

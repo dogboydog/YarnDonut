@@ -7,6 +7,11 @@ using Node = Godot.Node;
 namespace YarnSpinnerGodot;
 
 /// <summary>
+/// As of Godot plugin version 0.3.0, you don't have to use this script
+/// as a mediator between YarnSpinner for Godot and your GDScript view.
+/// You can directly add your GDScript view to the DialogueRunner inspector
+/// under Dialogue Views.
+/// 
 /// Wrapper which allows you to implement a YarnSpinner DialogueViewBase via
 /// GDScript by calling snake_case versions of each method. 
 /// Add this script to a node for each GDScript view you want to implement,
