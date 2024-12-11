@@ -418,25 +418,25 @@ namespace YarnSpinnerGodot
             }
             
             // TODO:  generic AddCommandHandler<T1, T2> not working in Godot.
-            // if (typeArguments.Any() && MethodSymbol?.IsStatic == true)
-            // {
-            //     // This method needs to be specified with type arguments, so
-            //     // we'll need to call the appropriate generic version of
-            //     // AddCommandHandler/Function that takes type parameters. Create
-            //     // a new GenericName for AddCommandHandler/Function and provide
-            //     // it with the type parameter list that we just built.
-            //
-            //     nameSyntax = SyntaxFactory.GenericName(
-            //         SyntaxFactory.Identifier(registrationMethodName),
-            //         SyntaxFactory.TypeArgumentList(SyntaxFactory.SeparatedList(typeArguments))
-            //     );
-            // }
-            // else
-            // {
+            if (typeArguments.Any() && MethodSymbol?.IsStatic == true)
+            {
+                // This method needs to be specified with type arguments, so
+                // we'll need to call the appropriate generic version of
+                // AddCommandHandler/Function that takes type parameters. Create
+                // a new GenericName for AddCommandHandler/Function and provide
+                // it with the type parameter list that we just built.
+            
+                nameSyntax = SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier(registrationMethodName),
+                    SyntaxFactory.TypeArgumentList(SyntaxFactory.SeparatedList(typeArguments))
+                );
+            }
+            else
+            {
                 // This method doesn't need to specify any type parameters, so
                 // we can just use the identifier name.
                 nameSyntax = SyntaxFactory.IdentifierName(registrationMethodName);
-            // }
+            }
 
             // Create the expression that refers to the
             // 'AddCommandHandler/Function' instance method on the dialogue

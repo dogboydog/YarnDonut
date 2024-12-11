@@ -20,6 +20,11 @@ public partial class SpaceSample : Node
             new Yarn.Saliency.RandomBestLeastRecentlyViewedSalienceStrategy(dialogueRunner.VariableStorage);
     }
 
+    public static void Test(global::YarnSpinnerGodot.IActionRegistration target)
+    {
+        target.AddCommandHandler<string, string>("test", SetSprite);
+    }
+    
     [YarnCommand("setsprite")]
     public static void SetSprite(string character, string spriteName)
     {

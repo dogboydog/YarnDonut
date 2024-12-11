@@ -1,4 +1,4 @@
-namespace YarnSpinnerGodotGenerated;
+namespace YarnSpinnerGodot.Generated;
 
 /// <summary>
 /// Partial class so that we can reference the generated ActionRegistration class,

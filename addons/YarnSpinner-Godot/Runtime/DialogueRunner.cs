@@ -88,7 +88,7 @@ public partial class DialogueRunner : Godot.Node
     static DialogueRunner()
     {
         // See comments on below method - trigger action registration from code generation. 
-        YarnSpinnerGodotGenerated.ActionRegistration.Touch();
+        YarnSpinnerGodot.Generated.ActionRegistration.Touch();
     }
 
     private Dialogue? dialogue;
