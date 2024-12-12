@@ -86,8 +86,8 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -696.0
 offset_top = -64.0
-offset_right = 696.0
-offset_bottom = 340.0
+offset_right = 744.0
+offset_bottom = 397.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 8
@@ -113,7 +113,9 @@ theme_override_font_sizes/normal_font_size = 28
 bbcode_enabled = true
 text = "Basic dialogue demo
 Talking to NPCs
-"
+Line Groups
+Node Groups
+Shadow lines"
 scroll_active = false
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]

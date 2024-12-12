@@ -18,6 +18,9 @@ using Yarn.Compiler;
 using Yarn.Utility;
 using File = System.IO.File;
 using Path = System.IO.Path;
+#if YARNSPINNER_DEBUG
+using System.Diagnostics;
+#endif
 
 namespace YarnSpinnerGodot;
 
