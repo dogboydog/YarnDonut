@@ -1,10 +1,8 @@
-#nullable enable
 #if TOOLS
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -19,7 +17,6 @@ using Yarn;
 using Yarn.Compiler;
 using Yarn.Utility;
 using File = System.IO.File;
-using FileAccess = System.IO.FileAccess;
 using Path = System.IO.Path;
 
 namespace YarnSpinnerGodot;
@@ -37,9 +34,9 @@ public static class YarnProjectEditorUtility
     /// </summary>
     /// <param name="scriptPath"></param>
     /// <returns></returns>
-    public static string GetDestinationProjectPath(string scriptPath)
+    public static string? GetDestinationProjectPath(string scriptPath)
     {
-        string destinationProjectPath = null;
+        string? destinationProjectPath = null;
         var globalScriptPath = Path.GetFullPath(ProjectSettings.GlobalizePath(scriptPath));
         var allProjects = FindAllYarnProjects();
         foreach (var project in allProjects)
@@ -158,7 +155,7 @@ public static class YarnProjectEditorUtility
                 var fileName = project.variablesClassName + ".cs";
 
                 var generatedSourcePath =
-                    Path.Combine(Path.GetDirectoryName(ProjectSettings.GlobalizePath(project.ResourcePath)),
+                    Path.Combine(Path.GetDirectoryName(ProjectSettings.GlobalizePath(project.ResourcePath))!,
                         fileName);
                 bool generated = GenerateVariableSource(generatedSourcePath, project, compilationResult);
                 if (generated)
@@ -196,6 +193,13 @@ public static class YarnProjectEditorUtility
                 {
                     GD.PrintErr(
                         $"Can't update localization for {loc.Key} because it doesn't have a Strings file.");
+                    continue;
+                }
+
+                if (project.baseLocalization == null)
+                {
+                    GD.PrintErr(
+                        $"Can't update localization for {loc.Key} because it doesn't have a {nameof(project.baseLocalization)}.");
                     continue;
                 }
 
@@ -403,7 +407,7 @@ public static class YarnProjectEditorUtility
         var updateHandlerType = assembly.GetType("System.Text.Json.JsonSerializerOptionsUpdateHandler");
         var clearCacheMethod =
             updateHandlerType?.GetMethod("ClearCache", BindingFlags.Static | BindingFlags.Public);
-        clearCacheMethod?.Invoke(null, new object[] {null});
+        clearCacheMethod?.Invoke(null, new object?[] {null});
     }
 
     public static void SaveYarnProject(YarnProject project)
@@ -461,7 +465,7 @@ public static class YarnProjectEditorUtility
             var scriptAbsolutePaths = sourceScripts.ToList().Where(s => s != null)
                 .Select(ProjectSettings.GlobalizePath).ToList();
             // Store the compiled program
-            byte[] compiledBytes = null;
+            byte[]? compiledBytes = null;
             CompilationResult? compilationResult = new CompilationResult();
             if (scriptAbsolutePaths.Count > 0)
             {
@@ -521,7 +525,7 @@ public static class YarnProjectEditorUtility
                     .Where(decl => decl.Type is not FunctionType)
                     .Select(decl =>
                     {
-                        SerializedDeclaration existingDeclaration = null;
+                        SerializedDeclaration? existingDeclaration = null;
                         // try to re-use a declaration if one exists to avoid changing the .tres file so much
                         foreach (var existing in project.SerializedDeclarations)
                         {
@@ -614,25 +618,6 @@ public static class YarnProjectEditorUtility
         return compilationResult;
     }
 
-    public static FunctionInfo CreateFunctionInfoFromMethodGroup(MethodInfo method)
-    {
-        var returnType = $"-> {method.ReturnType.Name}";
-
-        var parameters = method.GetParameters();
-        var p = new string[parameters.Length];
-        for (int i = 0; i < parameters.Length; i++)
-        {
-            var q = parameters[i].ParameterType;
-            p[i] = parameters[i].Name;
-        }
-
-        var info = new FunctionInfo();
-        info.Name = method.Name;
-        info.ReturnType = returnType;
-        info.Parameters = p;
-        return info;
-    }
-
     /// <summary>
     /// If <see langword="true"/>, <see cref="ActionManager"/> will search
     /// all assemblies that have been defined using an <see
@@ -700,7 +685,7 @@ public static class YarnProjectEditorUtility
             // We only get no value if we have no scripts to work with.
             // In this case, return an empty collection - there's no
             // error, but there's no content either.
-            return new List<StringTableEntry>();
+            return Array.Empty<StringTableEntry>();
         }
 
         var errors =
@@ -709,7 +694,7 @@ public static class YarnProjectEditorUtility
         if (errors.Any())
         {
             GD.PrintErr("Can't generate a strings table from a Yarn Project that contains compile errors", null);
-            return null;
+            return Array.Empty<StringTableEntry>();
         }
 
         return GetStringTableEntries(project, compilationResult);
@@ -736,36 +721,40 @@ public static class YarnProjectEditorUtility
     private static IEnumerable<LineMetadataTableEntry> LineMetadataTableEntriesFromCompilationResult(
         CompilationResult result)
     {
-        return result.StringTable.Select(x =>
+        if (result.StringTable == null)
         {
-            var meta = new LineMetadataTableEntry();
-            meta.ID = x.Key;
-            meta.File = ProjectSettings.LocalizePath(x.Value.fileName);
-            meta.Node = x.Value.nodeName;
-            meta.LineNumber = x.Value.lineNumber.ToString();
-            meta.Metadata = RemoveLineIDFromMetadata(x.Value.metadata).ToArray();
-            return meta;
+            return Array.Empty<LineMetadataTableEntry>();
+        }
+
+        return result.StringTable.Select(x => new LineMetadataTableEntry
+        {
+            ID = x.Key,
+            File = ProjectSettings.LocalizePath(x.Value.fileName),
+            Node = x.Value.nodeName,
+            LineNumber = x.Value.lineNumber.ToString(),
+            Metadata = RemoveLineIDFromMetadata(x.Value.metadata).ToArray()
         }).Where(x => x.Metadata.Length > 0);
     }
 
     private static IEnumerable<StringTableEntry> GetStringTableEntries(YarnProject project,
         CompilationResult result)
     {
-        return result.StringTable.Select(x =>
-            {
-                var entry = new StringTableEntry();
+        if (result.StringTable == null)
+        {
+            return Array.Empty<StringTableEntry>();
+        }
 
-                entry.ID = x.Key;
-                entry.Language = project.defaultLanguage;
-                entry.Text = x.Value.text;
-                entry.File = ProjectSettings.LocalizePath(x.Value.fileName);
-                entry.Node = x.Value.nodeName;
-                entry.LineNumber = x.Value.lineNumber.ToString();
-                entry.Lock = x.Value.text == null ? "" : YarnImporter.GetHashString(x.Value.text, 8);
-                entry.Comment = GenerateCommentWithLineMetadata(x.Value.metadata);
-                return entry;
-            }
-        );
+        return result.StringTable.Select(x => new StringTableEntry
+        {
+            ID = x.Key,
+            Language = project.defaultLanguage,
+            Text = x.Value.text,
+            File = ProjectSettings.LocalizePath(x.Value.fileName),
+            Node = x.Value.nodeName,
+            LineNumber = x.Value.lineNumber.ToString(),
+            Lock = x.Value.text == null ? "" : YarnImporter.GetHashString(x.Value.text, 8),
+            Comment = GenerateCommentWithLineMetadata(x.Value.metadata)
+        });
     }
 
     /// <summary>
@@ -853,7 +842,9 @@ public static class YarnProjectEditorUtility
                 return Array.Empty<string>();
             }
 
-            return result.StringTable.Where(i => i.Value.isImplicitTag == false).Select(i => i.Key);
+            return result.StringTable == null
+                ? Array.Empty<string>()
+                : result.StringTable.Where(i => i.Value.isImplicitTag == false).Select(i => i.Key);
         }).ToList(); // immediately execute this query so we can determine timing information
 
 #if YARNSPINNER_DEBUG
@@ -965,7 +956,7 @@ public static class YarnProjectEditorUtility
             return false;
         }
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         int indentLevel = 0;
         const int indentSize = 4;
 

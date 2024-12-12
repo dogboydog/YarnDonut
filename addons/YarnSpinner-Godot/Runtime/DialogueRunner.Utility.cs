@@ -34,6 +34,12 @@ public partial class DialogueRunner
     {
         var path = System.IO.Path.Combine(ProjectSettings.GlobalizePath("user://"), saveFileName);
 
+        if (variableStorage == null)
+        {
+            GD.PushError($"No {nameof(variableStorage)} is set on this {nameof(DialogueRunner)}");
+            return false;
+        }
+
         try
         {
             var saveData = System.IO.File.ReadAllText(path);
@@ -97,17 +103,17 @@ public partial class DialogueRunner
     {
         SaveData data = JsonSerializer.Deserialize<SaveData>(jsonData);
 
-        if (data.floatKeys == null && data.floatValues == null)
+        if (data.floatKeys == null || data.floatValues == null)
         {
             throw new ArgumentException("Provided JSON string was not able to extract numeric variables");
         }
 
-        if (data.stringKeys == null && data.stringValues == null)
+        if (data.stringKeys == null || data.stringValues == null)
         {
             throw new ArgumentException("Provided JSON string was not able to extract string variables");
         }
 
-        if (data.boolKeys == null && data.boolValues == null)
+        if (data.boolKeys == null || data.boolValues == null)
         {
             throw new ArgumentException("Provided JSON string was not able to extract boolean variables");
         }
@@ -150,6 +156,12 @@ public partial class DialogueRunner
 
     private string SerializeAllVariablesToJSON()
     {
+        if (variableStorage == null)
+        {
+            GD.PushError($"No {nameof(variableStorage)} is set on this {nameof(DialogueRunner)}");
+            return String.Empty;
+        }
+
         (var floats, var strings, var bools) = this.variableStorage.GetAllVariables();
 
         SaveData data = new SaveData();
@@ -159,7 +171,7 @@ public partial class DialogueRunner
         data.stringValues = strings.Values.ToArray();
         data.boolKeys = bools.Keys.ToArray();
         data.boolValues = bools.Values.ToArray();
-        return JsonSerializer.Serialize (data, YarnProject.JSONOptions);
+        return JsonSerializer.Serialize(data, YarnProject.JSONOptions);
     }
 
     [System.Serializable]
@@ -369,5 +381,4 @@ public partial class DialogueRunner
 
         return pausePositions;
     }
-
 }

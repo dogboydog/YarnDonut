@@ -122,7 +122,7 @@ public class Actions : ICommandDispatcher
         public MethodInfo Method { get; set; }
         private object? Target { get; set; }
 
-        public Type DeclaringType => Method.DeclaringType;
+        public Type DeclaringType => Method.DeclaringType!;
         public Type ReturnType => Method.ReturnType;
         public bool IsStatic => Method.IsStatic;
 
@@ -247,7 +247,7 @@ public class Actions : ICommandDispatcher
                     var parameterArrayElementType = parameters[i].ParameterType.GetElementType();
                     var paramIndex = i;
                     // var paramsArray = new List<object?>();
-                    var paramsArray = Array.CreateInstance(parameterArrayElementType, argumentCount - i);
+                    var paramsArray = Array.CreateInstance(parameterArrayElementType!, argumentCount - i);
                     while (i < argumentCount)
                     {
                         arg = args[i];
@@ -264,7 +264,7 @@ public class Actions : ICommandDispatcher
                             catch (Exception e)
                             {
                                 message =
-                                    $"Can't convert parameter {i} to {parameterArrayElementType.Name}: {e.Message}";
+                                    $"Can't convert parameter {i} to {parameterArrayElementType!.Name}: {e.Message}";
                                 result = default;
                                 return CommandDispatchResult.ParameterParseStatusType.InvalidParameterType;
                             }
@@ -311,7 +311,7 @@ public class Actions : ICommandDispatcher
                 {
                     // If the parameter is a params array, provide an empty
                     // array of the appropriate type.
-                    finalArgs[i] = Array.CreateInstance(parameter.ParameterType.GetElementType(), 0);
+                    finalArgs[i] = Array.CreateInstance(parameter.ParameterType!.GetElementType()!, 0);
                 }
                 else
                 {
@@ -493,7 +493,7 @@ public class Actions : ICommandDispatcher
                 foreach (var parameter in Method.GetParameters())
                 {
                     var type = parameter.ParameterType;
-                    string typeName;
+                    string? typeName;
 
                     if (TypeFriendlyNames.TryGetValue(type, out typeName) == false)
                     {
@@ -540,7 +540,7 @@ public class Actions : ICommandDispatcher
 
     private static string GetFullMethodName(MethodInfo method)
     {
-        return $"{method.DeclaringType.FullName}.{method.Name}";
+        return $"{method.DeclaringType?.FullName}.{method.Name}";
     }
 
     public void RegisterActions()
@@ -577,7 +577,7 @@ public class Actions : ICommandDispatcher
         }
 #if YARN_SOURCE_GENERATION_DEBUG_LOGGING
         GD.Print(
-            $"Registering command {name} from method {implementation.Method.DeclaringType.FullName}.{implementation.Method.Name}");
+            $"Registering command {name} from method {implementation.Method.DeclaringType?.FullName}.{implementation.Method.Name}");
 #endif
 
         Library.RegisterFunction(name, implementation);
@@ -668,7 +668,7 @@ public class Actions : ICommandDispatcher
     private static System.Func<string, int, object?> CreateConverter(ParameterInfo parameter, int index)
     {
         var targetType = parameter.ParameterType;
-        string name = parameter.Name;
+        string name = parameter.Name!;
         var parameterIsParamsArray = parameter.GetCustomAttribute<ParamArrayAttribute>() != null;
 
         if (targetType.IsArray && parameterIsParamsArray)
@@ -678,7 +678,7 @@ public class Actions : ICommandDispatcher
             // it with the arguments found in the command.
 
             var paramsArrayType = targetType.GetElementType();
-            var elementConverter = CreateConverterFunction(paramsArrayType, name);
+            var elementConverter = CreateConverterFunction(paramsArrayType!, name);
             return elementConverter;
         }
         else
@@ -765,7 +765,7 @@ public class Actions : ICommandDispatcher
         };
     }
 
-    private static Godot.Node FindTypedNodeInChildren(Godot.Node node, Type type)
+    private static Godot.Node? FindTypedNodeInChildren(Godot.Node node, Type type)
     {
         if (type.IsInstanceOfType(node))
         {

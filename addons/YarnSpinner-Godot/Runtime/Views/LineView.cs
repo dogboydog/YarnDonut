@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 using Godot;
 using Yarn.Markup;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+
 namespace YarnSpinnerGodot;
 
 /// <summary>
 /// A Dialogue View that presents lines of dialogue, using Godot UI Controls
 /// elements.
 /// Important: When implementing this interface, your class should extend from Godot.Node.
+/// Obsolete Use <see cref="AsyncLineView"/>
 /// </summary>
 [GlobalClass]
 public partial class LineView : Node, DialogueViewBase

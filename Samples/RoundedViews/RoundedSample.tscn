@@ -10,7 +10,10 @@
 
 [node name="DialogueRunner" parent="RoundedYarnSpinnerCanvasLayer" index="0"]
 yarnProject = ExtResource("2_s6ssf")
-startAutomatically = true
+autoStart = true
+
+[node name="TextLineProvider" parent="RoundedYarnSpinnerCanvasLayer" index="5"]
+YarnProject = ExtResource("2_s6ssf")
 
 [node name="ReturnOnComplete" type="Node2D" parent="." node_paths=PackedStringArray("dialogueRunner")]
 script = ExtResource("3_cw7ad")

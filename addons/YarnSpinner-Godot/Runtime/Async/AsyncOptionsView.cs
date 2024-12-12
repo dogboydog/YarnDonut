@@ -13,6 +13,7 @@ namespace YarnSpinnerGodot;
 /// manages a collection of <see cref="AsyncOptionItem"/> views for the user
 /// to choose from.
 /// </summary>
+[GlobalClass]
 public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
 {
     [Export] Control? viewControl;
@@ -36,7 +37,7 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
     /// The node that options will be parented to.
     /// You can use a BoxContainer to automatically lay out your options.
     /// </summary>
-    [Export] public Godot.Node optionParent;
+    [Export] public Godot.Node? optionParent;
 
     LocalizedLine? lastSeenLine;
 
@@ -56,7 +57,7 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
     {
         if (IsInstanceValid(viewControl))
         {
-            viewControl.Visible = false;
+            viewControl!.Visible = false;
         }
 
         return YarnTask.CompletedTask;
@@ -67,9 +68,14 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
     /// </summary>
     public override void _Ready()
     {
-        if (IsInstanceValid(viewControl))
+        if (!IsInstanceValid(viewControl) || !IsInstanceValid(optionParent))
         {
-            viewControl.Visible = false;
+            GD.PushError(
+                $"Make sure to set both {nameof(viewControl)} and {optionParent} on this {nameof(AsyncOptionsView)}");
+        }
+        else
+        {
+            viewControl!.Visible = false;
         }
 
         if (optionParent is Node2D parent2D && IsInstanceValid(parent2D))
@@ -97,7 +103,7 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
     {
         if (IsInstanceValid(viewControl))
         {
-            viewControl.Visible = false;
+            viewControl!.Visible = false;
         }
 
         return YarnTask.CompletedTask;
@@ -135,6 +141,13 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
     public async YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions,
         CancellationToken cancellationToken)
     {
+        if (!IsInstanceValid(optionParent))
+        {
+            throw new System.InvalidOperationException(
+                $"Can't display options from {nameof(AsyncOptionsView)}. No {nameof(optionParent)} is set " +
+                $"to parent the options to.");
+        }
+
         // If we don't already have enough option views, create more
         while (dialogueOptions.Length > optionViews.Count)
         {
@@ -242,13 +255,13 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
 
         if (IsInstanceValid(viewControl))
         {
-            viewControl.Visible = true;
+            viewControl!.Visible = true;
         }
 
         var parent2D = optionParent as Node2D;
         if (IsInstanceValid(parent2D))
         {
-            parent2D.Visible = true;
+            parent2D!.Visible = true;
         }
 
 
@@ -272,12 +285,12 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
 
         if (IsInstanceValid(viewControl))
         {
-            viewControl.Visible = false;
+            viewControl!.Visible = false;
         }
 
         if (IsInstanceValid(parent2D))
         {
-            parent2D.Visible = false;
+            parent2D!.Visible = false;
         }
 
         await YarnTask.NextFrame();
@@ -308,7 +321,8 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
             throw new System.InvalidOperationException($"Can't create new option view: {nameof(optionView)} is null");
         }
 
-        optionParent.AddChild(optionView);
+
+        optionParent!.AddChild(optionView);
         optionView.Visible = false;
 
         return optionView;

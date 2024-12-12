@@ -1,6 +1,6 @@
+#nullable disable
 using System;
 using Godot;
-using Yarn;
 using Yarn.Markup;
 using Node = Godot.Node;
 
@@ -20,10 +20,15 @@ namespace YarnSpinnerGodot;
 /// 
 ///
 /// Note: You still have to use the version of Godot which supports C# in order to use
-/// this plugin. 
+/// this plugin.
+///
+/// CS0618: Provided for backwards compatibility with v0.2.0, you can now directly
+/// use nodes with GDScript attached without the need of an adapter and do not need to use this script. 
 /// </summary>
 [GlobalClass]
+#pragma warning disable CS0618 // Type or member is obsolete
 public partial class GDScriptViewAdapter : Node, DialogueViewBase
+#pragma warning restore CS0618 // Type or member is obsolete
 {
     /// <summary>
     /// Assign this node to the node with the GDScript implementing your view attached.

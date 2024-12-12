@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
-
+#pragma warning disable CS0618 // Type or member is obsolete
 namespace YarnSpinnerGodot;
 
+/// <summary>
+/// Obsolete: Use <see cref="AsyncOptionsView"/>
+/// </summary>
 [GlobalClass]
-[Obsolete("Use " + nameof(AsyncOptionsView))]
+
 public partial class OptionsListView : Node, DialogueViewBase
 {
     [Export] PackedScene optionViewPrefab;

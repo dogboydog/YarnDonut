@@ -2,8 +2,12 @@
 using System;
 using Godot;
 
+#pragma warning disable CS0618 // Type or member is obsolete
 namespace YarnSpinnerGodot;
 
+/// <summary>
+/// Obsolete: Use <see cref="AsyncOptionItem"/>
+/// </summary>
 public partial class OptionView : BaseButton
 {
     [Export] bool showCharacterName = false;
@@ -42,7 +46,6 @@ public partial class OptionView : BaseButton
             {
                 label.Text =
                     $"[center]{LineView.PaletteMarkedUpText(line, palette)}[/center]";
-                
             }
             else
             {

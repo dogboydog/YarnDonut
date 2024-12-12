@@ -4,6 +4,7 @@ Yarn Spinner is licensed to you under the terms found in the file LICENSE.md.
 
 using System.Collections.Generic;
 using System.Threading;
+using Godot;
 using Yarn;
 using Yarn.Markup;
 
@@ -105,7 +106,7 @@ public abstract partial class LineProviderBehaviour : Godot.Node, ILineProvider
     public abstract YarnTask<LocalizedLine> GetLocalizedLineAsync(Line line, CancellationToken cancellationToken);
 
     /// <inheritdoc/>
-    public YarnProject? YarnProject { get; set; }
+    [Export] public YarnProject? YarnProject { get; set; }
 
     /// <inheritdoc/>
     public virtual YarnTask PrepareForLinesAsync(IEnumerable<string> lineIDs, CancellationToken cancellationToken)

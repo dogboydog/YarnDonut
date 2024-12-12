@@ -1,5 +1,4 @@
-﻿#nullable disable
-using Godot;
+﻿using Godot;
 using Yarn.Markup;
 
 namespace YarnSpinnerGodot;

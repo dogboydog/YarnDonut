@@ -687,7 +687,7 @@ public partial class YarnProjectInspectorPlugin : EditorInspectorPlugin
         YarnProjectEditorUtility.UpdateLocalizationCSVs(_project);
     }
 
-    private async void OnRecompileClicked()
+    private void OnRecompileClicked()
     {
         if (!IsInstanceValid(_project))
         {

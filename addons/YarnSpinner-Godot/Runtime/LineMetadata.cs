@@ -1,4 +1,4 @@
-#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +17,7 @@ public class LineMetadata
     /// <summary>
     /// File where a CSV will be written to describing the metadata (optional)
     /// </summary>
-    public string stringsFile;
+    public string? stringsFile;
 
     public LineMetadata()
     {

@@ -1,3 +1,4 @@
+#nullable disable
 using Godot;
 
 namespace YarnSpinnerGodot;

@@ -1,7 +1,7 @@
 /*
 Yarn Spinner is licensed to you under the terms found in the file LICENSE.md.
 */
-
+#nullable disable
 using System;
 using System.Collections;
 using System.Collections.Generic;

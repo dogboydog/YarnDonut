@@ -218,7 +218,7 @@ public partial class DialogueRunner : Godot.Node
     /// cref="YarnProject"/>.</remarks>
     /// <seealso cref="YarnProject"/>
     /// <seealso cref="StartDialogue(string)"/>
-    [Export] public string startNode;
+    [Export] public string? startNode;
 
     /// <summary>
     /// If this value is set, when an option is selected, the line contained
@@ -264,19 +264,23 @@ public partial class DialogueRunner : Godot.Node
     /// </summary>
     [Signal]
     public delegate void onDialogueCompleteEventHandler();
-    
+
     /// <summary>
     /// Clear all event handlers for <see cref="onDialogueComplete"/>
     /// </summary>
-    public void ClearAllOnDialogueComplete() {
+    public void ClearAllOnDialogueComplete()
+    {
         var connections = GetSignalConnectionList(SignalName.onDialogueComplete);
-        foreach (var connection in connections) {
+        foreach (var connection in connections)
+        {
             var callable = connection["callable"].AsCallable();
-            if (IsConnected(SignalName.onDialogueComplete, callable)) {
+            if (IsConnected(SignalName.onDialogueComplete, callable))
+            {
                 Disconnect(SignalName.onDialogueComplete, callable);
             }
         }
     }
+
     /// <summary>
     /// A signal that is emitted when a <see
     /// cref="Command"/> is received and no command handler was able to
@@ -325,7 +329,8 @@ public partial class DialogueRunner : Godot.Node
     private CancellationTokenSource? currentLineCancellationSource;
     private CancellationTokenSource? currentLineHurryUpSource;
 
-    internal ICommandDispatcher CommandDispatcher { get; private set; }
+    // Will be set in _EnterTree
+    private ICommandDispatcher CommandDispatcher { get; set; } = null!;
 
     /// <summary>
     /// Called by Godot to set up the object.
@@ -336,12 +341,13 @@ public partial class DialogueRunner : Godot.Node
         CommandDispatcher = actions;
         actions.RegisterActions();
 
+
         if (IsInstanceValid(VariableStorage) && IsInstanceValid(yarnProject))
         {
-            this.VariableStorage.Program = this.YarnProject.Program;
+            this.VariableStorage.Program = this.YarnProject!.Program;
         }
 
-        if (LineProvider != null && IsInstanceValid(yarnProject))
+        if (IsInstanceValid(yarnProject))
         {
             this.LineProvider.YarnProject = this.YarnProject;
         }
@@ -355,16 +361,23 @@ public partial class DialogueRunner : Godot.Node
     {
         foreach (var view in dialogueViews)
         {
-            if (view is not AsyncDialogueViewBase && view.GetScript().Obj is not GDScript)
+            if (view == null || view is not AsyncDialogueViewBase && view.GetScript().Obj is not GDScript)
             {
                 GD.PushError(
-                    $"Node {view.Name} ({view.GetType()}) does not appear to be a dialogue view. " +
+                    $"Node {view?.Name} ({view?.GetType()}) added to {nameof(dialogueViews)} does not appear to be a dialogue view. " +
                     $"Ensure only dialogue views are added to {nameof(dialogueViews)}.");
             }
         }
 
         if (autoStart)
         {
+            if (string.IsNullOrWhiteSpace(startNode))
+            {
+                GD.PushError(
+                    $"Auto Start was enabled on this {nameof(DialogueRunner)}, but no {nameof(startNode)} was provided");
+                return;
+            }
+
             CallDeferred(nameof(StartDialogue), startNode);
         }
     }
@@ -533,10 +546,10 @@ public partial class DialogueRunner : Godot.Node
 
     private async YarnTask OnCommandReceivedAsync(Command command)
     {
-        CommandDispatchResult dispatchResult = this.CommandDispatcher.DispatchCommand(command.Text, this);
+        CommandDispatchResult dispatchResult = this.CommandDispatcher!.DispatchCommand(command.Text, this);
 
         var parts = SplitCommandText(command.Text);
-        string commandName = parts.ElementAtOrDefault(0);
+        string commandName = parts.ElementAtOrDefault(0) ?? string.Empty;
 
         switch (dispatchResult.Status)
         {
@@ -826,45 +839,40 @@ public partial class DialogueRunner : Godot.Node
                 GDScriptViewAdapter.DialogueOptionsToDictArray(localisedOptions),
                 Callable.From((int gdScriptSetOption) => selectedOption = gdScriptSetOption));
 
-            var optionsTasks = new System.Collections.Generic.List<Task>();
 
             if (methodReturn.Obj != null && methodReturn.As<GodotObject>().GetClass() == "GDScriptFunctionState")
             {
                 // callable is from GDScript with await statements
-                async Task waitForGDScriptReturn()
-                {
-                    await ((SceneTree) Engine.GetMainLoop()).ToSignal(methodReturn.AsGodotObject(), "completed");
-                }
-
-                optionsTasks.Add(waitForGDScriptReturn());
+                await ((SceneTree) Engine.GetMainLoop()).ToSignal(methodReturn.AsGodotObject(), "completed");
             }
 
-            async Task waitForGDScriptOptionSelected()
+
+            // selectedOption will be set by the Callable sent to the GDScript view.
+            while (selectedOption == noOptionSelected)
             {
-                // selectedOption will be set by the Callable sent to the GDScript view.
-                while (selectedOption == noOptionSelected)
+                await YarnTask.NextFrame();
+                if (!IsInstanceValid(this))
                 {
-                    await YarnTask.NextFrame();
-                    if (!IsInstanceValid(this))
-                    {
-                        // dialogue runner may have been deleted while awaiting.
-                        return;
-                    }
+                    // dialogue runner may have been deleted while awaiting.
+                    return;
                 }
-
-                // if we got this far, selectedOption is not null anymore
-                DialogueOption? result =
-                    localisedOptions.FirstOrDefault(option => option.DialogueOptionID == selectedOption);
-
-                dialogueSelectionTCS.TrySetResult(result);
             }
 
-            optionsTasks.Add(waitForGDScriptOptionSelected());
+            // if we got this far, selectedOption is not null anymore
+            DialogueOption? result =
+                localisedOptions.FirstOrDefault(option => option.DialogueOptionID == selectedOption);
+
+            dialogueSelectionTCS.TrySetResult(result);
         }
 
         var pendingTasks = new List<YarnTask>();
         foreach (var view in this.dialogueViews)
         {
+            if (view == null || !IsInstanceValid(view))
+            {
+                continue;
+            }
+
             if (view is AsyncDialogueViewBase asyncView)
             {
                 pendingTasks.Add(WaitForOptionsView(asyncView));
@@ -1003,6 +1011,11 @@ public partial class DialogueRunner : Godot.Node
             var tasks = new List<YarnTask>();
             foreach (var view in dialogueViews)
             {
+                if (view == null || !IsInstanceValid(view))
+                {
+                    continue;
+                }
+
                 if (view is AsyncDialogueViewBase asyncView)
                 {
                     tasks.Add(asyncView.OnDialogueStartedAsync());
@@ -1242,7 +1255,7 @@ public partial class DialogueRunner : Godot.Node
         foreach (var arg in args)
         {
             var argType = argTypes[argIndex];
-            var castArg = argType switch
+            Variant castArg = argType switch
             {
                 Variant.Type.Bool => arg.AsBool(),
                 Variant.Type.Int => arg.AsInt32(),
@@ -1251,7 +1264,7 @@ public partial class DialogueRunner : Godot.Node
                 Variant.Type.Callable => arg.AsCallable(),
                 // if no type hint is given, assume string type
                 Variant.Type.Nil => arg.AsString(),
-                _ => Variant.From<GodotObject>(null),
+                _ => throw new ArgumentException($"Type for {arg} is not supported: {argType}"),
             };
             castArgs.Add(castArg);
             if (castArg.Obj == null)

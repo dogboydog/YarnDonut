@@ -13,8 +13,7 @@ public partial class TextLineProvider : LineProviderBehaviour
     /// for this <see cref="TextLineProvider"/>.
     /// </summary>
     [Language] [Export] public string textLanguageCode = System.Globalization.CultureInfo.CurrentCulture.Name;
-
-    [Export] public YarnProject YarnProject;
+    
     private YarnTask? prepareForLinesTask = null;
 
     public override bool LinesAvailable => prepareForLinesTask?.IsCompletedSuccessfully() ?? false;
@@ -54,7 +53,7 @@ public partial class TextLineProvider : LineProviderBehaviour
         }
     }
 
-    public override async YarnTask<LocalizedLine> GetLocalizedLineAsync(Yarn.Line line,
+    public override YarnTask<LocalizedLine> GetLocalizedLineAsync(Yarn.Line line,
         CancellationToken cancellationToken)
     {
         string text;
@@ -97,20 +96,20 @@ public partial class TextLineProvider : LineProviderBehaviour
         {
             // No line available.
             GD.PushWarning($"Can't locate the text for the line: {line.ID}", this);
-            return LocalizedLine.InvalidLine;
+            return YarnTask.FromResult(LocalizedLine.InvalidLine);
         }
 
         var parseResult = lineParser.ParseString(LineParser.ExpandSubstitutions(text, line.Substitutions),
             this.LocaleCode);
 
-        return new LocalizedLine()
+        return YarnTask.FromResult(new LocalizedLine()
         {
             TextID = line.ID,
             Text = parseResult,
             RawText = text,
             Substitutions = line.Substitutions,
             Metadata = metadata,
-        };
+        });
     }
 
 

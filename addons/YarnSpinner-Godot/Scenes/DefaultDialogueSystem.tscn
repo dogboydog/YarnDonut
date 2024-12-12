@@ -41,6 +41,7 @@ characterNameText = NodePath("ViewControl/CharacterNameText")
 characterNameContainer = NodePath("ViewControl/CharacterNameText")
 useFadeEffect = false
 fadeUpDuration = 0.1
+ConvertHTMLToBBCode = true
 
 [node name="ViewControl" type="Control" parent="AsyncLineView"]
 layout_mode = 1

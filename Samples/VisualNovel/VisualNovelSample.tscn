@@ -1,12 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://b4lixjwce14o3"]
+[gd_scene load_steps=7 format=3 uid="uid://b4lixjwce14o3"]
 
 [ext_resource type="Resource" uid="uid://bh6gxtkim13bm" path="res://Samples/VisualNovel/Dialogue/VisualNovel.yarnproject" id="2"]
 [ext_resource type="Script" path="res://Samples/VisualNovel/Scripts/VisualNovelManager.cs" id="4"]
 [ext_resource type="PackedScene" uid="uid://bv42g323prh5f" path="res://addons/YarnSpinner-Godot/Scenes/DefaultDialogueSystem.tscn" id="4_rci1f"]
 [ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/InMemoryVariableStorage.cs" id="6"]
-[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Async/AsyncLineView.cs" id="6_fonnp"]
 [ext_resource type="Script" path="res://Samples/ReturnOnComplete.cs" id="6_jon5a"]
-[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Async/AsyncOptionsView.cs" id="7_b1sgm"]
 [ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/LineProviders/TextLineProvider.cs" id="9"]
 
 [node name="VisualNovelSample" type="Control"]
@@ -17,7 +15,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VisualNovelManager" type="Control" parent="."]
+[node name="VNManager" type="Control" parent="."]
 anchors_preset = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -31,12 +29,12 @@ _spanishButtonPath = NodePath("DialogueStartUI/VBoxContainer/SpanishButton")
 _japaneseButtonPath = NodePath("DialogueStartUI/VBoxContainer/JapaneseButton")
 _dialogueCanvasPath = NodePath("../YarnSpinnerCanvasLayer")
 
-[node name="BackgroundImage" type="TextureRect" parent="VisualNovelManager"]
+[node name="BackgroundImage" type="TextureRect" parent="VNManager"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="DialogueStartUI" type="Control" parent="VisualNovelManager"]
+[node name="DialogueStartUI" type="Control" parent="VNManager"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -44,7 +42,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VisualNovelManager/DialogueStartUI"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VNManager/DialogueStartUI"]
 custom_minimum_size = Vector2(600, 0)
 layout_mode = 0
 offset_left = 494.0
@@ -52,13 +50,13 @@ offset_top = 272.0
 offset_right = 1094.0
 offset_bottom = 407.0
 
-[node name="PlayTheGameIn" type="RichTextLabel" parent="VisualNovelManager/DialogueStartUI/VBoxContainer"]
+[node name="PlayTheGameIn" type="RichTextLabel" parent="VNManager/DialogueStartUI/VBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 bbcode_enabled = true
 text = "Play the game in...."
 
-[node name="EnglishButton" type="Button" parent="VisualNovelManager/DialogueStartUI/VBoxContainer"]
+[node name="EnglishButton" type="Button" parent="VNManager/DialogueStartUI/VBoxContainer"]
 layout_mode = 2
 focus_neighbor_top = NodePath("../JapaneseButton")
 focus_neighbor_bottom = NodePath("../SpanishButton")
@@ -66,7 +64,7 @@ focus_next = NodePath("../SpanishButton")
 focus_previous = NodePath("../JapaneseButton")
 text = "English"
 
-[node name="SpanishButton" type="Button" parent="VisualNovelManager/DialogueStartUI/VBoxContainer"]
+[node name="SpanishButton" type="Button" parent="VNManager/DialogueStartUI/VBoxContainer"]
 layout_mode = 2
 focus_neighbor_top = NodePath("../EnglishButton")
 focus_neighbor_bottom = NodePath("../JapaneseButton")
@@ -74,7 +72,7 @@ focus_next = NodePath("../JapaneseButton")
 focus_previous = NodePath("../EnglishButton")
 text = "Español"
 
-[node name="JapaneseButton" type="Button" parent="VisualNovelManager/DialogueStartUI/VBoxContainer"]
+[node name="JapaneseButton" type="Button" parent="VNManager/DialogueStartUI/VBoxContainer"]
 layout_mode = 2
 focus_neighbor_top = NodePath("../SpanishButton")
 focus_neighbor_bottom = NodePath("../EnglishButton")
@@ -95,27 +93,6 @@ YarnProject = ExtResource("2")
 [node name="DialogueRunner" parent="YarnSpinnerCanvasLayer" index="0"]
 yarnProject = ExtResource("2")
 startNode = "Start"
-
-[node name="LineView" parent="YarnSpinnerCanvasLayer" index="2" node_paths=PackedStringArray("dialogueRunner", "viewControl", "lineText", "characterNameContainer")]
-script = ExtResource("6_fonnp")
-dialogueRunner = NodePath("../DialogueRunner")
-viewControl = NodePath("ViewControl")
-lineText = NodePath("ViewControl/LineText")
-characterNameContainer = NodePath("ViewControl/CharacterNameText")
-fadeUpDuration = 0.25
-fadeDownDuration = 0.1
-autoAdvanceDelay = 1.0
-typewriterEffectSpeed = 60
-
-[node name="LineText" parent="YarnSpinnerCanvasLayer/LineView/ViewControl" index="0"]
-theme_override_font_sizes/normal_font_size = 34
-
-[node name="OptionsListView" parent="YarnSpinnerCanvasLayer" index="3" node_paths=PackedStringArray("lastLineContainer", "lastLineCharacterNameContainer", "optionParent")]
-script = ExtResource("7_b1sgm")
-showsLastLine = false
-lastLineContainer = NodePath("ViewControl/LastLineText")
-lastLineCharacterNameContainer = NodePath("ViewControl/LastLineCharacterNameText")
-optionParent = NodePath("ViewControl/VBoxContainer")
 
 [node name="TextLineProvider" parent="YarnSpinnerCanvasLayer" index="5"]
 YarnProject = ExtResource("2")

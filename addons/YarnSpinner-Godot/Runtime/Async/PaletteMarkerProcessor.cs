@@ -16,17 +16,18 @@ namespace YarnSpinnerGodot;
 /// example, if the palette defines a style named "happy", this marker processor
 /// will process tags in a Yarn line named <c>[happy]</c> by inserting the
 /// appropriate TextMeshProp style tags defined for the "happy" style.</remarks>
+[GlobalClass]
 public partial class PaletteMarkerProcessor : AttributeMarkerProcessor
 {
     /// <summary>
     /// The <see cref="MarkupPalette"/> to use when applying styles.
     /// </summary>
-    [Export] public MarkupPalette palette;
+    [Export] public MarkupPalette? palette;
 
     /// <summary>
     /// The line provider to register this markup processor with.
     /// </summary>
-    [Export] public LineProviderBehaviour lineProvider;
+    [Export] public LineProviderBehaviour? lineProvider;
 
     /// <inheritdoc/>
     /// <summary>
@@ -42,6 +43,14 @@ public partial class PaletteMarkerProcessor : AttributeMarkerProcessor
     public override List<LineParser.MarkupDiagnostic> ProcessReplacementMarker(MarkupAttribute marker,
         StringBuilder childBuilder, List<MarkupAttribute> childAttributes, string localeCode)
     {
+        if (palette == null)
+        {
+            return new List<LineParser.MarkupDiagnostic>
+            {
+                new LineParser.MarkupDiagnostic($"No palette set on {nameof(PaletteMarkerProcessor)}")
+            };
+        }
+
         // get the colour for this marker
         if (!palette.FormatForMarker(marker.Name, out var style))
         {
@@ -106,12 +115,13 @@ public partial class PaletteMarkerProcessor : AttributeMarkerProcessor
 
         if (palette == null)
         {
+            GD.PushError($"No palette is set on {nameof(PaletteMarkerProcessor)}");
             return;
         }
 
         foreach (var colour in palette.FormatMarkers)
         {
-            lineProvider.RegisterMarkerProcessor(colour.Marker, this);
+            lineProvider!.RegisterMarkerProcessor(colour.Marker, this);
         }
     }
 }

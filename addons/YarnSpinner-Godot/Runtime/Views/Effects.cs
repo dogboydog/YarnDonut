@@ -247,7 +247,7 @@ public static class Effects
         // Wait a single frame to let the text component process its
         // content, otherwise text.textInfo.characterCount won't be
         // accurate
-        await DefaultActions.Wait(LineView.FrameWaitTime);
+        await DefaultActions.Wait(AsyncLineView.FrameWaitTime);
         if (!GodotObject.IsInstanceValid(text))
         {
             return;

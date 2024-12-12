@@ -14,6 +14,7 @@ namespace YarnSpinnerGodot;
 /// either by asking a dialogue runner to hurry up its delivery, advance to
 /// the next line, or cancel the entire dialogue session.
 /// </summary>
+[GlobalClass]
 public partial class LineAdvancer : Node, AsyncDialogueViewBase
 {
     [Export] DialogueRunner? runner;
@@ -44,7 +45,7 @@ public partial class LineAdvancer : Node, AsyncDialogueViewBase
     /// will be cancelled.
     /// </remarks>
     private int numberOfAdvancesThisLine = 0;
-    
+
     /// <summary>
     /// The input action that triggers a request to advance to the
     /// next piece of content.
@@ -182,17 +183,17 @@ public partial class LineAdvancer : Node, AsyncDialogueViewBase
     /// </summary>
     public override void _Process(double delta)
     {
-        if (Input.IsActionJustReleased(hurryUpAction))
+        if (!string.IsNullOrWhiteSpace(hurryUpAction) && Input.IsActionJustReleased(hurryUpAction))
         {
             this.RequestLineHurryUp();
         }
 
-        if (Input.IsActionJustReleased(nextLineAction))
+        if (!string.IsNullOrWhiteSpace(nextLineAction) && Input.IsActionJustReleased(nextLineAction))
         {
             this.RequestNextLine();
         }
 
-        if (Input.IsActionJustReleased(cancelDialogueAction))
+        if (!string.IsNullOrWhiteSpace(cancelDialogueAction) && Input.IsActionJustReleased(cancelDialogueAction))
         {
             this.RequestDialogueCancellation();
         }

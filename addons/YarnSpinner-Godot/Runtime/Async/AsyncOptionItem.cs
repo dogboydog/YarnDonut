@@ -11,34 +11,45 @@ namespace YarnSpinnerGodot;
 
 public partial class AsyncOptionItem : BaseButton
 {
-    [Export] RichTextLabel text;
+    [Export] RichTextLabel? text;
 
     public YarnTaskCompletionSource<DialogueOption?>? OnOptionSelected;
     public System.Threading.CancellationToken completionToken;
 
     private bool hasSubmittedOptionSelection = false;
 
-    private DialogueOption _option;
+    private DialogueOption? _option;
 
-    public DialogueOption Option
+    public DialogueOption? Option
     {
         get => _option;
 
         set
         {
+            if (value == null)
+            {
+                _option = null;
+                return;
+            }
+
             _option = value;
 
             hasSubmittedOptionSelection = false;
 
             // When we're given an Option, use its text and update our
             // interactibility.
-            text.Text = value.Line.TextWithoutCharacterName.Text;
+            text!.Text = value.Line.TextWithoutCharacterName.Text;
             Visible = value.IsAvailable;
         }
     }
 
     public override void _Ready()
     {
+        if (!IsInstanceValid(text))
+        {
+            GD.PushError($"No {text} {nameof(RichTextLabel)} is set on this {nameof(AsyncOptionItem)}");
+        }
+
         Connect(BaseButton.SignalName.Pressed, Callable.From(InvokeOptionSelected));
     }
 
@@ -60,5 +71,4 @@ public partial class AsyncOptionItem : BaseButton
             OnOptionSelected?.TrySetResult(this.Option);
         }
     }
-    
 }

@@ -13,6 +13,7 @@ namespace YarnSpinnerGodot;
 /// A Dialogue View that presents lines of dialogue, using Godot UI
 /// elements.
 /// </summary>
+[GlobalClass]
 public partial class AsyncLineView : Node, AsyncDialogueViewBase
 {
     [Export] public DialogueRunner? dialogueRunner;
@@ -228,6 +229,7 @@ public partial class AsyncLineView : Node, AsyncDialogueViewBase
     [Signal]
     public delegate void onPauseEndedEventHandler();
 
+    public const float FrameWaitTime = 0.16f;
     private TypewriterHandler? typewriter;
 
     /// <summary>
@@ -241,7 +243,7 @@ public partial class AsyncLineView : Node, AsyncDialogueViewBase
     {
         if (IsInstanceValid(viewControl))
         {
-            viewControl.Visible = false;
+            viewControl!.Visible = false;
         }
 
         return YarnTask.CompletedTask;
@@ -252,7 +254,7 @@ public partial class AsyncLineView : Node, AsyncDialogueViewBase
     {
         if (IsInstanceValid(viewControl))
         {
-            viewControl.Visible = true;
+            viewControl!.Visible = true;
         }
 
         return YarnTask.CompletedTask;
@@ -263,7 +265,7 @@ public partial class AsyncLineView : Node, AsyncDialogueViewBase
     {
         if (IsInstanceValid(viewControl))
         {
-            viewControl.Visible = false;
+            viewControl!.Visible = false;
         }
 
         if (useTypewriterEffect)
@@ -376,7 +378,7 @@ public partial class AsyncLineView : Node, AsyncDialogueViewBase
             else
             {
                 // We're not fading up, so set the canvas group's alpha to 1 immediately.
-                viewControl.Visible = true;
+                viewControl!.Visible = true;
                 var oldModulate = viewControl.Modulate;
                 viewControl.Modulate = new Color(oldModulate.R, oldModulate.G, oldModulate.B, 1.0f);
             }
@@ -447,14 +449,14 @@ public partial class AsyncLineView : Node, AsyncDialogueViewBase
             }
             else
             {
-                viewControl.Visible = false;
+                viewControl!.Visible = false;
             }
         }
 
         // the final bit of clean up is to remove the cancel listener from the button
         if (IsInstanceValid(continueButton))
         {
-            continueButton.Disconnect(BaseButton.SignalName.Pressed, Callable.From(OnContinuePressed));
+            continueButton!.Disconnect(BaseButton.SignalName.Pressed, Callable.From(OnContinuePressed));
             continueButton.Disabled = true;
         }
     }
@@ -493,10 +495,10 @@ public partial class AsyncLineView : Node, AsyncDialogueViewBase
             const string htmlTagPattern = @"<(.*?)>";
             if (IsInstanceValid(characterNameText))
             {
-                characterNameText.Text = Regex.Replace(characterNameText.Text, htmlTagPattern, "[$1]");
+                characterNameText!.Text = Regex.Replace(characterNameText.Text, htmlTagPattern, "[$1]");
             }
 
-            lineText.Text = Regex.Replace(lineText.Text, htmlTagPattern, "[$1]");
+            lineText!.Text = Regex.Replace(lineText.Text, htmlTagPattern, "[$1]");
         }
     }
 }
