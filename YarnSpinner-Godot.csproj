@@ -24,8 +24,6 @@
     <None Include="**\*.yarnproject" />
     <None Include="**\*.gd" />
     <Compile Remove="Generated\**"/>
-  </ItemGroup>
-  <ItemGroup>
     <!-- For SQL variable storage sample -->
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
   </ItemGroup>

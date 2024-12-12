@@ -6,7 +6,8 @@ namespace YarnSpinnerGodot;
 /// Contains information describing the formatting style of text within
 /// a named marker.
 /// </summary>
-public partial class FormatMarker : GodotObject
+[GlobalClass]
+public partial class FormatMarker : Resource
 {
     /// <summary>
     /// The name of the marker which can be used in text to indicate
@@ -17,7 +18,7 @@ public partial class FormatMarker : GodotObject
     /// <summary>
     /// The color to use for text associated with this marker.
     /// </summary>
-    [Export] public Color Color;
+    [Export] public Color Color = Colors.Black;
 
     /// <summary>
     /// Indicates whether the text associated with this marker should be

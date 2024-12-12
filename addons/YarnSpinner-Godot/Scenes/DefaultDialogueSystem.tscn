@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://bv42g323prh5f"]
 
 [ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/LineProviders/TextLineProvider.cs" id="1"]
-[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Views/OptionsListView.cs" id="2"]
-[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Views/LineView.cs" id="3"]
+[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Async/AsyncLineView.cs" id="2_3323r"]
+[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Async/AsyncOptionsView.cs" id="3_waeux"]
 [ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/InMemoryVariableStorage.cs" id="4"]
 [ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/DialogueRunner.cs" id="5"]
 [ext_resource type="PackedScene" uid="uid://b56ngcrq31nc5" path="res://addons/YarnSpinner-Godot/Scenes/OptionView.tscn" id="6"]
@@ -20,11 +20,11 @@ mouse_filter = 2
 script = ExtResource("5")
 variableStorage = NodePath("../InMemoryVariableStorage")
 lineProvider = NodePath("../TextLineProvider")
-dialogueViews = [NodePath("../LineView"), NodePath("../OptionsListView")]
+dialogueViews = [NodePath("../AsyncLineView"), NodePath("../AsyncOptionsView")]
 
 [node name="VariableDebugText" type="RichTextLabel" parent="."]
 
-[node name="LineView" type="Control" parent="." node_paths=PackedStringArray("characterNameText", "continueButton")]
+[node name="AsyncLineView" type="Control" parent="." node_paths=PackedStringArray("dialogueRunner", "viewControl", "lineText", "continueButton", "characterNameText", "characterNameContainer")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,15 +32,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("3")
-viewControlPath = NodePath("ViewControl")
-useFadeEffect = false
-lineTextPath = NodePath("ViewControl/LineText")
-characterNameText = NodePath("ViewControl/CharacterNameText")
-typewriterEffectSpeed = 80.0
+script = ExtResource("2_3323r")
+dialogueRunner = NodePath("../DialogueRunner")
+viewControl = NodePath("ViewControl")
+lineText = NodePath("ViewControl/LineText")
 continueButton = NodePath("ViewControl/ContinueButton")
+characterNameText = NodePath("ViewControl/CharacterNameText")
+characterNameContainer = NodePath("ViewControl/CharacterNameText")
+useFadeEffect = false
+fadeUpDuration = 0.1
 
-[node name="ViewControl" type="Control" parent="LineView"]
+[node name="ViewControl" type="Control" parent="AsyncLineView"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -48,7 +50,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="LineText" type="RichTextLabel" parent="LineView/ViewControl"]
+[node name="LineText" type="RichTextLabel" parent="AsyncLineView/ViewControl"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -69,7 +71,7 @@ theme_override_font_sizes/bold_font_size = 36
 bbcode_enabled = true
 text = "The dialogue text should appear here!"
 
-[node name="ColorRect" type="ColorRect" parent="LineView/ViewControl/LineText"]
+[node name="ColorRect" type="ColorRect" parent="AsyncLineView/ViewControl/LineText"]
 modulate = Color(0.203922, 0.192157, 0.192157, 0.458824)
 show_behind_parent = true
 layout_mode = 1
@@ -82,7 +84,7 @@ offset_bottom = -158.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CharacterNameText" type="RichTextLabel" parent="LineView/ViewControl"]
+[node name="CharacterNameText" type="RichTextLabel" parent="AsyncLineView/ViewControl"]
 self_modulate = Color(0.321569, 0.87451, 0.254902, 1)
 layout_mode = 1
 anchors_preset = 8
@@ -104,14 +106,14 @@ theme_override_font_sizes/bold_font_size = 36
 bbcode_enabled = true
 text = "Character Name"
 
-[node name="ColorRect" type="ColorRect" parent="LineView/ViewControl/CharacterNameText"]
+[node name="ColorRect" type="ColorRect" parent="AsyncLineView/ViewControl/CharacterNameText"]
 modulate = Color(0.203922, 0.192157, 0.192157, 0.458824)
 show_behind_parent = true
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="ContinueButton" type="Button" parent="LineView/ViewControl"]
+[node name="ContinueButton" type="Button" parent="AsyncLineView/ViewControl"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -128,7 +130,7 @@ mouse_default_cursor_shape = 2
 theme_override_font_sizes/font_size = 36
 text = "Continue"
 
-[node name="OptionsListView" type="Control" parent="." node_paths=PackedStringArray("lastLineCharacterNameText", "lastLineText", "viewControl", "boxContainer")]
+[node name="AsyncOptionsView" type="Control" parent="." node_paths=PackedStringArray("viewControl", "lastLineText", "lastLineContainer", "lastLineCharacterNameText", "lastLineCharacterNameContainer", "optionParent")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -136,14 +138,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("2")
-optionViewPrefab = ExtResource("6")
-lastLineCharacterNameText = NodePath("ViewControl/LastLineCharacterNameText")
-lastLineText = NodePath("ViewControl/LastLineText")
+script = ExtResource("3_waeux")
 viewControl = NodePath("ViewControl")
-boxContainer = NodePath("ViewControl/VBoxContainer")
+optionViewPrefab = ExtResource("6")
+lastLineText = NodePath("ViewControl/LastLineText")
+lastLineContainer = NodePath("ViewControl/LastLineText")
+lastLineCharacterNameText = NodePath("ViewControl/LastLineCharacterNameText")
+lastLineCharacterNameContainer = NodePath("ViewControl/LastLineCharacterNameText")
+optionParent = NodePath("ViewControl/VBoxContainer")
 
-[node name="ViewControl" type="Control" parent="OptionsListView"]
+[node name="ViewControl" type="Control" parent="AsyncOptionsView"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -151,7 +155,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="OptionsListView/ViewControl"]
+[node name="VBoxContainer" type="VBoxContainer" parent="AsyncOptionsView/ViewControl"]
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 1
 anchors_preset = 8
@@ -166,7 +170,7 @@ offset_bottom = 428.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="LastLineText" type="RichTextLabel" parent="OptionsListView/ViewControl"]
+[node name="LastLineText" type="RichTextLabel" parent="AsyncOptionsView/ViewControl"]
 visible = false
 layout_mode = 1
 anchors_preset = 5
@@ -186,7 +190,7 @@ bbcode_enabled = true
 text = "The last line text goes here"
 scroll_active = false
 
-[node name="ColorRect" type="ColorRect" parent="OptionsListView/ViewControl/LastLineText"]
+[node name="ColorRect" type="ColorRect" parent="AsyncOptionsView/ViewControl/LastLineText"]
 modulate = Color(0.203922, 0.192157, 0.192157, 0.458824)
 show_behind_parent = true
 layout_mode = 1
@@ -196,7 +200,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="LastLineCharacterNameText" type="RichTextLabel" parent="OptionsListView/ViewControl"]
+[node name="LastLineCharacterNameText" type="RichTextLabel" parent="AsyncOptionsView/ViewControl"]
 visible = false
 self_modulate = Color(0.321569, 0.87451, 0.254902, 1)
 layout_mode = 1
@@ -219,7 +223,7 @@ theme_override_font_sizes/bold_font_size = 36
 bbcode_enabled = true
 text = "Character Name"
 
-[node name="ColorRect" type="ColorRect" parent="OptionsListView/ViewControl/LastLineCharacterNameText"]
+[node name="ColorRect" type="ColorRect" parent="AsyncOptionsView/ViewControl/LastLineCharacterNameText"]
 modulate = Color(0.203922, 0.192157, 0.192157, 0.458824)
 show_behind_parent = true
 layout_mode = 0

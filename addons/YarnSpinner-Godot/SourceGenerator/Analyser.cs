@@ -111,7 +111,7 @@ namespace YarnSpinnerGodot
         }
 
         public static string GenerateRegistrationFileSource(IEnumerable<Action> actions,
-            string @namespace = "YarnSpinnerGodotGenerated", string className = "ActionRegistration")
+            string @namespace = "YarnSpinnerGodot.Generated", string className = "ActionRegistration")
         {
             var namespaceDecl = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(@namespace));
 

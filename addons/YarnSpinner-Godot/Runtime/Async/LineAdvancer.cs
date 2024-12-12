@@ -14,7 +14,7 @@ namespace YarnSpinnerGodot;
 /// either by asking a dialogue runner to hurry up its delivery, advance to
 /// the next line, or cancel the entire dialogue session.
 /// </summary>
-public partial class LineAdvancer : AsyncDialogueViewBase
+public partial class LineAdvancer : Node, AsyncDialogueViewBase
 {
     [Export] DialogueRunner? runner;
 
@@ -68,7 +68,7 @@ public partial class LineAdvancer : AsyncDialogueViewBase
     /// handlers for advancing the line.
     /// </summary>
     /// <returns>A completed task.</returns>
-    public override YarnTask OnDialogueStartedAsync()
+    public YarnTask OnDialogueStartedAsync()
     {
         return YarnTask.CompletedTask;
     }
@@ -78,7 +78,7 @@ public partial class LineAdvancer : AsyncDialogueViewBase
     /// action handlers.
     /// </summary>
     /// <returns>A completed task.</returns>
-    public override YarnTask OnDialogueCompleteAsync()
+    public YarnTask OnDialogueCompleteAsync()
     {
         return YarnTask.CompletedTask;
     }
@@ -88,7 +88,7 @@ public partial class LineAdvancer : AsyncDialogueViewBase
     /// </summary>
     /// <inheritdoc cref="AsyncLineView.RunLineAsync" path="/param"/>
     /// <returns>A completed task.</returns>
-    public override YarnTask RunLineAsync(LocalizedLine line, LineCancellationToken token)
+    public YarnTask RunLineAsync(LocalizedLine line, LineCancellationToken token)
     {
         // A new line has come in, so reset the number of times we've seen a
         // request to skip.
@@ -103,7 +103,7 @@ public partial class LineAdvancer : AsyncDialogueViewBase
     /// <inheritdoc cref="AsyncLineView.RunOptionsAsync" path="/param"/>
     /// <returns>A completed task indicating that no option was selected by
     /// this view.</returns>
-    public override YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions,
+    public YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions,
         CancellationToken cancellationToken)
     {
         // This line view doesn't take any actions when options are

@@ -152,7 +152,7 @@ public static class YarnProjectEditorUtility
         {
             var compilationResult = CompileAllScripts(project);
             SaveYarnProject(project);
-            if (project is { generateVariablesSourceFile: true, ResourcePath: not null }
+            if (project is {generateVariablesSourceFile: true, ResourcePath: not null}
                 && compilationResult != null)
             {
                 var fileName = project.variablesClassName + ".cs";
@@ -403,7 +403,7 @@ public static class YarnProjectEditorUtility
         var updateHandlerType = assembly.GetType("System.Text.Json.JsonSerializerOptionsUpdateHandler");
         var clearCacheMethod =
             updateHandlerType?.GetMethod("ClearCache", BindingFlags.Static | BindingFlags.Public);
-        clearCacheMethod?.Invoke(null, new object[] { null });
+        clearCacheMethod?.Invoke(null, new object[] {null});
     }
 
     public static void SaveYarnProject(YarnProject project)
@@ -452,7 +452,7 @@ public static class YarnProjectEditorUtility
                 return null;
             }
 
-            var library = new Library();
+            var library = Actions.GetLibrary();
 
             IEnumerable<Diagnostic> errors;
             project.ProjectErrors = Array.Empty<YarnProjectError>();
@@ -1059,7 +1059,7 @@ public static class YarnProjectEditorUtility
                     WriteLine($"/// <remarks>");
                     WriteLine($"/// Backing value: \"{enumCase.Value.Value}\"");
                     WriteLine($"/// </remarks>");
-                    var stringValue = (string)enumCase.Value.Value;
+                    var stringValue = (string) enumCase.Value.Value;
                     WriteComment($"\"{stringValue}\"");
                     WriteLine($"{enumCase.Key} = {CRC32.GetChecksum(stringValue)},");
                 }

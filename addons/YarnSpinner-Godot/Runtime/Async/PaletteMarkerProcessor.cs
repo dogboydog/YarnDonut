@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using Godot;
 using Yarn.Markup;
 
 namespace YarnSpinnerGodot;
@@ -20,12 +21,12 @@ public partial class PaletteMarkerProcessor : AttributeMarkerProcessor
     /// <summary>
     /// The <see cref="MarkupPalette"/> to use when applying styles.
     /// </summary>
-    public MarkupPalette palette;
+    [Export] public MarkupPalette palette;
 
     /// <summary>
     /// The line provider to register this markup processor with.
     /// </summary>
-    public LineProviderBehaviour lineProvider;
+    [Export] public LineProviderBehaviour lineProvider;
 
     /// <inheritdoc/>
     /// <summary>
@@ -66,22 +67,22 @@ public partial class PaletteMarkerProcessor : AttributeMarkerProcessor
         // do we need to italicise it?
         if (style.Italicised)
         {
-            childBuilder.Insert(0, "<i>");
-            childBuilder.Append("</i>");
+            childBuilder.Insert(0, "[i]");
+            childBuilder.Append("[/i]");
         }
 
         // do we need to underline it?
         if (style.Underlined)
         {
-            childBuilder.Insert(0, "<u>");
-            childBuilder.Append("</u>");
+            childBuilder.Insert(0, "[u]");
+            childBuilder.Append("[/u]");
         }
 
         // do we need to strikethrough it?
         if (style.Strikedthrough)
         {
-            childBuilder.Insert(0, "<s>");
-            childBuilder.Append("</s>");
+            childBuilder.Insert(0, "[s]");
+            childBuilder.Append("[/s]");
         }
 
         // we don't need to modify the children attributes because TMP knows

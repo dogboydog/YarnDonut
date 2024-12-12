@@ -1,6 +1,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Godot;
 using Yarn;
 using Yarn.Compiler;
@@ -49,7 +50,7 @@ public class SerializedDeclaration
 
         if (typeName == Types.String.Name)
         {
-            defaultValueString = Convert.ToString(decl.DefaultValue);
+            defaultValueString = Convert.ToString(decl.DefaultValue, CultureInfo.InvariantCulture);
         }
         else if (typeName == Types.Boolean.Name)
         {
@@ -59,7 +60,26 @@ public class SerializedDeclaration
         {
             defaultValueNumber = Convert.ToSingle(decl.DefaultValue);
         }
+        else if (decl.Type is EnumType enumDecl)
+        {
+            typeName = $"{enumDecl.Name} Enum ({enumDecl.RawType.Name})";
+
+            var defaultValue = decl.DefaultValue;
+            if (enumDecl.RawType.Name == Types.String.Name)
+            {
+                defaultValueString = Convert.ToString(defaultValue, CultureInfo.InvariantCulture);
+            }
+            else if (enumDecl.RawType.Name == Types.Boolean.Name)
+            {
+                defaultValueBool = Convert.ToBoolean(defaultValue);
+            }
+            else if (enumDecl.RawType.Name == Types.Number.Name)
+            {
+                defaultValueNumber = Convert.ToSingle(defaultValue);
+            }
+        }
         else
+
         {
             throw new InvalidOperationException($"Invalid declaration type {decl.Type.Name}");
         }
