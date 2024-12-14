@@ -4,13 +4,13 @@ Yarn Spinner is licensed to you under the terms found in the file LICENSE.md.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
 using Yarn;
+using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
 #nullable enable
 
