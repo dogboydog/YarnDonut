@@ -207,7 +207,7 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
         }
         // The first available option is selected by default
 
-        optionViews.First(view => view.Visible).GrabFocus();
+        optionViews.First(view => view.Visible).FocusButton();
 
         // Update the last line, if one is configured
         if (lastLineContainer != null)

@@ -1,8 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://b56ngcrq31nc5"]
+[gd_scene load_steps=3 format=3 uid="uid://b56ngcrq31nc5"]
 
 [ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Async/AsyncOptionItem.cs" id="1_nktd7"]
 
-[node name="OptionView" type="Button" node_paths=PackedStringArray("text")]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_pe0aq"]
+content_margin_left = 7.0
+content_margin_right = 6.0
+
+[node name="OptionView" type="PanelContainer" node_paths=PackedStringArray("text", "button")]
 custom_minimum_size = Vector2(0, 26)
 anchors_preset = 7
 anchor_left = 0.5
@@ -14,24 +18,17 @@ offset_top = -142.0
 offset_right = 119.0
 offset_bottom = -42.0
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 36
-text = Object(RichTextLabel,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"physics_interpolation_mode":2,"auto_translate_mode":0,"editor_description":"","visible":true,"modulate":Color(1, 1, 1, 1),"self_modulate":Color(1, 1, 1, 1),"show_behind_parent":false,"top_level":false,"clip_children":0,"light_mask":1,"visibility_layer":1,"z_index":0,"z_as_relative":true,"y_sort_enabled":false,"texture_filter":0,"texture_repeat":0,"material":null,"use_parent_material":false,"clip_contents":true,"custom_minimum_size":Vector2(0, 0),"layout_direction":0,"layout_mode":2,"size_flags_horizontal":1,"size_flags_vertical":6,"size_flags_stretch_ratio":1.0,"localize_numeral_system":true,"tooltip_text":"","focus_neighbor_left":NodePath(""),"focus_neighbor_top":NodePath(""),"focus_neighbor_right":NodePath(""),"focus_neighbor_bottom":NodePath(""),"focus_next":NodePath(""),"focus_previous":NodePath(""),"focus_mode":0,"mouse_filter":2,"mouse_force_pass_scroll_events":true,"mouse_default_cursor_shape":0,"shortcut_context":null,"theme":null,"theme_type_variation":&"","theme_override_font_sizes/bold_italics_font_size":24,"theme_override_font_sizes/italics_font_size":24,"theme_override_font_sizes/mono_font_size":24,"theme_override_font_sizes/normal_font_size":24,"theme_override_font_sizes/bold_font_size":24,"bbcode_enabled":true,"text":"[center]Option View[/center]","fit_content":true,"scroll_active":false,"scroll_following":false,"autowrap_mode":3,"tab_size":4,"context_menu_enabled":false,"shortcut_keys_enabled":true,"custom_effects":[],"meta_underlined":true,"hint_underlined":true,"threaded":false,"progress_bar_delay":1000,"selection_enabled":false,"deselect_on_focus_loss_enabled":true,"drag_and_drop_selection_enabled":true,"visible_characters":-1,"visible_characters_behavior":0,"visible_ratio":1.0,"text_direction":0,"language":"","structured_text_bidi_override":0,"structured_text_bidi_override_options":[],"script":null)
-
+mouse_filter = 1
 script = ExtResource("1_nktd7")
-text = NodePath("VBoxContainer/RichTextLabel")
+text = NodePath("RichTextLabel")
+button = NodePath("Button")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(1, 0.992647)
-alignment = 1
-
-[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer"]
+[node name="Button" type="Button" parent="."]
 layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 6
 mouse_filter = 2
 theme_override_font_sizes/bold_italics_font_size = 24
@@ -39,7 +36,9 @@ theme_override_font_sizes/italics_font_size = 24
 theme_override_font_sizes/mono_font_size = 24
 theme_override_font_sizes/normal_font_size = 24
 theme_override_font_sizes/bold_font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxEmpty_pe0aq")
 bbcode_enabled = true
 text = "[center]Option View[/center]"
 fit_content = true
 scroll_active = false
+autowrap_mode = 0

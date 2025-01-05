@@ -9,14 +9,20 @@ using Godot;
 
 namespace YarnSpinnerGodot;
 
-public partial class AsyncOptionItem : BaseButton
+public partial class AsyncOptionItem : Control
 {
     [Export] RichTextLabel? text;
-
+    [Export] private BaseButton button;
     public YarnTaskCompletionSource<DialogueOption?>? OnOptionSelected;
     public System.Threading.CancellationToken completionToken;
 
     private bool hasSubmittedOptionSelection = false;
+
+    public void FocusButton()
+    {
+        button.GrabFocus();
+    }
+
 
     private DialogueOption? _option;
 
@@ -50,7 +56,14 @@ public partial class AsyncOptionItem : BaseButton
             GD.PushError($"No {text} {nameof(RichTextLabel)} is set on this {nameof(AsyncOptionItem)}");
         }
 
-        Connect(BaseButton.SignalName.Pressed, Callable.From(InvokeOptionSelected));
+        if (!IsInstanceValid(button))
+        {
+            GD.PushError($"No {button} is set on this {nameof(AsyncOptionItem)}");
+        }
+        else
+        {
+            button.Connect(BaseButton.SignalName.Pressed, Callable.From(InvokeOptionSelected));
+        }
     }
 
     public void InvokeOptionSelected()
