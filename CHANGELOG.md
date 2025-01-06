@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.3.0] Pending 
+## [3.0.0-beta 2]   2025-01-06
+* Eliminate the need to check in DLL files with the plugin in favor of using Nuget, now that the YarnSpinner DLL files function properly with this plugin. You can delete any .dll files under addons/YarnSpinner-Godot  that you might have from a previous release
+* Restructure the AsyncOptionItem script (replaces OptionView from v0.2). The node that the AsyncOptionItem script is attached to can now be a Control rather than needing to be a button. The button component that will handle option selection can be a different node if desired. Assign the button in the AsyncOptionItem's inspector.
+
+## [3.0.0-beta 1]  2024-12-14
 
 * Updated YarnSpinner DLLs to support version 3 of the Yarn Language, which supports many new features, similar to the feature set described for the Unity plugin here:
   * https://www.yarnspinner.dev/blog/yarn-spinner-3-beta-1
