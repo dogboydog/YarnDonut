@@ -186,6 +186,7 @@ lastLineContainer = NodePath("ViewControl/LastLineText")
 lastLineCharacterNameText = NodePath("ViewControl/LastLineCharacterNameText")
 lastLineCharacterNameContainer = NodePath("ViewControl/LastLineCharacterNameText")
 optionParent = NodePath("ViewControl/VBoxContainer")
+useFadeEffect = false
 
 [node name="ViewControl" type="Control" parent="AsyncOptionsView"]
 layout_mode = 1

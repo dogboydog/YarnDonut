@@ -49,6 +49,39 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
     [Export] public bool showUnavailableOptions = false;
 
     /// <summary>
+    /// Controls whether the options list view should fade in when options appear, and
+    /// fade out when options disappear.
+    /// </summary>
+    /// <remarks><para>If this value is <see langword="true"/>, the <see
+    /// cref="viewControl"/> object's alpha property will animate from 0 to
+    /// 1 over the course of <see cref="fadeUpDuration"/> seconds when options
+    /// appear, and animate from 1 to zero over the course of <see
+    /// cref="fadeDownDuration"/> seconds when options disappear.</para>
+    /// <para>If this value is <see langword="false"/>, the <see
+    /// cref="viewControl"/> object will appear instantaneously.</para>
+    /// </remarks>
+    /// <seealso cref="viewControl"/>
+    /// <seealso cref="fadeUpDuration"/>
+    /// <seealso cref="fadeDownDuration"/>
+    [Export] public bool useFadeEffect = true;
+
+    /// <summary>
+    /// The time that the fade effect will take to fade options in.
+    /// </summary>
+    /// <remarks>This value is only used when <see cref="useFadeEffect"/> is
+    /// <see langword="true"/>.</remarks>
+    /// <seealso cref="useFadeEffect"/>
+    [Export] public float fadeUpDuration = 0.25f;
+
+    /// <summary>
+    /// The time that the fade effect will take to fade options out.
+    /// </summary>
+    /// <remarks>This value is only used when <see cref="useFadeEffect"/> is
+    /// <see langword="true"/>.</remarks>
+    /// <seealso cref="useFadeEffect"/>
+    [Export] public float fadeDownDuration = 0.1f;
+
+    /// <summary>
     /// Called by a <see cref="DialogueRunner"/> to dismiss the options view
     /// when dialogue is complete.
     /// </summary>
@@ -265,18 +298,22 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
         }
 
 
-        // fade up the UI now
-        await Effects.FadeAlphaAsync(viewControl, 0, 1, 1, cancellationToken);
+        if (useFadeEffect) {
+            // fade up the UI now
+            await Effects.FadeAlphaAsync(viewControl, 0, 1, fadeUpDuration,
+                cancellationToken);
+        }
 
 
         // Wait for a selection to be made, or for the task to be completed.
         var completedTask = await selectedOptionCompletionSource.Task;
         completionCancellationSource.Cancel();
 
-
-        // fade down
-        await Effects.FadeAlphaAsync(viewControl, 1, 0, 1, cancellationToken);
-
+        if (useFadeEffect) {
+            // fade down
+            await Effects.FadeAlphaAsync(viewControl, 1, 0, fadeDownDuration,
+                cancellationToken);
+        }
         // disabling ALL the options views now
         foreach (var optionView in optionViews)
         {
