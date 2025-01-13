@@ -38,10 +38,18 @@ func _ready() -> void:
 		#"text_id": "line:9bcbf175"
 	#}
 #]
-func run_options(options: Array, on_option_selected: Callable) -> void:
+func run_options_async(options: Array, on_option_selected: Callable) -> void:
 	print("Options: %s"  % JSON.stringify(options))
+	
+	# You can do await statements here if you want.
+	await get_tree().process_frame
 	option_selected_handler = on_option_selected
+	while options_container.get_child_count() >0:
+		options_container.remove_child(options_container.get_child(0))
 	for option in options:
+		if not option["is_available"]:
+			# don't render unvailable options
+			continue 
 		var option_view: SimpleGDScriptOptionView = option_view_prefab.instantiate() 
 		option_view.set_option(option, select_option)
 		options_container.add_child(option_view)

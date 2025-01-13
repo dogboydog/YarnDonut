@@ -1,10 +1,17 @@
+#nullable disable
 using System;
 using Godot;
 using Yarn.Markup;
+using Node = Godot.Node;
 
 namespace YarnSpinnerGodot;
 
 /// <summary>
+/// As of Godot plugin version 0.3.0, you don't have to use this script
+/// as a mediator between YarnSpinner for Godot and your GDScript view.
+/// You can directly add your GDScript view to the DialogueRunner inspector
+/// under Dialogue Views.
+/// 
 /// Wrapper which allows you to implement a YarnSpinner DialogueViewBase via
 /// GDScript by calling snake_case versions of each method. 
 /// Add this script to a node for each GDScript view you want to implement,
@@ -13,10 +20,15 @@ namespace YarnSpinnerGodot;
 /// 
 ///
 /// Note: You still have to use the version of Godot which supports C# in order to use
-/// this plugin. 
+/// this plugin.
+///
+/// CS0618: Provided for backwards compatibility with v0.2.0, you can now directly
+/// use nodes with GDScript attached without the need of an adapter and do not need to use this script. 
 /// </summary>
 [GlobalClass]
+#pragma warning disable CS0618 // Type or member is obsolete
 public partial class GDScriptViewAdapter : Node, DialogueViewBase
+#pragma warning restore CS0618 // Type or member is obsolete
 {
     /// <summary>
     /// Assign this node to the node with the GDScript implementing your view attached.
@@ -184,7 +196,17 @@ public partial class GDScriptViewAdapter : Node, DialogueViewBase
             return;
         }
 
-        var dialogueOptionsList = new Godot.Collections.Array();
+        var dialogueOptionsList = DialogueOptionsToDictArray(dialogueOptions);
+        GDScriptView.Call(gdScriptName, dialogueOptionsList, Callable.From(onOptionSelected));
+    }
+
+    /// <summary>
+    /// Convert dialogue options to a Godot Array of Godot Dictionaries for compatibility with GDScript
+    /// </summary>
+    /// <param name="dialogueOptions">Array of DialogueOptions provided by the DialogueRunner</param>
+    public static Godot.Collections.Array DialogueOptionsToDictArray(DialogueOption[] dialogueOptions)
+    {
+        var dictOptions = new Godot.Collections.Array();
         foreach (var option in dialogueOptions)
         {
             var optionDict = new Godot.Collections.Dictionary();
@@ -192,10 +214,10 @@ public partial class GDScriptViewAdapter : Node, DialogueViewBase
             optionDict["text_id"] = option.TextID;
             optionDict["line"] = LocalizedLineToDict(option.Line);
             optionDict["is_available"] = option.IsAvailable;
-            dialogueOptionsList.Add(optionDict);
+            dictOptions.Add(optionDict);
         }
 
-        GDScriptView.Call(gdScriptName, dialogueOptionsList, Callable.From(onOptionSelected));
+        return dictOptions;
     }
 
     /// <inheritdoc/>

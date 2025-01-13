@@ -6,13 +6,18 @@ extends Node
 @export var continue_button : Button
 @export var character_name_label : RichTextLabel
 @export var line_text_label : RichTextLabel
+@export var view_control: Node 
 
-var on_line_finished : Callable
+var line_finished: bool 
 
-func dialogue_started() -> void:
+func _ready() -> void: 
+	view_control.visible = false 
+	
+func on_dialogue_start_async() -> void:
 	print("Dialogue started ")
 	
-func run_line(line: Dictionary, on_dialogue_line_finished: Callable) -> void:
+	
+func run_line_async(line: Dictionary) -> void:
 	# line is a Dictionary converted from the LocalizedLine C# Class
 	# example: 
 	# {"metadata":["my_metadata"],
@@ -26,9 +31,11 @@ func run_line(line: Dictionary, on_dialogue_line_finished: Callable) -> void:
 		#   "text_without_character_name":"So, can I use GDScript with YarnSpinner?"
 		#  }
 	#  }
+	view_control.visible = true
+	line_finished = false
 	print('Line: ' + JSON.stringify(line))
 	continue_button.pressed.connect(continue_line)
-	self.on_line_finished = on_dialogue_line_finished
+	
 	line_text_label.text = line["text"]["text_without_character_name"]
 	var character_name : String = ""
 	var character_name_offset: int = 0 
@@ -49,10 +56,13 @@ func run_line(line: Dictionary, on_dialogue_line_finished: Callable) -> void:
 	if not (character_name):
 		character_name_label.visible = false 
 	
-	
+	while !line_finished:
+		await get_tree().process_frame
+		
 func continue_line() -> void:
 	continue_button.pressed.disconnect(continue_line)
-	self.on_line_finished.call()
+	line_finished = true
 
-func dialogue_complete() -> void:
+func dialogue_complete_async() -> void:
 	print("Dialogue complete ")
+	view_control.visible = false

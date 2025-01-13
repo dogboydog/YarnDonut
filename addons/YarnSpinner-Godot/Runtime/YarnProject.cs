@@ -12,7 +12,7 @@ using Yarn;
 using Yarn.Compiler;
 using Array = System.Array;
 #if TOOLS
-using YarnSpinnerGodot.Editor;
+using YarnSpinnerGodot;
 #endif
 
 namespace YarnSpinnerGodot;
@@ -40,7 +40,7 @@ namespace YarnSpinnerGodot;
 [GlobalClass]
 public partial class YarnProject : Resource
 {
-    public static JsonSerializerOptions JSONOptions = new() {IncludeFields = true};
+    public static JsonSerializerOptions JSONOptions = new() { IncludeFields = true };
 
     /// <summary>
     /// File extension of JSON yarn project files.
@@ -82,14 +82,45 @@ public partial class YarnProject : Resource
 
     [Export] public string CompiledYarnProgramBase64;
 
-    public static List<Resource> ScriptsWithParseErrors => new();
-
     [Export] public Localization baseLocalization;
 
     /// <summary>
     /// res:// path to the .yarnproject file
     /// </summary>
     [Export] public string JSONProjectPath;
+
+    /// <summary>
+    /// Whether to generate a C# file that contains properties for each variable.
+    /// </summary>
+    /// <seealso cref="variablesClassName"/>
+    /// <seealso cref="variablesClassNamespace"/>
+    /// <seealso cref="variablesClassParent"/>
+    [Export] public bool generateVariablesSourceFile;
+
+    /// <summary>
+    /// The name of the generated variables storage class.
+    /// </summary>
+    /// <seealso cref="generateVariablesSourceFile"/>
+    /// <seealso cref="variablesClassNamespace"/>
+    /// <seealso cref="variablesClassParent"/>
+    [Export] public string variablesClassName = "YarnVariables";
+
+    /// <summary>
+    /// The namespace of the generated variables storage class.
+    /// </summary>
+    /// <seealso cref="generateVariablesSourceFile"/>
+    /// <seealso cref="variablesClassName"/>
+    /// <seealso cref="variablesClassParent"/>
+    [Export] public string variablesClassNamespace = null;
+
+    /// <summary>
+    /// The parent class of the generated variables storage class.
+    /// </summary>
+    /// <seealso cref="generateVariablesSourceFile"/>
+    /// <seealso cref="variablesClassName"/>
+    /// <seealso cref="variablesClassNamespace"/>
+    [Export] public string variablesClassParent = typeof(InMemoryVariableStorage).FullName;
+
 #if TOOLS
     public string DefaultJSONProjectPath => new Regex(@"\.tres$").Replace(ResourcePath, ".yarnproject");
     private Yarn.Compiler.Project _jsonProject;
@@ -239,7 +270,8 @@ public partial class YarnProject : Resource
                 try
                 {
                     _serializedDeclarations =
-                        JsonSerializer.Deserialize<SerializedDeclaration[]>(_serializedDeclarationsJSON, YarnProject.JSONOptions);
+                        JsonSerializer.Deserialize<SerializedDeclaration[]>(_serializedDeclarationsJSON,
+                            YarnProject.JSONOptions);
                 }
                 catch (Exception e)
                 {

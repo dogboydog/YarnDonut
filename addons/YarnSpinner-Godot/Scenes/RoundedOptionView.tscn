@@ -1,10 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://dhnl6qatalt6x"]
+[gd_scene load_steps=6 format=3 uid="uid://dhnl6qatalt6x"]
 
 [ext_resource type="StyleBox" uid="uid://itxqi5xpilu6" path="res://addons/YarnSpinner-Godot/Scenes/RoundedViewStylebox.tres" id="1_brfok"]
-[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Views/OptionView.cs" id="1_uv0oc"]
-[ext_resource type="StyleBox" uid="uid://cqadffkf802cr" path="res://addons/YarnSpinner-Godot/Scenes/RoundedViewFocusedStylebox.tres" id="2_tuu8c"]
+[ext_resource type="StyleBox" uid="uid://cqadffkf802cr" path="res://addons/YarnSpinner-Godot/Scenes/RoundedViewFocusedStyleBox.tres" id="2_tuu8c"]
+[ext_resource type="Script" path="res://addons/YarnSpinner-Godot/Runtime/Async/AsyncOptionItem.cs" id="3_kb3mh"]
+[ext_resource type="StyleBox" uid="uid://c3mta1ok76ssl" path="res://addons/YarnSpinner-Godot/Scenes/RoundedViewRichTextLabelStyleBox.tres" id="4_vp3pp"]
 
-[node name="OptionView" type="Button" node_paths=PackedStringArray("label")]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m3qic"]
+
+[node name="OptionView" type="PanelContainer" node_paths=PackedStringArray("text", "button")]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -18,43 +21,36 @@ grow_horizontal = 2
 grow_vertical = 0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 36
-theme_override_styles/normal = ExtResource("1_brfok")
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxEmpty_m3qic")
+script = ExtResource("3_kb3mh")
+text = NodePath("RichTextLabel")
+button = NodePath("Button")
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 2
+theme_override_styles/focus = ExtResource("2_tuu8c")
+theme_override_styles/disabled = ExtResource("1_brfok")
+theme_override_styles/hover_pressed = ExtResource("1_brfok")
+theme_override_styles/hover_mirrored = ExtResource("1_brfok")
 theme_override_styles/hover = ExtResource("1_brfok")
 theme_override_styles/pressed = ExtResource("1_brfok")
-theme_override_styles/disabled = ExtResource("1_brfok")
-theme_override_styles/focus = ExtResource("2_tuu8c")
-script = ExtResource("1_uv0oc")
-label = NodePath("VBoxContainer/RichTextLabel")
+theme_override_styles/normal = ExtResource("1_brfok")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(1, 0.992647)
-alignment = 1
-
-[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 6
 mouse_filter = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_colors/font_selected_color = Color(0, 0, 0, 1)
-theme_override_colors/selection_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_colors/table_odd_row_bg = Color(0, 0, 0, 1)
-theme_override_colors/table_even_row_bg = Color(0, 0, 0, 1)
-theme_override_colors/table_border = Color(0, 0, 0, 1)
+theme_override_font_sizes/bold_italics_font_size = 24
+theme_override_font_sizes/italics_font_size = 24
+theme_override_font_sizes/mono_font_size = 24
 theme_override_font_sizes/normal_font_size = 24
 theme_override_font_sizes/bold_font_size = 24
-theme_override_font_sizes/italics_font_size = 24
-theme_override_font_sizes/bold_italics_font_size = 24
-theme_override_font_sizes/mono_font_size = 24
+theme_override_styles/normal = ExtResource("4_vp3pp")
 bbcode_enabled = true
 text = "[center]Option View[/center]"
 fit_content = true
 scroll_active = false
+autowrap_mode = 0

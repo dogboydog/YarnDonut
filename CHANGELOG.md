@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [3.0.0-beta 2]   2025-01-06
+* Eliminate the need to check in DLL files with the plugin in favor of using Nuget, now that the YarnSpinner DLL files function properly with this plugin. You can delete any .dll files under addons/YarnSpinner-Godot  that you might have from a previous release
+* Restructure the AsyncOptionItem script (replaces OptionView from v0.2). The node that the AsyncOptionItem script is attached to can now be a Control rather than needing to be a button. The button component that will handle option selection can be a different node if desired. Assign the button in the AsyncOptionItem's inspector.
+
+## [3.0.0-beta 1]  2024-12-14
+
+* Updated YarnSpinner DLLs to support version 3 of the Yarn Language, which supports many new features, similar to the feature set described for the Unity plugin here:
+  * https://www.yarnspinner.dev/blog/yarn-spinner-3-beta-1
+  * The samples have been updated to demonstrate these features, including enums, node groups, line groups, smart variables, shadow lines, generated variable storage code, `<<detour>>` and `<<once>>`. 
+* `[YarnCommand`] and `[YarnFunction]` have been updated to generate a class called `YarnSpinnerGodot.Generated.ActionRegistration`. This class will register all of your commands and functions without relying on reflection, which was the cause of some performance hiccups when starting a scene with a DialogueRunner in v0.2.* of the plugin
+* To enable new features for an existing .yarnproject, edit the .yarnproject file to change the projectFileVersion to 3. 
+* If you keep your .yarnproject at projectFileVersion 2, you will have to re-compile the scripts in your yarn project to work with this version of the plugin.
+* Update views to be async Task based, like the Unity plugin version 3. 
+* The existing `DialogueViewBase` interface is deprecated in favor of `AsyncDialogueViewBased`. Updated example views are provided.
+* GDScript nodes that have methods that are the `snake_case` version of methods on `AsyncDialogueViewBase` can be added directly in `YarnProject.dialogueViews` 
+without requiring GDScriptViewAdapter. Supported methods: `on_dialogue_start_async() -> void`, `on_dialogue_complete_async() -> void`, `run_line_async(line: Dictionary) -> void`, `run_options_async(options: Array, on_option_selected: Callable) -> void`. You can still use `await` statements in your GDScript view methods. `AddCommandHandlerCallable` on `DialogueRunner` has been re-tested to ensure that commands can still be registered from GDScript.  Also, the GDScriptIntegration sample has been updated with these changes. 
+* ⚠ Breaking change: LineProviderBehaviour  has changed to require different methods and fields. If you have a custom line provider, please see the updated TextLineProvider as an * example of how to implement the updated class. Also notice that you must now set the yarn project on `TextLineProvider` instances, either via script or in the inspector.
+* ⚠ Breaking change: Use DialogueRunner.VariableStorage, not DialogueRunner.variableStorage, nor DialogueRunner.SetDialogueViews (removed)  to get/set the variable storage associated with a DialogueRunner. Previously there were two properties with different case that were both publicly accessible.  
+* ⚠ Breaking change: MarkupPalette renamed ColourMarkers to FormatMarkers, supporting new functionality like bold, underline, italics, as a way to demonstrate the updated formatting 
+* ⚠ Breaking change: the field DialogueRunner.verboseLogging has been removed. 
+* New functionality on YarnProject - optionally generate a C# variable storage class which has getters and setters for each variable declared in your yarn scripts. You can control the class that the generated file inherits from, the namespace it will be in, and the name of the class and file. 
+
+
+
 ## [0.2.14] 2024-11-02
 * GDScript: Add GDScriptViewAdapter, a C# Script which allows you to write custom dialogue views in GDScript. See GDScriptViewAdapter.cs for more details.
 * GDScript: Add new method AddCommandHandlerCallable to DialogueRunner, allowing commands to be registered from GDScript. GDScript command handlers that use asynchronous `await` functionality are also supported as blocking YarnSpinner commands, similar to using `async Task` commands in C#.
@@ -30,7 +54,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [0.2.9] 2024-06-30
 
 * Set LineView's MouseFilter to 'ignore' to avoid interfering with clicks.  
-* Fix an issue where 'use fade effect' would cause the ConvertBBCodeToHTML feature to stop working while the text was fading out. 
+* Fix an issue where 'use fade effect' would cause the ConvertHTMLToBBCode feature to stop working while the text was fading out. 
 * Set the LineView to Visible=False when marking its alpha as 0.
 
 ## [0.2.8] 2024-05-24
