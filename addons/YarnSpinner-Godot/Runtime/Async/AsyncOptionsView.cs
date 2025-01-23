@@ -243,7 +243,7 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
         optionViews.First(view => view.Visible).FocusButton();
 
         // Update the last line, if one is configured
-        if (lastLineContainer != null)
+        if (IsInstanceValid(lastLineContainer))
         {
             if (lastSeenLine != null && showsLastLine)
             {
@@ -251,7 +251,7 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
                 // and the last line has a character then we show the nameplate
                 // otherwise we turn off the nameplate
                 var line = lastSeenLine.Text;
-                if (lastLineCharacterNameContainer != null)
+                if (IsInstanceValid(lastLineCharacterNameContainer))
                 {
                     if (string.IsNullOrWhiteSpace(lastSeenLine.CharacterName))
                     {
@@ -298,7 +298,8 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
         }
 
 
-        if (useFadeEffect) {
+        if (useFadeEffect)
+        {
             // fade up the UI now
             await Effects.FadeAlphaAsync(viewControl, 0, 1, fadeUpDuration,
                 cancellationToken);
@@ -309,11 +310,13 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
         var completedTask = await selectedOptionCompletionSource.Task;
         completionCancellationSource.Cancel();
 
-        if (useFadeEffect) {
+        if (useFadeEffect)
+        {
             // fade down
             await Effects.FadeAlphaAsync(viewControl, 1, 0, fadeDownDuration,
                 cancellationToken);
         }
+
         // disabling ALL the options views now
         foreach (var optionView in optionViews)
         {
