@@ -122,7 +122,7 @@ public partial class OptionsListView : Node, DialogueViewBase
             }
 
             // Update the last line, if one is configured
-            if (IsInstanceValid(lastLineText))
+            if (IsInstanceValid(lastLineText) && lastSeenLine != null)
             {
                 var line = lastSeenLine.Text;
                 lastLineText.Visible = true;
@@ -195,6 +195,7 @@ public partial class OptionsListView : Node, DialogueViewBase
                     OnOptionSelected(selectedOption.DialogueOptionID);
                 }
             }
+
             // If the user is hiding unavailable options, select the first visible one.
             optionViews.First(view => view.Visible).GrabFocus();
         }
@@ -207,16 +208,15 @@ public partial class OptionsListView : Node, DialogueViewBase
     /// <inheritdoc />
     public void DialogueComplete()
     {
-        // do we still have a line lying around?
+        lastSeenLine = null;
+        OnOptionSelected = null;
+        if (IsInstanceValid(lastLineText))
+        {
+            lastLineText.Visible = false;
+        }
+
         if (viewControl.Visible)
         {
-            lastSeenLine = null;
-            OnOptionSelected = null;
-            if (lastLineText != null)
-            {
-                lastLineText.Visible = false;
-            }
-
             viewControl.Visible = false;
             Effects.FadeAlpha(viewControl, viewControl.Modulate.A, 0, fadeTime)
                 .ContinueWith(failedTask =>
