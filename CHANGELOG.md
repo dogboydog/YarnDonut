@@ -4,14 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [3.0.0-beta 3] 2025-01-23
+## [0.3.0-beta 3] 2025-01-23
 
 * Fixed an issue where the AsyncLineView would show at the beginning of dialogue, even if the dialogue begins with an
   option.
 * Fixed an issue where the System.Threading.Tasks implementation of YarnTask.WaitUntil did not return early when the CancellationToken was cancelled 
 * Make the fade effect optional via inspector fields `useFadeEffect`, `fadeUpDuration, and `fadeDownDuration` in AsyncOptionsView.cs
 
-## [3.0.0-beta 2]   2025-01-06
+## [0.3.0-beta 2]   2025-01-06
 
 * Eliminate the need to check in DLL files with the plugin in favor of using Nuget, now that the YarnSpinner DLL files
   function properly with this plugin. You can delete any .dll files under addons/YarnSpinner-Godot that you might have
@@ -20,7 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   attached to can now be a Control rather than needing to be a button. The button component that will handle option
   selection can be a different node if desired. Assign the button in the AsyncOptionItem's inspector.
 
-## [3.0.0-beta 1]  2024-12-14
+## [0.3.0-beta 1]  2024-12-14
 
 * Updated YarnSpinner DLLs to support version 3 of the Yarn Language, which supports many new features, similar to the
   feature set described for the Unity plugin here:
