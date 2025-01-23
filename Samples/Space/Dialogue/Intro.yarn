@@ -3,5 +3,6 @@ title: SpaceIntro
 tags:
 ---
 <<declare $sampleName to "Space">>
+-> Test
 Welcome to the {$sampleName} Sample! Try talking to Sally and the Ship. #line:03f451b 
 ===
