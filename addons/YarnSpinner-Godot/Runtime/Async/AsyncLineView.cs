@@ -252,11 +252,6 @@ public partial class AsyncLineView : Node, AsyncDialogueViewBase
     /// <inheritdoc/>
     public YarnTask OnDialogueStartedAsync()
     {
-        if (IsInstanceValid(viewControl))
-        {
-            viewControl!.Visible = true;
-        }
-
         return YarnTask.CompletedTask;
     }
 
