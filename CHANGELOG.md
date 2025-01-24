@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.16] 2025-1-24
+
+* Fix null reference in AddCommandHandlerCallable when callable does not return an object (#80) by  @meybax 
+* Fix uncaught exceptions in DialogueRunner when markup in a line was malformed. 
+
 ## [0.2.15] 2025-1-23
 
 * Fixed an issue where an exception could be raised if OptionsListView has lastLineText set, and dialogue begins with an option. 

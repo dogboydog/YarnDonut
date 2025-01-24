@@ -1032,7 +1032,7 @@ public partial class DialogueRunner : Godot.Node
             {
                 localisedLine.Text = Dialogue.ParseMarkup(text);
             }
-            catch (Yarn.Markup.MarkupParseException e)
+            catch (Exception e)
             {
                 // Parsing the markup failed. We'll log a warning, and
                 // produce a markup result that just contains the raw text.
@@ -1197,7 +1197,7 @@ public partial class DialogueRunner : Godot.Node
             {
                 CurrentLine.Text = Dialogue.ParseMarkup(text);
             }
-            catch (Yarn.Markup.MarkupParseException e)
+            catch (Exception e)
             {
                 // Parsing the markup failed. We'll log a warning, and
                 // produce a markup result that just contains the raw text.
