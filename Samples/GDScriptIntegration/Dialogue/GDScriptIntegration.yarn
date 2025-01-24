@@ -2,6 +2,7 @@
 tags:
 ---
 <<declare $myVariableSetFromGDScript to "" as string>>
+<<log "Starting GDScriptIntegration sample!">>
 Gary: So, can I use [fx type="wave"]GDScript[/fx] with YarnSpinner?  #my_metadata #line:02fa0cd 
 Derrick: Many features can be used with GDScript. For example, you can make a custom view like the one in this scene. #line:09c1c2c 
 Derrick: You can also interact with DialogueRunner and variable storage nodes with cross-language scripting. #line:0b086af 
