@@ -534,7 +534,8 @@ public partial class DialogueRunner : Godot.Node
             var castArgs = CastToExpectedTypes(argTypes, commandName, handlerArgs);
 
             var current = handler.Call(castArgs.ToArray());
-            if (current.As<GodotObject>().GetClass() == "GDScriptFunctionState")
+            var currentGodotObject = current.As<GodotObject>();
+            if (currentGodotObject != null && currentGodotObject.GetClass() == "GDScriptFunctionState")
             {
                 // callable is from GDScript with await statements
                 await ((SceneTree) Engine.GetMainLoop()).ToSignal(current.AsGodotObject(), "completed");
