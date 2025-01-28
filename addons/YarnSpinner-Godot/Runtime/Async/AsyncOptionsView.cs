@@ -88,11 +88,15 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
     /// <returns>A completed task.</returns>
     public YarnTask OnDialogueCompleteAsync()
     {
-        if (IsInstanceValid(viewControl))
+        lastSeenLine = null;
+        if (IsInstanceValid(lastLineText))
         {
-            viewControl!.Visible = false;
+            lastLineText.Visible = false;
         }
-
+        if (IsInstanceValid(lastLineCharacterNameContainer))
+        {
+            lastLineCharacterNameContainer!.Visible = false;
+        }
         return YarnTask.CompletedTask;
     }
 
