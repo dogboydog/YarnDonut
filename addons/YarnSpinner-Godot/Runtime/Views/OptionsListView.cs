@@ -4,10 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
-
+#pragma warning disable CS0618 // Type or member is obsolete
 namespace YarnSpinnerGodot;
 
+/// <summary>
+/// Obsolete: Use <see cref="AsyncOptionsView"/>
+/// </summary>
 [GlobalClass]
+
 public partial class OptionsListView : Node, DialogueViewBase
 {
     [Export] PackedScene optionViewPrefab;
@@ -122,7 +126,7 @@ public partial class OptionsListView : Node, DialogueViewBase
             }
 
             // Update the last line, if one is configured
-            if (IsInstanceValid(lastLineText))
+            if (IsInstanceValid(lastLineText) && lastSeenLine != null)
             {
                 var line = lastSeenLine.Text;
                 lastLineText.Visible = true;
@@ -207,7 +211,13 @@ public partial class OptionsListView : Node, DialogueViewBase
     /// <inheritdoc />
     public void DialogueComplete()
     {
-        // do we still have a line lying around?
+        lastSeenLine = null;
+        OnOptionSelected = null;
+        if (IsInstanceValid(lastLineText))
+        {
+            lastLineText.Visible = false;
+        }
+
         if (viewControl.Visible)
         {
             lastSeenLine = null;
