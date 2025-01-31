@@ -366,14 +366,19 @@ public partial class AsyncLineView : Node, AsyncDialogueViewBase
         if (IsInstanceValid(viewControl))
         {
             // fading up the UI
+            viewControl!.Visible = true;
             if (useFadeEffect)
             {
+             
                 await Effects.FadeAlphaAsync(viewControl, 0, 1, fadeDownDuration, token.HurryUpToken);
+                if (!IsInstanceValid(this))
+                {
+                    return;
+                }
             }
             else
             {
-                // We're not fading up, so set the canvas group's alpha to 1 immediately.
-                viewControl!.Visible = true;
+                // We're not fading up, so set the view control's alpha to 1 immediately.
                 var oldModulate = viewControl.Modulate;
                 viewControl.Modulate = new Color(oldModulate.R, oldModulate.G, oldModulate.B, 1.0f);
             }
@@ -441,11 +446,13 @@ public partial class AsyncLineView : Node, AsyncDialogueViewBase
             if (useFadeEffect)
             {
                 await Effects.FadeAlphaAsync(viewControl, 1, 0, fadeDownDuration, token.HurryUpToken);
+                if (!IsInstanceValid(this))
+                {
+                    return;
+                }
             }
-            else
-            {
-                viewControl!.Visible = false;
-            }
+
+            viewControl!.Visible = false;
         }
 
         // the final bit of clean up is to remove the cancel listener from the button

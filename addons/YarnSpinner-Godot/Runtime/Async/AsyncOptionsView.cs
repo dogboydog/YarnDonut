@@ -89,7 +89,7 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
     public YarnTask OnDialogueCompleteAsync()
     {
         lastSeenLine = null;
-        if (IsInstanceValid(lastLineText))
+        if (IsInstanceValid(lastLineContainer))
         {
             lastLineText.Visible = false;
         }
@@ -97,6 +97,7 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
         {
             lastLineCharacterNameContainer!.Visible = false;
         }
+
         return YarnTask.CompletedTask;
     }
 
@@ -304,9 +305,14 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
 
         if (useFadeEffect)
         {
+            viewControl!.Visible = true;
             // fade up the UI now
             await Effects.FadeAlphaAsync(viewControl, 0, 1, fadeUpDuration,
                 cancellationToken);
+            if (!IsInstanceValid(this))
+            {
+                return null;
+            }
         }
 
 
@@ -319,6 +325,12 @@ public partial class AsyncOptionsView : Node, AsyncDialogueViewBase
             // fade down
             await Effects.FadeAlphaAsync(viewControl, 1, 0, fadeDownDuration,
                 cancellationToken);
+            if (!IsInstanceValid(this))
+            {
+                return null;
+            }
+
+            viewControl!.Visible = false;
         }
 
         // disabling ALL the options views now
